@@ -1,0 +1,2148 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Ứng dụng học chữ Hán Kanji phong cách Nhật Bản truyền thống (Torii Red & Washi), bao gồm Flashcard chi tiết nghĩa tiếng Việt, Mẹo nhớ chiết tự bộ thủ, trắc nghiệm Quiz 4 đáp án và Sổ tay ôn tập thông minh.">
+  <title>Học Kanji Nhật Bản | 漢字学習帳 (Kanji Gakushūchō)</title>
+
+  <!-- Google Fonts: Thư pháp Nhật Bản & Font tiếng Việt sang trọng -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Shippori+Mincho:wght@500;700;900&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            torii: {
+              DEFAULT: '#b91c1c', // Đỏ son Nhật Bản (Vermilion / Torii Red)
+              light: '#dc2626',
+              dark: '#991b1b',
+              glow: 'rgba(185, 28, 28, 0.25)'
+            },
+            washi: {
+              DEFAULT: '#fbf9f5', // Trắng ngà giấy Washi
+              light: '#ffffff',
+              dark: '#f0ebe1',
+              border: '#e4ddd0'
+            },
+            sumi: {
+              DEFAULT: '#1c1917', // Đen mực tàu Sumi-e
+              light: '#292524',
+              muted: '#78716c'
+            },
+            bamboo: {
+              DEFAULT: '#047857', // Xanh tre/trúc Nhật
+              light: '#059669',
+              bg: '#ecfdf5'
+            },
+            gold: {
+              DEFAULT: '#b45309', // Vàng hoàng gia / vàng son
+              light: '#d97706',
+              bg: '#fffbeb'
+            }
+          },
+          fontFamily: {
+            kanji: ['"Shippori Mincho"', '"Noto Serif JP"', 'serif'],
+            ui: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif']
+          },
+          boxShadow: {
+            washi: '0 10px 30px -5px rgba(28, 25, 23, 0.08), 0 4px 6px -2px rgba(28, 25, 23, 0.04)',
+            hanko: '0 0 0 3px #b91c1c, 0 4px 12px rgba(185, 28, 28, 0.3)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Họa tiết truyền thống Nhật Bản: Sóng nước Seigaiha nền nhẹ & hoa văn Asanoha */
+    body {
+      background-color: #fbf9f5;
+      background-image: radial-gradient(#e6ded2 1px, transparent 1px), radial-gradient(#e6ded2 1px, #fbf9f5 1px);
+      background-size: 40px 40px;
+      background-position: 0 0, 20px 20px;
+      color: #1c1917;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Hiệu ứng cánh hoa anh đào (Sakura petals) rơi nhẹ */
+    .sakura-petal {
+      position: fixed;
+      background: radial-gradient(circle, #fda4af 20%, #f43f5e 90%);
+      border-radius: 150% 0 150% 0;
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 1;
+      animation: sakuraFall linear infinite;
+    }
+
+    @keyframes sakuraFall {
+      0% {
+        transform: translateY(-10vh) translateX(0) rotate(0deg);
+        opacity: 0.5;
+      }
+
+      100% {
+        transform: translateY(105vh) translateX(120px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Dấu triện Hanko / Đóng dấu truyền thống */
+    .hanko-stamp {
+      border: 2.5px solid #b91c1c;
+      color: #b91c1c;
+      font-family: 'Shippori Mincho', serif;
+      font-weight: 900;
+      padding: 2px 8px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transform: rotate(-4deg);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      box-shadow: inset 0 0 0 1px #b91c1c;
+    }
+
+    /* 3D Flashcard Flip */
+    .perspective-1000 {
+      perspective: 1200px;
+    }
+
+    .card-flip-inner {
+      transition: transform 0.65s cubic-bezier(0.34, 1.4, 0.64, 1);
+      transform-style: preserve-3d;
+    }
+
+    .card-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-front,
+    .card-back {
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+    }
+
+    /* Furigana Ruby typography */
+    ruby {
+      ruby-align: center;
+      ruby-position: over;
+    }
+
+    rt {
+      font-size: 0.62em;
+      color: #991b1b;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    /* Rung thẻ khi trả lời sai Quiz */
+    @keyframes shakeError {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      20%,
+      60% {
+        transform: translateX(-8px);
+      }
+
+      40%,
+      80% {
+        transform: translateX(8px);
+      }
+    }
+
+    .shake-card {
+      animation: shakeError 0.45s ease-in-out;
+    }
+
+    /* Viền hoa văn truyền thống */
+    .japanese-border {
+      border: 1px solid #e4ddd0;
+      box-shadow: inset 0 0 0 3px rgba(185, 28, 28, 0.05);
+    }
+
+    /* Thanh cuộn đẹp */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #e4ddd0;
+      border-radius: 999px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #b91c1c;
+    }
+  </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+
+  <!-- Cánh hoa anh đào rơi trang trí nền -->
+  <div id="sakuraContainer" aria-hidden="true"></div>
+
+  <!-- Header Văn hóa Nhật Bản -->
+  <header class="w-full bg-washi-light border-b border-washi-border py-4 px-4 shadow-sm relative z-10">
+    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+
+      <!-- Biểu tượng Torii & Tiêu đề -->
+      <div class="flex items-center gap-3">
+        <div
+          class="w-12 h-12 bg-torii text-white rounded-lg flex items-center justify-center shadow-md border-2 border-torii-dark">
+          <!-- Torii Gate Icon -->
+          <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M2 5h20v2H2V5zm3 4h14v2H5V9zm2 4v8h2v-8H7zm8 0v8h2v-8h-2zM4 3h16v1.5H4V3z" />
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl md:text-2xl font-bold font-kanji text-sumi tracking-wide">漢字学習帳</h1>
+            <span class="hanko-stamp text-xs">日 本 語</span>
+          </div>
+          <p class="text-xs text-sumi-muted">Luyện nhớ Kanji N5 - N1 • Mẹo nhớ chiết tự • Sổ tay thông minh</p>
+        </div>
+      </div>
+
+      <!-- Chuyển đổi 3 Chế độ: Học Flashcard / Kiểm tra Quiz / Sổ tay hay quên -->
+      <nav class="flex items-center bg-washi-dark p-1.5 rounded-xl border border-washi-border shadow-inner gap-1">
+        <button id="modeStudyBtn"
+          class="nav-mode-btn active px-4 py-2 rounded-lg text-xs md:text-sm font-bold flex items-center gap-1.5 transition-all bg-torii text-white shadow-sm">
+          <span>🎴</span> Học Flashcard
+        </button>
+        <button id="modeQuizBtn"
+          class="nav-mode-btn px-4 py-2 rounded-lg text-xs md:text-sm font-bold flex items-center gap-1.5 text-sumi-muted hover:text-sumi transition-all">
+          <span>🎯</span> Kiểm tra Quiz
+        </button>
+        <button id="modeNotebookBtn"
+          class="nav-mode-btn px-4 py-2 rounded-lg text-xs md:text-sm font-bold flex items-center gap-1.5 text-sumi-muted hover:text-sumi transition-all relative">
+          <span>📖</span> Sổ tay chữ quên
+          <span id="notebookBadge"
+            class="hidden ml-1 px-1.5 py-0.5 text-[10px] font-black bg-torii text-white rounded-full">0</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-4xl w-full mx-auto p-4 md:py-6 flex flex-col items-center gap-5 relative z-10">
+
+    <!-- ============================================== -->
+    <!-- PHẦN 1: CHẾ ĐỘ HỌC FLASHCARD                   -->
+    <!-- ============================================== -->
+    <section id="studySection" class="w-full flex flex-col items-center gap-5">
+
+      <!-- Cấp độ Tabs (N5 -> N1) -->
+      <div
+        class="w-full flex justify-between items-center bg-washi-light p-1.5 rounded-2xl border border-washi-border shadow-washi">
+        <div class="flex items-center gap-1 w-full justify-between" id="levelTabs">
+          <button
+            class="level-tab-btn flex-1 py-2 rounded-xl text-xs md:text-sm font-bold transition-all bg-torii text-white shadow-sm"
+            data-level="N5">
+            N5 <span class="text-[10px] opacity-80" id="countBadgeN5">(103)</span>
+          </button>
+          <button
+            class="level-tab-btn flex-1 py-2 rounded-xl text-xs md:text-sm font-bold transition-all text-sumi-muted hover:text-sumi hover:bg-washi-dark"
+            data-level="N4">
+            N4 <span class="text-[10px] opacity-80" id="countBadgeN4">(181)</span>
+          </button>
+          <button
+            class="level-tab-btn flex-1 py-2 rounded-xl text-xs md:text-sm font-bold transition-all text-sumi-muted hover:text-sumi hover:bg-washi-dark"
+            data-level="N3">
+            N3 <span class="text-[10px] opacity-80" id="countBadgeN3">(361)</span>
+          </button>
+          <button
+            class="level-tab-btn flex-1 py-2 rounded-xl text-xs md:text-sm font-bold transition-all text-sumi-muted hover:text-sumi hover:bg-washi-dark"
+            data-level="N2">
+            N2 <span class="text-[10px] opacity-80" id="countBadgeN2">(415)</span>
+          </button>
+          <button
+            class="level-tab-btn flex-1 py-2 rounded-xl text-xs md:text-sm font-bold transition-all text-sumi-muted hover:text-sumi hover:bg-washi-dark"
+            data-level="N1">
+            N1 <span class="text-[10px] opacity-80" id="countBadgeN1">(1136)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Thanh trạng thái: Vị trí, Tiến trình & Bộ lọc -->
+      <div class="w-full bg-washi-light p-3.5 rounded-xl border border-washi-border shadow-sm flex flex-col gap-2">
+        <div class="flex items-center justify-between text-xs md:text-sm font-semibold">
+          <div class="flex items-center gap-2">
+            <span class="text-sumi-muted">Tiến độ cấp độ:</span>
+            <span class="text-torii font-extrabold font-kanji text-base" id="cardProgressText">1 / 103 chữ</span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <span id="shuffleIndicator"
+              class="hidden items-center gap-1 text-[11px] font-bold text-gold bg-gold-bg px-2 py-0.5 rounded-full border border-gold/30">
+              🔀 Đang xáo trộn
+            </span>
+            <span class="text-sumi-muted text-xs">Nhấn <kbd
+                class="px-1.5 py-0.5 bg-washi-dark border border-washi-border rounded text-[10px]">Space</kbd> để lật
+              thẻ</span>
+          </div>
+        </div>
+
+        <!-- Progress bar phong cách sơn mài Urushi -->
+        <div class="w-full h-2 bg-washi-dark rounded-full overflow-hidden border border-washi-border/60">
+          <div id="studyProgressBar"
+            class="h-full bg-gradient-to-r from-torii via-torii-light to-gold rounded-full transition-all duration-300 w-1">
+          </div>
+        </div>
+      </div>
+
+      <!-- Khung Thẻ Flashcard Trung Tâm (3D Flip Scene) -->
+      <div
+        class="w-full max-w-xl min-h-[460px] md:min-h-[500px] h-[500px] md:h-[530px] perspective-1000 cursor-pointer select-none"
+        id="flashcardScene" title="Nhấp chuột hoặc phím Space để lật thẻ">
+        <div class="card-flip-inner relative w-full h-full rounded-2xl" id="flashcardInner">
+
+          <!-- MẶT TRƯỚC (Front: Kanji to, Âm Hán Việt, Onyomi, Kunyomi) -->
+          <div
+            class="card-front absolute inset-0 w-full h-full bg-washi-light rounded-2xl p-6 md:p-8 flex flex-col justify-between items-center shadow-washi border-2 border-washi-border japanese-border">
+
+            <!-- Top bar mặt trước -->
+            <div class="w-full flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="hanko-stamp text-xs" id="frontLevelBadge">JLPT N5</span>
+                <span id="dictStatusBadge"
+                  class="inline-flex items-center gap-1.5 text-[10px] font-bold text-sumi-muted bg-washi-dark px-2 py-0.5 rounded-full border border-washi-border">
+                  <svg id="dictLoadingSpinner" class="animate-spin w-3 h-3 text-torii hidden" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                  </svg>
+                  <span id="dictStatusText">KANJIDIC2</span>
+                </span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button id="btnAudioFront"
+                  class="w-9 h-9 rounded-full bg-washi-dark border border-washi-border text-torii hover:bg-torii hover:text-white flex items-center justify-center transition-all shadow-sm"
+                  title="Phát âm tiếng Nhật (Phím A)">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Kanji đại bản trung tâm -->
+            <div class="flex flex-col items-center justify-center my-auto">
+              <div
+                class="text-7xl md:text-8xl font-kanji font-black text-sumi tracking-widest transition-transform duration-300 hover:scale-105 drop-shadow-sm"
+                id="kanjiBigText">
+                一
+              </div>
+              <div class="mt-2 text-xl md:text-2xl font-bold text-torii font-kanji tracking-wider" id="hanVietText">
+                NHẤT
+              </div>
+              <div class="text-xs md:text-sm text-sumi-muted mt-1 font-medium" id="frontMeaningText">
+                Nghĩa: Một, số một, đứng đầu
+              </div>
+            </div>
+
+            <!-- Âm Onyomi & Kunyomi mặt trước -->
+            <div
+              class="w-full bg-washi-dark/60 rounded-xl p-3 border border-washi-border flex justify-around text-xs md:text-sm">
+              <div class="text-center">
+                <span class="text-sumi-muted block text-[10px] uppercase font-bold tracking-wider">Onyomi (Âm On)</span>
+                <span class="font-bold text-sumi font-kanji text-sm md:text-base text-torii"
+                  id="onReadingText">イチ、イツ</span>
+              </div>
+              <div class="w-px bg-washi-border"></div>
+              <div class="text-center">
+                <span class="text-sumi-muted block text-[10px] uppercase font-bold tracking-wider">Kunyomi (Âm
+                  Kun)</span>
+                <span class="font-bold text-sumi font-kanji text-sm md:text-base text-bamboo"
+                  id="kunReadingText">ひと、ひと.つ</span>
+              </div>
+            </div>
+
+            <!-- Gợi ý lật thẻ dưới đáy -->
+            <div class="text-[11px] text-sumi-muted flex items-center gap-1.5 mt-2">
+              <svg class="w-4 h-4 text-torii" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+              </svg>
+              <span>Chạm hoặc nhấn Space để xem Mẹo nhớ & Từ vựng</span>
+            </div>
+          </div>
+
+          <!-- MẶT SAU (Back: MẸO NHỚ CHIẾT TỰ, 3-4 Từ vựng Furigana, Câu ví dụ Nhật - Việt, Nút tra cứu) -->
+          <div
+            class="card-back absolute inset-0 w-full h-full bg-washi-light rounded-2xl p-5 md:p-6 flex flex-col justify-between shadow-washi border-2 border-washi-border japanese-border overflow-y-auto">
+
+            <!-- Top bar mặt sau -->
+            <div class="w-full flex items-center justify-between pb-2 border-b border-washi-border">
+              <div class="flex items-center gap-3">
+                <span class="text-3xl font-kanji font-black text-torii" id="backMiniKanji">一</span>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-base text-sumi" id="backMiniHanViet">NHẤT</span>
+                    <span class="text-xs text-bamboo font-bold bg-bamboo/10 px-1.5 py-0.5 rounded"
+                      id="backMiniLevel">JLPT N5</span>
+                    <span id="backDictSourceBadge"
+                      class="text-[9px] font-bold text-sumi-muted bg-washi-dark px-1.5 py-0.5 rounded border border-washi-border">KANJIDIC2
+                      & JMdict</span>
+                  </div>
+                  <span class="text-xs text-sumi-muted block mt-0.5" id="backMiniMeaning">Nghĩa: Một, số một, đứng
+                    đầu</span>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-1.5">
+                <button id="btnAudioBack"
+                  class="p-1.5 rounded-lg bg-washi-dark text-torii hover:bg-torii hover:text-white transition-all"
+                  title="Nghe phát âm tiếng Nhật">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- KHU VỰC: MẸO NHỚ CHỮ HÁN & CHIẾT TỰ BỘ THỦ (Yêu cầu trọng tâm) -->
+            <div
+              class="my-2 bg-gradient-to-br from-torii/10 via-gold/10 to-washi-dark p-3.5 rounded-xl border border-torii/30 relative overflow-hidden shadow-sm">
+              <div class="flex items-center gap-1.5 text-xs font-bold text-torii uppercase tracking-wider mb-1">
+                <span>💡</span>
+                <span>Mẹo nhớ chữ Hán & Chiết tự:</span>
+              </div>
+              <p class="text-xs md:text-sm text-sumi font-medium leading-relaxed" id="mnemonicStoryText">
+                Một nét gạch ngang đơn giản duy nhất, tượng trưng cho sự khởi đầu, số một độc nhất vô nhị trên thế gian.
+              </p>
+            </div>
+
+            <!-- Danh sách 3-4 từ vựng liên quan có Furigana <ruby> & Nghĩa tiếng Việt -->
+            <div class="my-1">
+              <span
+                class="text-[11px] font-bold uppercase tracking-wider text-torii block mb-1.5 flex items-center gap-1">
+                <span>📚</span> Từ vựng liên quan (kèm Furigana & Nghĩa):
+              </span>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs md:text-sm" id="vocabListContainer">
+                <!-- Sẽ được điền động bằng JavaScript -->
+              </div>
+            </div>
+
+            <!-- Câu ví dụ minh họa tiếng Nhật kèm phiên âm & bản dịch tiếng Việt -->
+            <div class="bg-washi-dark/90 p-3 rounded-xl border border-washi-border my-1">
+              <span
+                class="text-[11px] font-bold uppercase tracking-wider text-bamboo block mb-1 flex items-center gap-1">
+                <span>🌸</span> Câu ví dụ minh họa:
+              </span>
+              <p class="font-kanji text-sm md:text-base font-semibold text-sumi leading-relaxed" id="exampleSentenceJp">
+                <ruby>彼<rt>かれ</rt></ruby>はクラスで<ruby>一番<rt>いちばん</rt></ruby><ruby>背<rt>せ</rt></ruby>が<ruby>高<rt>たか</rt>
+                </ruby>い。
+              </p>
+              <p class="text-[11px] text-sumi-muted italic mt-1 font-medium" id="exampleSentenceVn">
+                → Dịch nghĩa: Anh ấy là người cao nhất trong lớp.
+              </p>
+            </div>
+
+            <!-- Nút tra cứu nhanh Mazii, Jisho, Wiktionary -->
+            <div class="pt-2 border-t border-washi-border flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <a id="linkMazii" href="#" target="_blank" rel="noopener"
+                  class="px-2.5 py-1.5 bg-torii/10 hover:bg-torii hover:text-white text-torii text-xs font-bold rounded-lg transition-all flex items-center gap-1 border border-torii/20">
+                  <span>🏮</span> Mazii (Tra nghĩa)
+                </a>
+                <a id="linkJisho" href="#" target="_blank" rel="noopener"
+                  class="px-2.5 py-1.5 bg-sumi/10 hover:bg-sumi hover:text-white text-sumi text-xs font-bold rounded-lg transition-all flex items-center gap-1 border border-sumi/20">
+                  <span>✍️</span> Jisho (Nét viết)
+                </a>
+              </div>
+              <span class="text-[10px] text-sumi-muted">Nhấn <kbd class="bg-washi-dark px-1 rounded">Space</kbd> lật
+                lại</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- KHU VỰC TỪ VỰNG CHUẨN HIỂN THỊ DƯỚI THÔNG TIN KANJI -->
+      <div class="w-full max-w-xl bg-washi-light p-4 md:p-5 rounded-2xl border-2 border-washi-border shadow-washi japanese-border my-1">
+        <div class="flex items-center justify-between pb-2 mb-3 border-b border-washi-border">
+          <h3 class="text-sm md:text-base font-bold font-kanji text-sumi flex items-center gap-2">
+            <span class="text-torii text-base">📚</span>
+            <span>Từ vựng</span>
+          </h3>
+          <span class="text-[11px] text-sumi-muted font-medium bg-washi-dark px-2.5 py-0.5 rounded-full border border-washi-border">
+            Từ thông dụng N5
+          </span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="mainVocabGrid">
+          <!-- Điền động bởi JavaScript: Word / Reading / Meaning -->
+        </div>
+      </div>
+
+      <!-- Thanh điều khiển: Chưa nhớ / Đã nhớ & Nút chuyển trang -->
+      <div class="w-full max-w-xl flex flex-col gap-3">
+        <!-- Hai nút cốt lõi: CHƯA NHỚ vs ĐÃ NHỚ -->
+        <div class="grid grid-cols-2 gap-3">
+          <button id="btnMarkForgotten"
+            class="py-3 px-4 rounded-xl font-bold text-sm md:text-base text-torii bg-torii/10 border-2 border-torii/40 hover:bg-torii hover:text-white transition-all shadow-sm flex items-center justify-center gap-2 active:scale-95">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+            Chưa nhớ (Lưu sổ tay)
+          </button>
+
+          <button id="btnMarkMastered"
+            class="py-3 px-4 rounded-xl font-bold text-sm md:text-base text-bamboo bg-bamboo/10 border-2 border-bamboo/40 hover:bg-bamboo hover:text-white transition-all shadow-sm flex items-center justify-center gap-2 active:scale-95">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="9 12 12 15 16 10"></polyline>
+            </svg>
+            Đã nhớ (Từ tiếp theo)
+          </button>
+        </div>
+
+        <!-- Điều hướng: Từ trước, Xáo trộn, Xem danh sách, Từ sau -->
+        <div class="flex items-center justify-between gap-2 bg-washi-light p-2 rounded-xl border border-washi-border">
+          <button id="btnPrevCard"
+            class="px-4 py-2 rounded-lg font-bold text-xs md:text-sm bg-washi-dark text-sumi hover:bg-washi-border transition-all flex items-center gap-1.5">
+            <span>←</span> Từ trước
+          </button>
+
+          <div class="flex items-center gap-1.5">
+            <button id="btnShuffleToggle"
+              class="px-3 py-2 rounded-lg font-bold text-xs md:text-sm bg-washi-dark text-sumi hover:text-gold transition-all flex items-center gap-1"
+              title="Xáo trộn ngẫu nhiên (Phím S)">
+              <span>🔀</span> <span class="hidden sm:inline">Xáo trộn</span>
+            </button>
+            <button id="btnOpenGridModal"
+              class="px-3 py-2 rounded-lg font-bold text-xs md:text-sm bg-washi-dark text-sumi hover:text-torii transition-all flex items-center gap-1"
+              title="Xem danh sách chữ (Phím G)">
+              <span>📜</span> <span class="hidden sm:inline">Mục lục</span>
+            </button>
+          </div>
+
+          <button id="btnNextCard"
+            class="px-4 py-2 rounded-lg font-bold text-xs md:text-sm bg-torii text-white hover:bg-torii-light transition-all flex items-center gap-1.5">
+            Từ sau <span>→</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- PHẦN 2: CHẾ ĐỘ KIỂM TRA QUIZ (TRẮC NGHIỆM 4 ĐÁP ÁN) -->
+    <!-- ============================================== -->
+    <section id="quizSection" class="w-full max-w-xl hidden flex-col items-center gap-5">
+      <div
+        class="w-full bg-washi-light p-5 rounded-2xl border border-washi-border shadow-washi japanese-border flex flex-col items-center text-center">
+
+        <!-- Header Quiz -->
+        <div class="w-full flex items-center justify-between pb-3 border-b border-washi-border text-xs">
+          <span class="hanko-stamp text-xs" id="quizLevelBadge">JLPT N5 QUIZ</span>
+          <div class="flex items-center gap-2">
+            <span class="text-sumi-muted">Điểm chuỗi:</span>
+            <span class="font-extrabold text-torii font-kanji text-base" id="quizStreakCount">0 🔥</span>
+          </div>
+        </div>
+
+        <!-- Chữ Kanji câu hỏi -->
+        <div class="my-5">
+          <span class="text-xs text-sumi-muted uppercase tracking-wider block mb-2 font-bold">Chữ Hán này có Âm Hán Việt
+            & Nghĩa là gì?</span>
+          <div class="text-7xl md:text-8xl font-kanji font-black text-sumi drop-shadow-sm" id="quizKanjiDisplay">
+            一
+          </div>
+          <button id="btnAudioQuiz"
+            class="mt-3 inline-flex items-center gap-1.5 text-xs text-torii font-bold bg-torii/10 hover:bg-torii hover:text-white px-3 py-1 rounded-full transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+            </svg>
+            Nghe phát âm
+          </button>
+        </div>
+
+        <!-- 4 Lựa chọn Trắc nghiệm -->
+        <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3" id="quizOptionsContainer">
+          <!-- Điền động 4 nút lựa chọn -->
+        </div>
+
+        <!-- Phản hồi kết quả Quiz (Có kèm Mẹo Nhớ Chiết Tự) -->
+        <div id="quizFeedbackBox"
+          class="w-full mt-4 p-4 rounded-xl border text-sm font-bold hidden transition-all text-left">
+          <!-- Hiển thị kết quả đúng / sai & Mẹo nhớ -->
+        </div>
+
+        <button id="btnNextQuizQuestion"
+          class="mt-4 px-6 py-2.5 bg-torii text-white font-bold rounded-xl text-sm hover:bg-torii-light transition-all shadow-sm hidden">
+          Câu tiếp theo →
+        </button>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- PHẦN 3: SỔ TAY ÔN TẬP CHỮ HAY QUÊN (SMART NOTEBOOK) -->
+    <!-- ============================================== -->
+    <section id="notebookSection" class="w-full max-w-2xl hidden flex-col gap-4">
+      <!-- Header Sổ tay & Nút ôn tập lại -->
+      <div
+        class="w-full bg-washi-light p-4 rounded-2xl border border-washi-border shadow-washi flex flex-col md:flex-row items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-bold font-kanji text-sumi flex items-center gap-2">
+            <span>📖</span> Sổ tay chữ hay quên
+            <span class="hanko-stamp text-xs" id="notebookTotalCount">0 chữ</span>
+          </h2>
+          <p class="text-xs text-sumi-muted mt-0.5">Lưu tự động các chữ làm sai hoặc bấm "Chưa nhớ" kèm Mẹo nhớ chiết tự
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="btnStartSmartReview"
+            class="px-4 py-2 bg-torii text-white rounded-xl text-xs md:text-sm font-bold hover:bg-torii-light transition-all flex items-center gap-1.5 shadow-sm">
+            <span>🎯</span> Luyện đề ôn tập lại ngay
+          </button>
+          <button id="btnClearNotebook"
+            class="px-3 py-2 bg-washi-dark text-sumi-muted hover:text-torii rounded-xl text-xs font-bold transition-all"
+            title="Xóa tất cả">
+            Xóa hết
+          </button>
+        </div>
+      </div>
+
+      <!-- Danh sách thẻ trong sổ tay (Hiển thị cả Mẹo nhớ chiết tự) -->
+      <div id="notebookCardsContainer" class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        <!-- Render danh sách chữ hay quên -->
+      </div>
+
+      <!-- Trạng thái trống khi chưa có chữ quên nào -->
+      <div id="notebookEmptyState"
+        class="w-full bg-washi-light p-10 rounded-2xl border border-washi-border text-center flex flex-col items-center justify-center gap-3">
+        <span class="text-5xl">🌸</span>
+        <h3 class="font-bold text-sumi text-base font-kanji">Sổ tay của bạn đang trống!</h3>
+        <p class="text-xs text-sumi-muted max-w-sm">
+          Khi bạn bấm "Chưa nhớ" trong khi học hoặc trả lời sai câu hỏi trắc nghiệm, các chữ đó sẽ tự động được ghi danh
+          vào đây kèm câu chuyện mẹo nhớ để bạn ôn luyện lại.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal Mục Lục Toàn Bộ Kanji -->
+  <div id="gridModal" class="fixed inset-0 bg-sumi/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div
+      class="bg-washi-light w-full max-w-xl max-h-[85vh] rounded-2xl border-2 border-washi-border shadow-2xl flex flex-col overflow-hidden">
+      <div class="p-4 border-b border-washi-border flex items-center justify-between bg-washi">
+        <h3 class="font-bold text-base font-kanji text-sumi" id="gridModalTitle">Mục lục chữ Kanji</h3>
+        <button id="btnCloseGridModal"
+          class="w-8 h-8 rounded-lg text-sumi-muted hover:text-sumi text-xl font-bold flex items-center justify-center">&times;</button>
+      </div>
+      <div class="p-3 border-b border-washi-border">
+        <input type="text" id="gridSearchInput" placeholder="Tìm theo chữ Kanji hoặc âm Hán Việt..."
+          class="w-full px-3 py-2 rounded-lg bg-washi-dark border border-washi-border text-xs md:text-sm outline-none focus:border-torii">
+      </div>
+      <div id="gridModalBody" class="p-4 overflow-y-auto grid grid-cols-6 sm:grid-cols-8 gap-2">
+        <!-- Render các ô chữ -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Thông Báo Góc Màn Hình -->
+  <div id="toastBox"
+    class="fixed bottom-6 left-1/2 -translate-x-1/2 translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-sumi text-white px-5 py-2.5 rounded-full text-xs font-bold shadow-xl flex items-center gap-2 z-50 border border-washi-border/20">
+    <span id="toastIcon">🌸</span>
+    <span id="toastMessage">Thông báo</span>
+  </div>
+
+  <!-- Nạp dữ liệu gốc từ kanji-data.js -->
+  <script src="kanji-data.js"></script>
+
+  <!-- Nạp kho dữ liệu mở rộng hơn 2000 chữ Kanji từ kanji_full_database.js -->
+  <script src="kanji_full_database.js"></script>
+
+  <!-- KHO DỮ LIỆU TỪ ĐIỂN KANJI MỞ RỘNG (Âm Hán Việt, Nghĩa, Mẹo nhớ chiết tự, Từ vựng Furigana, Câu ví dụ) -->
+  <script>
+    const KANJI_EXTENDED_DICT = {
+      "一": {
+        hanViet: "NHẤT",
+        on: "イチ、イツ",
+        kun: "ひと、ひと.つ",
+        meaning: "Một, số một, đứng đầu",
+        mnemonic: "Một nét gạch ngang đơn giản duy nhất, tượng trưng cho sự khởi đầu, số một độc nhất vô nhị trên thế gian.",
+        vocab: [
+          { word: "一つ", reading: "ひとつ", meaning_vi: "một cái", jp: "一つ", vn: "một cái" },
+          { word: "一人", reading: "ひとり", meaning_vi: "một người", jp: "一人", vn: "một người" },
+          { word: "一日", reading: "いちにち", meaning_vi: "một ngày", jp: "一日", vn: "một ngày" },
+          { word: "一番", reading: "いちばん", meaning_vi: "nhất / số 1", jp: "一番", vn: "nhất / số 1" }
+        ],
+        exampleJp: "<ruby>富士山<rt>ふじさん</rt></ruby>は<ruby>日本<rt>にほん</rt></ruby>で<ruby>一番<rt>いちばん</rt></ruby><ruby>高<rt>たか</rt></ruby>い<ruby>山<rt>やま</rt></ruby>です。",
+        exampleVn: "Núi Phú Sĩ là ngọn núi cao nhất Nhật Bản."
+      },
+      "七": {
+        hanViet: "THẤT",
+        on: "シチ",
+        kun: "なな、なな.つ、なの",
+        meaning: "Số bảy (7)",
+        mnemonic: "Hình dáng một thanh gươm cắm xuống đất với nét cắt ngang qua, tượng trưng cho vết cắt thất thoát số 7.",
+        vocab: [
+          { jp: "<ruby>七月<rt>しちがつ</rt></ruby>", vn: "Tháng bảy" },
+          { jp: "<ruby>七日<rt>なのか</rt></ruby>", vn: "Ngày mùng 7" },
+          { jp: "<ruby>七人<rt>ななにん</rt></ruby>", vn: "Bảy người" },
+          { jp: "<ruby>七夕<rt>たなばた</rt></ruby>", vn: "Lễ Thất Tịch" }
+        ],
+        exampleJp: "<ruby>来週<rt>らいしゅう</rt></ruby>の<ruby>七日<rt>なのか</rt></ruby>に<ruby>日本<rt>にほん</rt></ruby>へ<ruby>行<rt>い</rt></ruby>きます。",
+        exampleVn: "Ngày mùng 7 tuần tới tôi sẽ đi Nhật Bản."
+      },
+      "万": {
+        hanViet: "VẠN",
+        on: "マン、バン",
+        kun: "よろず",
+        meaning: "Mười nghìn (10.000), vô số",
+        mnemonic: "Hình tượng chiếc móc khóa bảo vệ kho báu chứa tới mười nghìn (vạn) báu vật quý giá.",
+        vocab: [
+          { jp: "<ruby>一万<rt>いちまん</rt></ruby>", vn: "Mười nghìn (1 vạn)" },
+          { jp: "<ruby>万年筆<rt>まんねんひつ</rt></ruby>", vn: "Bút máy" },
+          { jp: "<ruby>万一<rt>まんいち</rt></ruby>", vn: "Vạn nhất, lỡ như" },
+          { jp: "<ruby>万国<rt>ばんこく</rt></ruby>", vn: "Vạn quốc, toàn thế giới" }
+        ],
+        exampleJp: "この<ruby>時計<rt>とけい</rt></ruby>は<ruby>二万<rt>にまん</rt></ruby><ruby>円<rt>えん</rt></ruby>でした。",
+        exampleVn: "Chiếc đồng hồ này có giá 2 vạn Yên."
+      },
+      "三": {
+        hanViet: "TAM",
+        on: "サン",
+        kun: "み、み.つ、みっ.つ",
+        meaning: "Số ba (3)",
+        mnemonic: "Ba nét gạch ngang đại diện cho Thiên - Địa - Nhân (Trời, Đất và Con người), cấu thành số 3 cân bằng.",
+        vocab: [
+          { jp: "<ruby>三月<rt>さんがつ</rt></ruby>", vn: "Tháng ba" },
+          { jp: "<ruby>三日<rt>みっか</rt></ruby>", vn: "Ngày mùng 3" },
+          { jp: "<ruby>三人<rt>さんにん</rt></ruby>", vn: "Ba người" },
+          { jp: "<ruby>三角<rt>さんかく</rt></ruby>", vn: "Hình tam giác" }
+        ],
+        exampleJp: "<ruby>私<rt>わたし</rt></ruby>の<ruby>家族<rt>かぞく</rt></ruby>は<ruby>三人<rt>さんにん</rt></ruby>です。",
+        exampleVn: "Gia đình tôi có ba người."
+      },
+      "上": {
+        hanViet: "THƯỢNG",
+        on: "ジョウ、ショウ",
+        kun: "うえ、あ.がる、のぼ.る",
+        meaning: "Ở trên, phía trên, đi lên",
+        mnemonic: "Một vạch ngang làm mốc, một nét thẳng đứng hướng lên trên và nét gạch chỉ định vị trí 'Ở trên'.",
+        vocab: [
+          { jp: "<ruby>机<rt>つくえ</rt></ruby>の<ruby>上<rt>うえ</rt></ruby>", vn: "Trên mặt bàn" },
+          { jp: "<ruby>上手<rt>じょうず</rt></ruby>", vn: "Giỏi giang, khéo léo" },
+          { jp: "<ruby>上着<rt>うわぎ</rt></ruby>", vn: "Áo khoác bên ngoài" },
+          { jp: "<ruby>上がる<rt>あがる</rt></ruby>", vn: "Đi lên, tăng lên" }
+        ],
+        exampleJp: "<ruby>本<rt>ほん</rt></ruby>は<ruby>机<rt>つくえ</rt></ruby>の<ruby>上<rt>うえ</rt></ruby>に<ruby>置<rt>お</rt></ruby>いてあります。",
+        exampleVn: "Sách được đặt ở trên mặt bàn."
+      },
+      "下": {
+        hanViet: "HẠ",
+        on: "カ、ゲ",
+        kun: "した、さ.がる、くだ.る",
+        meaning: "Ở dưới, hạ xuống, giảm",
+        mnemonic: "Một vạch ngang làm mốc chuẩn, nét sổ và nét gạch hướng xuống chỉ phương hướng 'Ở dưới'.",
+        vocab: [
+          { jp: "<ruby>下手<rt>へた</rt></ruby>", vn: "Kém, vụng về" },
+          { jp: "<ruby>地下鉄<rt>ちかてつ</rt></ruby>", vn: "Tàu điện ngầm" },
+          { jp: "<ruby>下がる<rt>さがる</rt></ruby>", vn: "Hạ xuống, giảm bớt" },
+          { jp: "<ruby>下さい<rt>ください</rt></ruby>", vn: "Xin hãy..." }
+        ],
+        exampleJp: "<ruby>猫<rt>ねこ</rt></ruby>がベッドの<ruby>下<rt>した</rt></ruby>で<ruby>寝<rt>ね</rt></ruby>ています。",
+        exampleVn: "Chú mèo đang ngủ ở dưới gầm giường."
+      },
+      "中": {
+        hanViet: "TRUNG",
+        on: "チュウ",
+        kun: "なか",
+        meaning: "Bên trong, ở giữa, Trung Quốc",
+        mnemonic: "Chiếc hộp hình chữ nhật bị một mũi tên đâm xuyên thẳng chính giữa tâm điểm -> 'Ở giữa, trung tâm'.",
+        vocab: [
+          { jp: "<ruby>一日中<rt>いちにちじゅう</rt></ruby>", vn: "Suốt cả ngày" },
+          { jp: "<ruby>中学校<rt>ちゅうがっこう</rt></ruby>", vn: "Trường THCS" },
+          { jp: "<ruby>中国<rt>ちゅうごく</rt></ruby>", vn: "Trung Quốc" },
+          { jp: "<ruby>中心<rt>ちゅうしん</rt></ruby>", vn: "Trung tâm" }
+        ],
+        exampleJp: "<ruby>部屋<rt>へや</rt></ruby>の<ruby>中<rt>なか</rt></ruby>に<ruby>入<rt>はい</rt></ruby>ってください。",
+        exampleVn: "Xin mời bạn bước vào bên trong phòng."
+      },
+      "九": {
+        hanViet: "CỬU",
+        on: "キュウ、ク",
+        kun: "ここの、ここの.つ",
+        meaning: "Số chín (9)",
+        mnemonic: "Hình ảnh cánh tay dang rộng vươn dài với bàn tay co lại đếm đến con số 9.",
+        vocab: [
+          { jp: "<ruby>九月<rt>くがつ</rt></ruby>", vn: "Tháng chín" },
+          { jp: "<ruby>九日<rt>ここのか</rt></ruby>", vn: "Ngày mùng 9" },
+          { jp: "<ruby>九人<rt>きゅうにん</rt></ruby>", vn: "Chín người" },
+          { jp: "<ruby>九州<rt>きゅうしゅう</rt></ruby>", vn: "Đảo Kyushu" }
+        ],
+        exampleJp: "<ruby>明日<rt>あした</rt></ruby>は<ruby>九時<rt>くじ</rt></ruby>に<ruby>起<rt>お</rt></ruby>きます。",
+        exampleVn: "Ngày mai tôi sẽ thức dậy lúc 9 giờ."
+      },
+      "二": {
+        hanViet: "NHỊ",
+        on: "ニ",
+        kun: "ふた、ふた.つ",
+        meaning: "Số hai (2)",
+        mnemonic: "Hai nét gạch ngang song song chồng lên nhau, tượng trưng cho hai bờ, số 2 cân xứng.",
+        vocab: [
+          { jp: "<ruby>二人<rt>ふたり</rt></ruby>", vn: "Hai người" },
+          { jp: "<ruby>二月<rt>にがつ</rt></ruby>", vn: "Tháng hai" },
+          { jp: "<ruby>二十日<rt>はつか</rt></ruby>", vn: "Ngày 20" },
+          { jp: "<ruby>二十歳<rt>はたち</rt></ruby>", vn: "20 tuổi" }
+        ],
+        exampleJp: "<ruby>二人<rt>ふたり</rt></ruby>で<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>に<ruby>行<rt>い</rt></ruby>きました。",
+        exampleVn: "Hai chúng tôi đã cùng nhau đi xem phim."
+      },
+      "五": {
+        hanViet: "NGŨ",
+        on: "ゴ",
+        kun: "いつ、いつ.つ",
+        meaning: "Số năm (5)",
+        mnemonic: "Hình chiếc bàn tính cổ với 5 thanh ngang dọc kết nối biểu thị số 5.",
+        vocab: [
+          { jp: "<ruby>五月<rt>ごがつ</rt></ruby>", vn: "Tháng năm" },
+          { jp: "<ruby>五日<rt>いつか</rt></ruby>", vn: "Ngày mùng 5" },
+          { jp: "<ruby>五人<rt>ごにん</rt></ruby>", vn: "Năm người" },
+          { jp: "<ruby>五円<rt>ごえん</rt></ruby>", vn: "5 Yên (đồng xu có lỗ may mắn)" }
+        ],
+        exampleJp: "<ruby>午後<rt>ごご</rt></ruby><ruby>五時<rt>ごじ</rt></ruby>に<ruby>仕事<rt>しごと</rt></ruby>が<ruby>終<rt>お</rt></ruby>わります。",
+        exampleVn: "5 giờ chiều tôi sẽ kết thúc công việc."
+      },
+      "人": {
+        hanViet: "NHÂN",
+        on: "ジン、ニン",
+        kun: "ひと",
+        meaning: "Con người, người",
+        mnemonic: "Hai nét tựa vào nhau: con người luôn cần dựa vào nhau để cùng sẻ chia và nâng đỡ trong cuộc sống.",
+        vocab: [
+          { jp: "<ruby>日本人<rt>にほんじん</rt></ruby>", vn: "Người Nhật Bản" },
+          { jp: "<ruby>大人<rt>おとな</rt></ruby>", vn: "Người lớn" },
+          { jp: "<ruby>外国人<rt>がいこくじん</rt></ruby>", vn: "Người nước ngoài" },
+          { jp: "<ruby>人気<rt>にんき</rt></ruby>", vn: "Được yêu thích, hâm mộ" }
+        ],
+        exampleJp: "あの<ruby>人<rt>ひと</rt></ruby>はとても<ruby>親切<rt>しんせつ</rt></ruby>です。",
+        exampleVn: "Người kia rất tốt bụng và thân thiện."
+      },
+      "今": {
+        hanViet: "KIM",
+        on: "コン、キン",
+        kun: "いま",
+        meaning: "Bây giờ, hiện tại, nay",
+        mnemonic: "Mái nhà che chở chiếc đồng hồ đang điểm đúng thời khắc hiện tại ngay lúc 'Bây giờ'.",
+        vocab: [
+          { jp: "<ruby>今日<rt>きょう</rt></ruby>", vn: "Hôm nay" },
+          { jp: "<ruby>今週<rt>こんしゅう</rt></ruby>", vn: "Tuần này" },
+          { jp: "<ruby>今年<rt>ことし</rt></ruby>", vn: "Năm nay" },
+          { jp: "<ruby>今月<rt>こんげつ</rt></ruby>", vn: "Tháng này" }
+        ],
+        exampleJp: "<ruby>今<rt>いま</rt></ruby>、<ruby>何時<rt>なんじ</rt></ruby>ですか。",
+        exampleVn: "Bây giờ là mấy giờ rồi?"
+      },
+      "休": {
+        hanViet: "HƯU",
+        on: "キュウ",
+        kun: "やす.む、やす.まる、やす.める",
+        meaning: "Nghỉ ngơi, nghỉ phép",
+        mnemonic: "Bộ Nhân đứng (人 - người) bên cạnh chữ Mộc (木 - cây) -> Người mệt mỏi tựa vào bóng mát gốc cây to để 'Nghỉ ngơi'.",
+        vocab: [
+          { jp: "<ruby>休み<rt>やすみ</rt></ruby>", vn: "Ngày nghỉ, kỳ nghỉ" },
+          { jp: "<ruby>休日<rt>きゅうじつ</rt></ruby>", vn: "Ngày nghỉ" },
+          { jp: "<ruby>昼休み<rt>ひるやすみ</rt></ruby>", vn: "Giờ nghỉ trưa" },
+          { jp: "<ruby>夏休み<rt>なつやすみ</rt></ruby>", vn: "Nghỉ hè" }
+        ],
+        exampleJp: "<ruby>今日<rt>きょう</rt></ruby>は<ruby>仕事<rt>しごと</rt></ruby>が<ruby>休<rt>やす</rt></ruby>みですから、ゆっくり<ruby>寝<rt>ね</rt></ruby>ます。",
+        exampleVn: "Hôm nay tôi được nghỉ làm nên sẽ ngủ thật thoải mái."
+      },
+      "何": {
+        hanViet: "HÀ",
+        on: "カ",
+        kun: "なに、なん",
+        meaning: "Cái gì, gì",
+        mnemonic: "Bộ Nhân đứng (人) cùng chữ Khả (可) vác đồ -> Người gánh nặng đi qua hỏi xem trên vai đang mang vác 'Cái gì'?",
+        vocab: [
+          { jp: "<ruby>何<rt>なに/なん</rt></ruby>", vn: "Cái gì" },
+          { jp: "<ruby>何時<rt>なんじ</rt></ruby>", vn: "Mấy giờ" },
+          { jp: "<ruby>何人<rt>なんにん</rt></ruby>", vn: "Mấy người" },
+          { jp: "<ruby>何度<rt>なんど</rt></ruby>", vn: "Bao nhiêu lần" }
+        ],
+        exampleJp: "これは<ruby>何<rt>なん</rt></ruby>ですか。",
+        exampleVn: "Cái này là cái gì thế?"
+      },
+      "先": {
+        hanViet: "TIÊN",
+        on: "セン",
+        kun: "さき、ま.ず",
+        meaning: "Trước, đi trước, tiên tiến",
+        mnemonic: "Bàn chân bước đi trên mặt đất dẫn đường cho người phía sau -> Người đi trước mở lối chính là 'Tiên'.",
+        vocab: [
+          { jp: "<ruby>先生<rt>せんせい</rt></ruby>", vn: "Giáo viên, thầy cô" },
+          { jp: "<ruby>先週<rt>せんしゅう</rt></ruby>", vn: "Tuần trước" },
+          { jp: "<ruby>先月<rt>せんげつ</rt></ruby>", vn: "Tháng trước" },
+          { jp: "<ruby>お先に<rt>おさきに</rt></ruby>", vn: "Tôi xin phép về trước" }
+        ],
+        exampleJp: "<ruby>田中<rt>たなか</rt></ruby><ruby>先生<rt>せんせい</rt></ruby>は<ruby>日本語<rt>にほんご</rt></ruby>を<ruby>教<rt>おし</rt></ruby>えています。",
+        exampleVn: "Thầy Tanaka đang dạy tiếng Nhật."
+      },
+      "日": {
+        hanViet: "NHẬT",
+        on: "ニチ、ジツ",
+        kun: "ひ、-び、-か",
+        meaning: "Mặt trời, ngày, Nhật Bản",
+        mnemonic: "Mô phỏng hình ảnh ông mặt trời rực rỡ với vầng hào quang ở tâm, tượng trưng cho ban ngày và đất nước Mặt Trời mọc.",
+        vocab: [
+          { jp: "<ruby>日本<rt>にほん</rt></ruby>", vn: "Nhật Bản" },
+          { jp: "<ruby>日曜日<rt>にちようび</rt></ruby>", vn: "Chủ nhật" },
+          { jp: "<ruby>毎日<rt>まいにち</rt></ruby>", vn: "Mỗi ngày" },
+          { jp: "<ruby>誕生日<rt>たんじょうび</rt></ruby>", vn: "Sinh nhật" }
+        ],
+        exampleJp: "<ruby>今日<rt>きょう</rt></ruby>はとてもいい<ruby>天気<rt>てんき</rt></ruby>の<ruby>日<rt>ひ</rt></ruby>です。",
+        exampleVn: "Hôm nay là một ngày thời tiết rất đẹp."
+      },
+      "月": {
+        hanViet: "NGUYỆT",
+        on: "ゲツ、ガツ",
+        kun: "つき",
+        meaning: "Mặt trăng, tháng",
+        mnemonic: "Mô phỏng hình ảnh vầng trăng khuyết lấp lánh ban đêm trên bầu trời với hai đám mây nhẹ vắt ngang.",
+        vocab: [
+          { jp: "<ruby>月曜日<rt>げつようび</rt></ruby>", vn: "Thứ hai" },
+          { jp: "<ruby>一月<rt>いちがつ</rt></ruby>", vn: "Tháng một" },
+          { jp: "<ruby>今月<rt>こんげつ</rt></ruby>", vn: "Tháng này" },
+          { jp: "<ruby>満月<rt>まんげつ</rt></ruby>", vn: "Trăng tròn, trăng rằm" }
+        ],
+        exampleJp: "<ruby>今夜<rt>こんや</rt></ruby>は<ruby>月<rt>つき</rt></ruby>がとても<ruby>綺麗<rt>きれい</rt></ruby>ですね。",
+        exampleVn: "Tối nay vầng trăng đẹp quá nhỉ."
+      },
+      "木": {
+        hanViet: "MỘC",
+        on: "ボク、モク",
+        kun: "き、こ-",
+        meaning: "Cây, gỗ",
+        mnemonic: "Thân cây thẳng đứng vươn lên trời, hai cành xòe ra hai bên và rễ cây cắm sâu dưới lòng đất.",
+        vocab: [
+          { jp: "<ruby>木曜日<rt>もくようび</rt></ruby>", vn: "Thứ năm" },
+          { jp: "<ruby>大木<rt>たいぼく</rt></ruby>", vn: "Cây cổ thụ lớn" },
+          { jp: "<ruby>木綿<rt>もめん</rt></ruby>", vn: "Vải bông cotton" },
+          { jp: "<ruby>木材<rt>もくざい</rt></ruby>", vn: "Vật liệu gỗ" }
+        ],
+        exampleJp: "<ruby>公園<rt>こうえん</rt></ruby>に<ruby>大<rt>おお</rt></ruby>きな<ruby>桜<rt>さくら</rt></ruby>の<ruby>木<rt>き</rt></ruby>があります。",
+        exampleVn: "Trong công viên có một cây hoa anh đào rất lớn."
+      },
+      "水": {
+        hanViet: "THỦY",
+        on: "スイ",
+        kun: "みず",
+        meaning: "Nước",
+        mnemonic: "Dòng sông chảy xiết cuồn cuộn ở giữa và các giọt nước bắn tung tóe sang hai sườn núi.",
+        vocab: [
+          { jp: "<ruby>水曜日<rt>すいようび</rt></ruby>", vn: "Thứ tư" },
+          { jp: "<ruby>水泳<rt>すいえい</rt></ruby>", vn: "Bơi lội" },
+          { jp: "<ruby>冷水<rt>れいすい</rt></ruby>", vn: "Nước lạnh" },
+          { jp: "<ruby>水着<rt>みずぎ</rt></ruby>", vn: "Đồ bơi" }
+        ],
+        exampleJp: "<ruby>朝<rt>あさ</rt></ruby><ruby>起<rt>お</rt></ruby>きて<ruby>冷<rt>つめ</rt></ruby>たい<ruby>水<rt>みず</rt></ruby>を<ruby>一杯<rt>いっぱい</rt></ruby><ruby>飲<rt>の</rt></ruby>みます。",
+        exampleVn: "Sáng thức dậy tôi uống một cốc nước lạnh."
+      },
+      "火": {
+        hanViet: "HỎA",
+        on: "カ",
+        kun: "ひ、-び、ほ-",
+        meaning: "Lửa, hỏa hoạn",
+        mnemonic: "Ngọn lửa bốc cháy phập phồng với những tia lửa phát sáng đỏ rực bắn ra xung quanh.",
+        vocab: [
+          { jp: "<ruby>火曜日<rt>かようび</rt></ruby>", vn: "Thứ ba" },
+          { jp: "<ruby>花火<rt>はなび</rt></ruby>", vn: "Pháo hoa" },
+          { jp: "<ruby>火事<rt>かじ</rt></ruby>", vn: "Hỏa hoạn, cháy nhà" },
+          { jp: "<ruby>火山<rt>かざん</rt></ruby>", vn: "Núi lửa" }
+        ],
+        exampleJp: "<ruby>夏休<rt>なつやす</rt></ruby>みに<ruby>友達<rt>ともだち</rt></ruby>と<ruby>花火<rt>はなび</rt></ruby>を<ruby>見<rt>み</rt></ruby>に<ruby>行<rt>い</rt></ruby>きました。",
+        exampleVn: "Kỳ nghỉ hè tôi đã cùng bạn bè đi ngắm pháo hoa."
+      },
+      "金": {
+        hanViet: "KIM",
+        on: "キン、コン",
+        kun: "かね、かな-",
+        meaning: "Vàng, tiền bạc, kim loại",
+        mnemonic: "Dưới mái nhà che chở nơi tích trữ kho báu, sâu trong lòng đất chôn cất hai quặng vàng ròng lấp lánh.",
+        vocab: [
+          { jp: "<ruby>金曜日<rt>きんようび</rt></ruby>", vn: "Thứ sáu" },
+          { jp: "<ruby>お金<rt>おかね</rt></ruby>", vn: "Tiền bạc" },
+          { jp: "<ruby>金色<rt>きんいろ</rt></ruby>", vn: "Màu vàng óng" },
+          { jp: "<ruby>料金<rt>りょうきん</rt></ruby>", vn: "Cước phí, giá vé" }
+        ],
+        exampleJp: "<ruby>財布<rt>さいふ</rt></ruby>に<ruby>お金<rt>おかね</rt></ruby>があまり<ruby>入<rt>はい</rt></ruby>っていません。",
+        exampleVn: "Trong ví tôi không có nhiều tiền lắm."
+      },
+      "土": {
+        hanViet: "THỔ",
+        on: "ド、ト",
+        kun: "つち",
+        meaning: "Đất, thổ địa",
+        mnemonic: "Nét gạch dưới là mặt đất, nét gạch trên là mầm cây đang nhú lên từ lòng đất mẹ phì nhiêu.",
+        vocab: [
+          { jp: "<ruby>土曜日<rt>どようび</rt></ruby>", vn: "Thứ bảy" },
+          { jp: "<ruby>土地<rt>とち</rt></ruby>", vn: "Đất đai, thổ địa" },
+          { jp: "<ruby>お土産<rt>おみやげ</rt></ruby>", vn: "Quà lưu niệm đặc sản" },
+          { jp: "<ruby>粘土<rt>ねんど</rt></ruby>", vn: "Đất sét" }
+        ],
+        exampleJp: "<ruby>土曜日<rt>どようび</rt></ruby>の<ruby>午後<rt>ごご</rt></ruby>に<ruby>図書館<rt>としょかん</rt></ruby>へ<ruby>行<rt>い</rt></ruby>きます。",
+        exampleVn: "Chiều thứ bảy tôi sẽ đến thư viện."
+      },
+      "生": {
+        hanViet: "SINH",
+        on: "セイ、ショウ",
+        kun: "い.きる、う.まれる、なま",
+        meaning: "Sinh ra, sống, học sinh",
+        mnemonic: "Mầm cây xanh non vươn mình trỗi dậy từ mặt đất -> Sự sống đâm chồi nảy lộc được 'Sinh' sôi.",
+        vocab: [
+          { jp: "<ruby>学生<rt>がくせい</rt></ruby>", vn: "Học sinh, sinh viên" },
+          { jp: "<ruby>誕生日<rt>たんじょうび</rt></ruby>", vn: "Ngày sinh nhật" },
+          { jp: "<ruby>生きる<rt>いきる</rt></ruby>", vn: "Sống, sinh tồn" },
+          { jp: "<ruby>先生<rt>せんせい</rt></ruby>", vn: "Thầy cô giáo" }
+        ],
+        exampleJp: "<ruby>私<rt>わたし</rt></ruby>はハノイ<ruby>大学<rt>だいがく</rt></ruby>の<ruby>学生<rt>がくせい</rt></ruby>です。",
+        exampleVn: "Tôi là sinh viên của trường Đại học Hà Nội."
+      },
+      "学": {
+        hanViet: "HỌC",
+        on: "ガク",
+        kun: "まな.ぶ",
+        meaning: "Học tập, trường học",
+        mnemonic: "Đứa trẻ (bộ Tử 子) ngồi dưới mái nhà (bộ Miên 宀) chăm chỉ tiếp thu kiến thức của thầy cô để 'Học tập'.",
+        vocab: [
+          { jp: "<ruby>学校<rt>がっこう</rt></ruby>", vn: "Trường học" },
+          { jp: "<ruby>大学<rt>だいがく</rt></ruby>", vn: "Trường đại học" },
+          { jp: "<ruby>学習<rt>がくしゅう</rt></ruby>", vn: "Học tập, nghiên cứu" },
+          { jp: "<ruby>留学生<rt>りゅうがくせい</rt></ruby>", vn: "Du học sinh" }
+        ],
+        exampleJp: "<ruby>毎日<rt>まいにち</rt></ruby><ruby>学校<rt>がっこう</rt></ruby>で<ruby>日本語<rt>にほんご</rt></ruby>を<ruby>勉強<rt>べんきょう</rt></ruby>します。",
+        exampleVn: "Hằng ngày tôi học tiếng Nhật ở trường."
+      },
+      "校": {
+        hanViet: "HIỆU",
+        on: "コウ",
+        kun: "",
+        meaning: "Trường học",
+        mnemonic: "Mộc (木 - gỗ) làm nhà + Giao (交 - giao lưu kết bạn) -> Ngôi trường bằng gỗ nơi học sinh gặp gỡ và giao lưu tri thức.",
+        vocab: [
+          { jp: "<ruby>学校<rt>がっこう</rt></ruby>", vn: "Trường học" },
+          { jp: "<ruby>高校<rt>こうこう</rt></ruby>", vn: "Trường cấp 3 (THPT)" },
+          { jp: "<ruby>小学校<rt>しょうがっこう</rt></ruby>", vn: "Trường tiểu học" },
+          { jp: "<ruby>中学校<rt>ちゅうがっこう</rt></ruby>", vn: "Trường THCS" }
+        ],
+        exampleJp: "<ruby>私<rt>わたし</rt></ruby>の<ruby>学校<rt>がっこう</rt></ruby>は<ruby>駅<rt>えき</rt></ruby>の<ruby>近<rt>ちか</rt></ruby>くにあります。",
+        exampleVn: "Trường của tôi nằm ở gần nhà ga."
+      },
+      "本": {
+        hanViet: "BẢN",
+        on: "ホン",
+        kun: "もと",
+        meaning: "Sách, cội nguồn, Nhật Bản",
+        mnemonic: "Chữ Mộc (木 - cây) thêm một nét gạch ngang ở dưới gốc chỉ 'Gốc rễ' cội nguồn, và từ thân cây làm ra 'Sách'.",
+        vocab: [
+          { jp: "<ruby>日本<rt>にほん</rt></ruby>", vn: "Nhật Bản" },
+          { jp: "<ruby>本屋<rt>ほんや</rt></ruby>", vn: "Hiệu sách" },
+          { jp: "<ruby>本棚<rt>ほんだな</rt></ruby>", vn: "Giá sách" },
+          { jp: "<ruby>基本<rt>きほん</rt></ruby>", vn: "Cơ bản" }
+        ],
+        exampleJp: "<ruby>暇<rt>ひま</rt></ruby>な<ruby>時<rt>とき</rt></ruby>に<ruby>日本語<rt>にほんご</rt></ruby>の<ruby>本<rt>ほん</rt></ruby>を<ruby>読<rt>よ</rt></ruby>みます。",
+        exampleVn: "Khi rảnh rỗi tôi đọc sách tiếng Nhật."
+      },
+      "山": {
+        hanViet: "SƠN",
+        on: "サン、セン",
+        kun: "やま",
+        meaning: "Núi, ngọn núi",
+        mnemonic: "Mô phỏng hình ảnh ba đỉnh núi nhấp nhô hùng vĩ nối tiếp nhau giữa đất trời.",
+        vocab: [
+          { jp: "<ruby>富士山<rt>ふじさん</rt></ruby>", vn: "Núi Phú Sĩ" },
+          { jp: "<ruby>山登り<rt>やまのぼり</rt></ruby>", vn: "Leo núi" },
+          { jp: "<ruby>火山<rt>かざん</rt></ruby>", vn: "Núi lửa" },
+          { jp: "<ruby>山口<rt>やまぐち</rt></ruby>", vn: "Họ Yamaguchi / Tỉnh Yamaguchi" }
+        ],
+        exampleJp: "<ruby>来月<rt>らいげつ</rt></ruby>、<ruby>友達<rt>ともだち</rt></ruby>と<ruby>一緒<rt>いっしょ</rt></ruby>に<ruby>富士山<rt>ふじさん</rt></ruby>に<ruby>登<rt>のぼ</rt></ruby>ります。",
+        exampleVn: "Tháng sau tôi sẽ cùng bạn bè leo núi Phú Sĩ."
+      },
+      "川": {
+        hanViet: "XUYÊN",
+        on: "セン",
+        kun: "かわ",
+        meaning: "Sông, dòng sông",
+        mnemonic: "Ba nét thẳng uốn lượn tượng trưng cho dòng nước chảy êm đềm giữa hai bờ sông.",
+        vocab: [
+          { jp: "<ruby>小川<rt>おがわ</rt></ruby>", vn: "Dòng suối nhỏ" },
+          { jp: "<ruby>川岸<rt>かわぎし</rt></ruby>", vn: "Bờ sông" },
+          { jp: "<ruby>河川<rt>かせん</rt></ruby>", vn: "Sông ngòi" }
+        ],
+        exampleJp: "この<ruby>川<rt>かわ</rt></ruby>には<ruby>魚<rt>さかな</rt></ruby>がたくさん<ruby>泳<rt>およ</rt></ruby>いでいます。",
+        exampleVn: "Dưới con sông này có rất nhiều cá đang bơi."
+      },
+      "大": {
+        hanViet: "ĐẠI",
+        on: "ダイ、タイ",
+        kun: "おお-、おお.きい",
+        meaning: "To, lớn, vĩ đại",
+        mnemonic: "Hình dáng một con người dang rộng hai tay và hai chân ra hết cỡ để biểu thị sự 'To lớn'.",
+        vocab: [
+          { jp: "<ruby>大きい<rt>おおきい</rt></ruby>", vn: "To lớn" },
+          { jp: "<ruby>大学<rt>だいがく</rt></ruby>", vn: "Trường đại học" },
+          { jp: "<ruby>大人<rt>おとな</rt></ruby>", vn: "Người lớn" },
+          { jp: "<ruby>大切<rt>たいせつ</rt></ruby>", vn: "Quan trọng, quý giá" }
+        ],
+        exampleJp: "この<ruby>部屋<rt>へや</rt></ruby>はとても<ruby>広<rt>ひろ</rt></ruby>くて<ruby>大<rt>おお</rt></ruby>きいです。",
+        exampleVn: "Căn phòng này rất rộng và lớn."
+      },
+      "小": {
+        hanViet: "TIỂU",
+        on: "ショウ",
+        kun: "ちい.さい、こ-、お-",
+        meaning: "Nhỏ, bé",
+        mnemonic: "Nét sổ ở giữa và hai nét phẩy hai bên như hai giọt nước nhỏ li ti, biểu thị sự 'Nhỏ bé'.",
+        vocab: [
+          { jp: "<ruby>小さい<rt>ちいさい</rt></ruby>", vn: "Nhỏ bé" },
+          { jp: "<ruby>小学校<rt>しょうがっこう</rt></ruby>", vn: "Trường tiểu học" },
+          { jp: "<ruby>小川<rt>おがわ</rt></ruby>", vn: "Dòng suối nhỏ" },
+          { jp: "<ruby>小鳥<rt>ことり</rt></ruby>", vn: "Chú chim nhỏ" }
+        ],
+        exampleJp: "かわいい<ruby>小鳥<rt>ことり</rt></ruby>が<ruby>歌<rt>うた</rt></ruby>っています。",
+        exampleVn: "Chú chim nhỏ dễ thương đang hót líu lo."
+      }
+    };
+
+    // Bảng ánh xạ âm Hán Việt dự phòng nhanh cho các chữ còn lại
+    const HAN_VIET_FALLBACK_MAP = {
+      "入": "NHẬP", "八": "BÁT", "六": "LỤC", "円": "VIÊN", "出": "XUẤT", "分": "PHÂN", "前": "TIỀN", "北": "BẮC", "十": "THẬP", "千": "THIÊN",
+      "午": "NGỌ", "半": "BÁN", "南": "NAM", "友": "HỮU", "右": "HỮU", "名": "DANH", "四": "TỨ", "国": "QUỐC", "外": "NGOẠI", "天": "THIÊN",
+      "女": "NỮ", "子": "TỬ", "左": "TẢ", "年": "NIÊN", "後": "HẬU", "時": "THỜI", "書": "THƯ", "来": "LAI", "東": "ĐÔNG", "母": "MẪU",
+      "毎": "MỖI", "気": "KHÍ", "父": "PHỤ", "男": "NAM", "白": "BẠCH", "百": "BÁCH", "聞": "VĂN", "行": "HÀNH", "西": "TÂY", "見": "KIẾN",
+      "話": "THOẠI", "語": "NGỮ", "読": "ĐỘC", "车": "XA", "長": "TRƯỜNG", "間": "GIAN", "雨": "VŨ", "電": "ĐIỆN", "食": "THỰC", "高": "CAO",
+      "不": "BẤT", "世": "THẾ", "主": "CHỦ", "事": "SỰ", "京": "KINH", "仕": "SĨ", "代": "ĐẠI", "以": "DĨ", "会": "HỘI", "住": "TRÚ",
+      "体": "THỂ", "作": "TÁC", "使": "SỬ", "借": "TÁ", "元": "NGUYÊN", "兄": "HUYNH", "公": "CÔNG", "写": "TẢ", "冬": "ĐÔNG", "切": "THIẾT",
+      "別": "BIỆT", "力": "LỰC", "勉": "MIỄN", "動": "ĐỘNG", "医": "Y", "去": "KHỨ", "口": "KHẨU", "古": "CỔ", "台": "THAI", "同": "ĐỒNG",
+      "味": "VỊ", "品": "PHẨM", "員": "VIÊN", "問": "VẤN", "図": "ĐỒ", "地": "ĐỊA", "堂": "ĐƯỜNG", "場": "TRƯỜNG", "売": "MẠI", "夏": "HẠ",
+      "夕": "TỊCH", "多": "ĐA", "夜": "DẠ", "妹": "MUỘI", "姉": "TỶ", "始": "THỦY", "字": "TỰ", "安": "AN", "室": "THẤT", "家": "GIA",
+      "少": "THIỂU", "屋": "ỐC", "工": "CÔNG", "帰": "QUY", "広": "QUẢNG", "店": "ĐIẾM", "度": "ĐỘ", "建": "KIẾN", "弟": "ĐỆ", "強": "CƯỜNG",
+      "待": "ĐÃI", "心": "TÂM", "思": "TƯ", "急": "CẤP", "悪": "ÁC", "意": "Ý", "手": "THỦ", "持": "TRÌ", "教": "GIÁO", "文": "VĂN",
+      "料": "LIỆU", "新": "TÂN", "方": "PHƯƠNG", "旅": "LỮ", "族": "TỘC", "早": "TẢO", "明": "MINH", "映": "ÁNH", "春": "XUÂN", "昼": "TRÚ",
+      "曜": "DIỆU", "有": "HỮU", "服": "PHỤC", "朝": "TRIÊU", "業": "NGHIỆP", "楽": "LẠC", "歌": "CA", "止": "CHỈ", "正": "CHÍNH", "歩": "BỘ",
+      "死": "TỬ", "注": "CHÚ", "洋": "DƯƠNG", "海": "HẢI", "漢": "HÁN", "牛": "NGƯU", "物": "VẬT", "特": "ĐẶC", "犬": "KHUYỂN", "理": "LÍ",
+      "用": "DỤNG", "田": "ĐIỀN", "町": "ĐINH", "画": "HỌA", "界": "GIỚI", "病": "BỆNH", "発": "PHÁT", "的": "ĐÍCH", "目": "MỤC", "真": "CHÂN",
+      "着": "TRỨ", "知": "TRI", "研": "NGHIÊN", "社": "XÃ", "私": "TƯ", "秋": "THU", "究": "CỨU", "空": "KHÔNG", "立": "LẬP", "答": "ĐÁP",
+      "紙": "CHỈ", "終": "CHUNG", "習": "TẬP", "考": "KHẢO", "者": "GIẢ", "肉": "NHỤC", "自": "TỰ", "色": "SẮC", "花": "HOA", "英": "ANH",
+      "茶": "TRÀ", "親": "THÂN", "言": "NGÔN", "計": "KẾ", "試": "THÍ", "買": "MÃI", "貸": "THẢI", "質": "CHẤT", "赤": "XÍCH", "走": "TẨU",
+      "起": "KHỞI", "足": "TÚC", "転": "CHUYỂN", "近": "CẬN", "送": "TỐNG", "通": "THÔNG", "週": "CHU", "運": "VẬN", "道": "ĐẠO", "重": "TRỌNG",
+      "野": "DÃ", "銀": "NGÂN", "開": "KHAI", "院": "VIỆN", "集": "TẬP", "青": "THANH", "音": "ÂM", "題": "ĐỀ", "風": "PHONG", "飯": "PHẠN",
+      "飲": "ẨM", "館": "QUÁN", "駅": "DỊCH", "験": "NGHIỆM", "魚": "NGƯ", "鳥": "ĐIỂU", "黒": "HẮC"
+    };
+
+    // Đồng bộ tự động tất cả các âm Hán Việt chuẩn xác từ KANJI_FULL_DATABASE vào Fallback Map
+    if (typeof window !== 'undefined' && window.KANJI_FULL_DATABASE) {
+      for (const k in window.KANJI_FULL_DATABASE) {
+        const item = window.KANJI_FULL_DATABASE[k];
+        if (item && item.hanViet && item.hanViet !== "HÁN TỰ" && item.hanViet !== "HÁN") {
+          HAN_VIET_FALLBACK_MAP[k] = item.hanViet;
+        }
+      }
+    }
+
+    // Từ điển mẹo nhớ chiết tự tự động cho các chữ chưa có thủ công
+    const MNEMONIC_FALLBACK_RULES = {
+      "明": "Mặt trời (Nhật 日) kết hợp Mặt trăng (Nguyệt 月) chiếu sáng rực rỡ tạo nên sự 'Sáng sủa, ngày mai'.",
+      "見": "Đôi mắt (Mục 目) đặt trên đôi chân (Nhi 儿) đứng chăm chú 'Nhìn ngắm'.",
+      "聞": "Ghé sát tai (Nhĩ 耳) vào khe cánh cổng (Môn 門) để 'Lắng nghe' tin tức.",
+      "語": "Ngôn (言 - lời nói) + Ngũ (五 - năm) + Khẩu (口 - miệng) -> 5 cái miệng cùng cất lời tạo thành 'Ngôn ngữ'.",
+      "話": "Ngôn (言 - lời nói) + Thiệt (舌 - lưỡi) -> Lưỡi thốt ra lời nói để 'Trò chuyện, hội thoại'.",
+      "読": "Ngôn (言 - lời nói) + Mại (売 - bán) -> Người bán hàng cất giọng 'Đọc' to bảng giá các món hàng.",
+      "書": "Bàn tay cầm cây bút lông nắn nót viết từng nét chữ ngay ngắn lên trang giấy trắng để 'Viết sách'.",
+      "食": "Mái nhà (Nhân 人) che chở cho chiếc bát đầy đặn (Cấn 艮), mọi người quây quần 'Ăn uống'.",
+      "飲": "Thực (飠 - ăn uống) kết hợp Khiếm (欠 - há to miệng) -> Há to miệng để 'Uống' dòng nước mát.",
+      "車": "Hai bánh xe hai bên nối với trục xe ở giữa tạo thành hình cỗ 'Xe cộ'.",
+      "雨": "Mây đen giăng kín trời và 4 hạt nước 'Mưa' đang tí tách rơi xuống đất.",
+      "電": "Cơn mưa giông (Vũ 雨) xuất hiện tia chớp ngoằn ngoèo mang theo dòng 'Điện'.",
+      "高": "Tòa lâu đài nguy nga có mái vòm cao chót vót vươn thẳng lên trời -> 'Cao ráo, đắt đỏ'.",
+      "男": "Điền (田 - ruộng) + Lực (力 - sức) -> Người dồn hết sức lực cày bừa trên đồng ruộng là 'Người đàn ông'.",
+      "女": "Hình ảnh người phụ nữ đoan trang, dịu dàng đang ngồi với hai tay khép nép duyên dáng.",
+      "子": "Hình ảnh đứa trẻ sơ sinh quấn tã, dang rộng hai tay đòi mẹ bế ẵm.",
+      "母": "Người mẹ dịu hiền ôm ấp con thơ với hai dòng sữa ngọt lành nuôi con khôn lớn.",
+      "父": "Người cha nghiêm nghị hai tay cầm hai chiếc roi tre dạy bảo con cái nên người.",
+      "友": "Hai bàn tay nắm chặt lấy nhau cùng bước qua sóng gió -> Biểu tượng của tình 'Bạn bè'.",
+      "名": "Tịch (夕 - buổi tối) + Khẩu (口 - miệng) -> Buổi tối trời tối om, phải gọi 'Tên' nhau để nhận diện.",
+      "国": "Biên giới bao bọc (囗) bảo vệ viên ngọc quý (玉) giang sơn của 'Đất nước'.",
+      "外": "Tịch (夕 - buổi tối) + Bặc (卜 - quẻ bói) -> Buổi tối cầm quẻ bói chạy ra 'Bên ngoài' xem bói.",
+      "前": "Mặt trăng soi bóng con thuyền lướt đi về 'Phía trước' trên dòng sông tĩnh lặng.",
+      "後": "Người bước từng bước ngắn lùi về 'Phía sau' để dõi theo quan sát mọi người.",
+      "左": "Tay trái cầm cây thước vuông (Công 工) để đo đạc chuẩn xác -> 'Bên trái'.",
+      "右": "Tay phải cầm thìa đút đồ ăn vào miệng (Khẩu 口) -> 'Bên phải'."
+    };
+  </script>
+
+  <!-- LOGIC ĐIỀU KHIỂN ỨNG DỤNG (JS) -->
+  <script>
+    (function () {
+      // 1. Kiểm tra nguồn dữ liệu
+      const kanjiRaw = window.KANJI_DATA || (typeof KANJI_DATA !== 'undefined' ? KANJI_DATA : null);
+      if (!kanjiRaw) {
+        alert("Lỗi: Không tìm thấy dữ liệu kanji-data.js!");
+        return;
+      }
+
+      // 2. State quản lý
+      let activeMode = 'study'; // 'study' | 'quiz' | 'notebook'
+      let currentLevel = 'N5';
+      let originalList = [];
+      let currentList = [];
+      let currentIndex = 0;
+      let isFlipped = false;
+      let isShuffled = false;
+      let quizStreak = 0;
+      let currentQuizKanji = null;
+      let isQuizAnswered = false;
+
+      // LocalStorage keys
+      const STORAGE_KEY_FORGOTTEN = 'kanji_washi_forgotten_cards_v2';
+
+      function getForgottenCards() {
+        try {
+          return JSON.parse(localStorage.getItem(STORAGE_KEY_FORGOTTEN)) || [];
+        } catch { return []; }
+      }
+      function saveForgottenCards(cards) {
+        localStorage.setItem(STORAGE_KEY_FORGOTTEN, JSON.stringify(cards));
+        updateNotebookBadge();
+      }
+
+      // 3. Helper lấy thông tin Kanji đầy đủ (kèm Mẹo nhớ chiết tự)
+      function getKanjiInfo(char) {
+        const dbItem = (window.KANJI_FULL_DATABASE && window.KANJI_FULL_DATABASE[char]) ? window.KANJI_FULL_DATABASE[char] : null;
+        const hasDbVocab = dbItem && dbItem.vocab && dbItem.vocab.length && dbItem.vocab[0].reading && dbItem.vocab[0].reading !== '...';
+
+        // Xây dựng danh sách từ vựng chuẩn hóa
+        let vocabList = [];
+        if (hasDbVocab) {
+          vocabList = dbItem.vocab.map(v => ({
+            word: v.word || v.jp || '',
+            reading: (v.reading && v.reading !== '...') ? v.reading : '',
+            meaning_vi: v.meaning_vi || v.meaning || '',
+            jp: `<ruby>${v.word || v.jp}<rt>${(v.reading && v.reading !== '...') ? v.reading : ''}</rt></ruby>`,
+            vn: v.meaning_vi || v.meaning || ''
+          }));
+        } else if (KANJI_EXTENDED_DICT[char] && KANJI_EXTENDED_DICT[char].vocab) {
+          vocabList = KANJI_EXTENDED_DICT[char].vocab.map(v => ({
+            word: v.word || (v.jp ? v.jp.replace(/<[^>]+>/g, '') : ''),
+            reading: v.reading || '',
+            meaning_vi: v.meaning_vi || v.vn || '',
+            jp: v.jp || `<ruby>${v.word}<rt>${v.reading || ''}</rt></ruby>`,
+            vn: v.vn || v.meaning_vi || ''
+          }));
+        } else if (dbItem && dbItem.vocab) {
+          vocabList = dbItem.vocab.map(v => ({
+            word: v.word || v.jp || char,
+            reading: (v.reading && v.reading !== '...') ? v.reading : '',
+            meaning_vi: v.meaning_vi || v.meaning || `Chữ ${char}`,
+            jp: `<ruby>${v.word || v.jp}<rt>${(v.reading && v.reading !== '...') ? v.reading : ''}</rt></ruby>`,
+            vn: v.meaning_vi || v.meaning || `Chữ ${char}`
+          }));
+        }
+
+        // Ưu tiên 1: Dữ liệu viết tay chi tiết đặc sắc (kết hợp với từ vựng chuẩn từ database nếu có)
+        if (KANJI_EXTENDED_DICT[char]) {
+          const ext = Object.assign({}, KANJI_EXTENDED_DICT[char]);
+          if (vocabList.length) ext.vocab = vocabList;
+          return ext;
+        }
+
+        // Ưu tiên 2: Kho dữ liệu đầy đủ 2200+ chữ từ kanji_full_database
+        if (dbItem) {
+          const fallbackHV = (typeof HAN_VIET_FALLBACK_MAP !== 'undefined' && HAN_VIET_FALLBACK_MAP[char]) ? HAN_VIET_FALLBACK_MAP[char] : "";
+          const validHanViet = (dbItem.hanViet && dbItem.hanViet !== "HÁN TỰ" && dbItem.hanViet !== "HÁN") ? dbItem.hanViet : fallbackHV;
+          return {
+            hanViet: validHanViet,
+            on: dbItem.on || "Tra từ điển Mazii / Jisho",
+            kun: dbItem.kun || "Tra từ điển Mazii / Jisho",
+            meaning: dbItem.meaning || `Chữ Hán: ${char}`,
+            mnemonic: dbItem.mnemonic || `Chiết tự chữ '${char}': Nhìn kỹ các nét bút và bộ thủ cấu thành để tạo sự liên tưởng ghi nhớ bền lâu.`,
+            vocab: vocabList.length ? vocabList : [
+              { word: char, reading: '', meaning_vi: `Chữ ${char}`, jp: `<ruby>${char}<rt>...</rt></ruby>`, vn: `Chữ ${char}` }
+            ],
+            exampleJp: dbItem.example ? dbItem.example.sentence : `この<ruby>漢字<rt>かんじ</rt></ruby>は「<ruby>${char}<rt></rt></ruby>」です。`,
+            exampleVn: dbItem.example ? dbItem.example.translation : `Chữ Hán này được viết là chữ ${char}.`
+          };
+        }
+
+        // Ưu tiên 3: Bảng ánh xạ fallback tự động
+        const fallbackHanViet = HAN_VIET_FALLBACK_MAP[char] || "";
+        const autoMnemonic = MNEMONIC_FALLBACK_RULES[char] ||
+          `Chiết tự chữ "${char}" (${fallbackHanViet}): Hãy quan sát kỹ các nét bút và bộ thủ cấu thành để liên kết sinh động với ý nghĩa "${fallbackHanViet}". Nhấn nút tra cứu bên dưới để xem hình ảnh minh họa chi tiết!`;
+
+        return {
+          hanViet: fallbackHanViet,
+          on: "Tra từ điển Mazii/Jisho",
+          kun: "Tra từ điển Mazii/Jisho",
+          meaning: `Chữ Hán: ${fallbackHanViet}`,
+          mnemonic: autoMnemonic,
+          vocab: [
+            { jp: `<ruby>${char}<rt>...</rt></ruby>`, vn: `Từ vựng chứa chữ ${fallbackHanViet}` },
+            { jp: `<ruby>${char}語<rt>...ご</rt></ruby>`, vn: `Từ ghép với chữ ${char}` },
+            { jp: `<ruby>大${char}<rt>おお...</rt></ruby>`, vn: `Cụm từ thông dụng` }
+          ],
+          exampleJp: `この<ruby>漢字<rt>かんじ</rt></ruby>は「<ruby>${char}<rt></rt></ruby>」です。`,
+          exampleVn: `Chữ Kanji này là chữ ${fallbackHanViet}. Nhấp vào liên kết bên dưới để xem trọn bộ nghĩa & nét viết.`
+        };
+      }
+
+      // Thử nạp thêm file JSON nếu đang chạy qua Live Server / máy chủ web
+      fetch('kanji_full_database.json')
+        .then(res => res.json())
+        .then(data => {
+          window.KANJI_FULL_DATABASE = Object.assign(window.KANJI_FULL_DATABASE || {}, data);
+          for (const k in data) {
+            if (data[k] && data[k].hanViet && data[k].hanViet !== "HÁN TỰ" && data[k].hanViet !== "HÁN") {
+              HAN_VIET_FALLBACK_MAP[k] = data[k].hanViet;
+            }
+          }
+          renderFlashcard();
+        })
+        .catch(() => {
+          // Khi chạy ở chế độ file://, thẻ script kanji_full_database.js đã nạp sẵn
+        });
+
+      // 4. Hiệu ứng cánh hoa anh đào (Sakura Fall)
+      function createSakuraPetals() {
+        const container = document.getElementById('sakuraContainer');
+        for (let i = 0; i < 15; i++) {
+          const petal = document.createElement('div');
+          petal.className = 'sakura-petal';
+          const size = Math.random() * 8 + 8;
+          petal.style.width = `${size}px`;
+          petal.style.height = `${size * 1.4}px`;
+          petal.style.left = `${Math.random() * 100}vw`;
+          petal.style.animationDuration = `${Math.random() * 6 + 7}s`;
+          petal.style.animationDelay = `${Math.random() * 5}s`;
+          container.appendChild(petal);
+        }
+      }
+      createSakuraPetals();
+
+      // 5. Toast Thông báo
+      let toastTimer = null;
+      function showToast(msg, icon = '🌸') {
+        const toast = document.getElementById('toastBox');
+        document.getElementById('toastIcon').textContent = icon;
+        document.getElementById('toastMessage').textContent = msg;
+        toast.classList.remove('translate-y-20', 'opacity-0');
+        toast.classList.add('translate-y-0', 'opacity-100');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.remove('translate-y-0', 'opacity-100');
+          toast.classList.add('translate-y-20', 'opacity-0');
+        }, 2200);
+      }
+
+      // 6. Phát âm tiếng Nhật (Web Speech API)
+      function speakJapanese(text) {
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'ja-JP';
+          utterance.rate = 0.85;
+          window.speechSynthesis.speak(utterance);
+        } else {
+          showToast('Trình duyệt chưa hỗ trợ giọng đọc Web Speech API', '⚠️');
+        }
+      }
+
+      // 7. Cập nhật Badge số lượng chữ trong sổ tay
+      function updateNotebookBadge() {
+        const badge = document.getElementById('notebookBadge');
+        const cards = getForgottenCards();
+        if (cards.length > 0) {
+          badge.textContent = cards.length;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+
+      // 8. TỪ ĐIỂN MỞ KANJIDIC2 & JMdict (KanjiAPI) + OFFLINE LOCALSTORAGE CACHING
+      const DICT_CACHE_PREFIX = 'kanji_live_dict_cache_v1_';
+
+      const GLOSS_VI_DICT = {
+        "water": "nước", "sun": "mặt trời", "day": "ngày", "moon": "mặt trăng", "month": "tháng",
+        "tree": "cây cối", "wood": "gỗ", "fire": "ngọn lửa", "gold": "vàng, kim loại", "money": "tiền bạc",
+        "soil": "đất đai", "earth": "mặt đất", "person": "con người", "people": "người", "mountain": "ngọn núi",
+        "river": "dòng sông", "book": "sách", "origin": "gốc rễ", "study": "học tập", "learn": "học hỏi",
+        "school": "trường học", "ahead": "phía trước", "before": "trước đó", "life": "sự sống, sinh ra",
+        "birth": "sinh đẻ", "big": "to lớn", "large": "rộng lớn", "small": "nhỏ bé", "little": "bé bỏng",
+        "up": "ở trên", "above": "phía trên", "down": "ở dưới", "below": "bên dưới", "middle": "ở giữa",
+        "inside": "bên trong", "now": "bây giờ", "present": "hiện tại", "time": "thời gian", "hour": "giờ giấc",
+        "rest": "nghỉ ngơi", "break": "giờ giải lao", "what": "cái gì", "see": "nhìn, xem", "look": "quan sát",
+        "hear": "nghe", "listen": "lắng nghe", "read": "đọc", "write": "viết", "eat": "ăn uống",
+        "drink": "uống", "car": "xe cộ", "rain": "cơn mưa", "electricity": "điện năng", "high": "cao, đắt",
+        "expensive": "đắt đỏ", "cheap": "giá rẻ", "white": "màu trắng", "black": "màu đen", "red": "màu đỏ",
+        "blue": "màu xanh", "heaven": "bầu trời, thiên đường", "child": "đứa trẻ", "woman": "phụ nữ",
+        "female": "nữ giới", "man": "đàn ông", "male": "nam giới", "father": "người cha", "mother": "người mẹ",
+        "friend": "bạn bè", "name": "tên gọi", "country": "đất nước", "outside": "bên ngoài", "gate": "cánh cổng"
+      };
+
+      function translateGloss(enGloss) {
+        if (!enGloss) return "";
+        const lower = enGloss.toLowerCase().trim();
+        if (GLOSS_VI_DICT[lower]) return GLOSS_VI_DICT[lower];
+        for (const k of Object.keys(GLOSS_VI_DICT)) {
+          if (lower.includes(k)) return GLOSS_VI_DICT[k];
+        }
+        return enGloss;
+      }
+
+      async function loadLiveKanjiDictionary(char, level) {
+        const cacheKey = DICT_CACHE_PREFIX + char;
+        const localFallback = getKanjiInfo(char);
+        const hasLocalStandardVocab = localFallback.vocab && localFallback.vocab.length && localFallback.vocab[0].reading && localFallback.vocab[0].reading !== '...';
+
+        // 1. Kiểm tra LocalStorage Cache (Offline Caching - hiển thị tức thì không cần gọi mạng)
+        try {
+          const cachedStr = localStorage.getItem(cacheKey);
+          if (cachedStr) {
+            const cachedData = JSON.parse(cachedStr);
+            if (hasLocalStandardVocab) {
+              cachedData.vocab = localFallback.vocab;
+            }
+            return { data: cachedData, fromCache: true };
+          }
+        } catch (e) { }
+
+        // 2. Hiển thị Loading Spinner
+        const spinner = document.getElementById('dictLoadingSpinner');
+        const statusText = document.getElementById('dictStatusText');
+        if (spinner) spinner.classList.remove('hidden');
+        if (statusText) statusText.textContent = 'Đang nạp KANJIDIC2...';
+
+        try {
+          // Tạo timeout 4 giây để tránh treo mạng
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+          const [kanjiRes, wordsRes] = await Promise.all([
+            fetch(`https://kanjiapi.dev/v1/kanji/${encodeURIComponent(char)}`, { signal: controller.signal }).then(r => r.ok ? r.json() : null).catch(() => null),
+            fetch(`https://kanjiapi.dev/v1/words/${encodeURIComponent(char)}`, { signal: controller.signal }).then(r => r.ok ? r.json() : null).catch(() => null)
+          ]);
+          clearTimeout(timeoutId);
+
+          if (kanjiRes) {
+            const onStr = (kanjiRes.on_readings && kanjiRes.on_readings.length) ? kanjiRes.on_readings.join('、') : null;
+            const kunStr = (kanjiRes.kun_readings && kanjiRes.kun_readings.length) ? kanjiRes.kun_readings.join('、') : null;
+            const enMean = (kanjiRes.meanings && kanjiRes.meanings.length) ? kanjiRes.meanings[0] : "";
+            const vnMean = translateGloss(enMean);
+
+            // Xử lý từ vựng: Luôn ưu tiên từ vựng chuẩn trong project
+            let vocabList = [];
+            if (hasLocalStandardVocab) {
+              vocabList = localFallback.vocab;
+            } else if (wordsRes && Array.isArray(wordsRes)) {
+              for (const w of wordsRes) {
+                if (vocabList.length >= 4) break;
+                const written = w.variants && w.variants[0] ? w.variants[0].written : "";
+                const pronounced = w.variants && w.variants[0] ? w.variants[0].pronounced : "";
+                const glossEn = (w.meanings && w.meanings[0] && w.meanings[0].glosses) ? w.meanings[0].glosses[0] : "";
+                const glossVn = translateGloss(glossEn);
+
+                if (written && written.includes(char)) {
+                  vocabList.push({
+                    word: written,
+                    reading: pronounced,
+                    meaning_vi: glossVn ? `${glossVn} (${glossEn})` : glossEn,
+                    jp: `<ruby>${written}<rt>${pronounced}</rt></ruby>`,
+                    vn: glossVn ? `${glossVn} (${glossEn})` : glossEn
+                  });
+                }
+              }
+            }
+
+            const enriched = {
+              kanji: char,
+              level: level,
+              hanViet: localFallback.hanViet || "HÁN TỰ",
+              on: onStr || localFallback.on,
+              kun: kunStr || localFallback.kun,
+              meaning: vnMean ? `${vnMean} (${enMean})` : localFallback.meaning,
+              mnemonic: localFallback.mnemonic,
+              vocab: (vocabList && vocabList.length) ? vocabList : localFallback.vocab,
+              exampleJp: localFallback.exampleJp,
+              exampleVn: localFallback.exampleVn,
+              source: hasLocalStandardVocab ? 'Kho dữ liệu Project' : 'KANJIDIC2 & JMdict'
+            };
+
+            // Lưu vào LocalStorage
+            try {
+              localStorage.setItem(cacheKey, JSON.stringify(enriched));
+            } catch (e) { }
+
+            return { data: enriched, fromCache: false };
+          }
+        } catch (err) {
+          console.warn("[KanjiAPI] Không thể tải từ điển mở:", err);
+        } finally {
+          if (spinner) spinner.classList.add('hidden');
+          if (statusText) statusText.textContent = hasLocalStandardVocab ? 'Kho dữ liệu' : 'KANJIDIC2';
+        }
+
+        return { data: localFallback, fromCache: false };
+      }
+
+      function updateCardView(info, kanji) {
+        // Mặt trước
+        document.getElementById('kanjiBigText').textContent = kanji;
+        document.getElementById('hanVietText').textContent = info.hanViet;
+        document.getElementById('frontMeaningText').textContent = `Nghĩa: ${info.meaning.replace('Nghĩa: ', '')}`;
+        document.getElementById('onReadingText').textContent = info.on;
+        document.getElementById('kunReadingText').textContent = info.kun;
+        document.getElementById('frontLevelBadge').textContent = `JLPT ${currentLevel}`;
+
+        // Mặt sau
+        document.getElementById('backMiniKanji').textContent = kanji;
+        document.getElementById('backMiniHanViet').textContent = info.hanViet;
+        document.getElementById('backMiniLevel').textContent = `JLPT ${currentLevel}`;
+        document.getElementById('backMiniMeaning').textContent = `Nghĩa: ${info.meaning.replace('Nghĩa: ', '')}`;
+
+        // Mẹo nhớ chiết tự
+        document.getElementById('mnemonicStoryText').textContent = info.mnemonic;
+
+        // Render từ vựng cho cả khu vực Từ vựng bên dưới thẻ và mặt sau thẻ
+        const mainVocabGrid = document.getElementById('mainVocabGrid');
+        const vocabContainer = document.getElementById('vocabListContainer');
+        if (mainVocabGrid) mainVocabGrid.innerHTML = '';
+        if (vocabContainer) vocabContainer.innerHTML = '';
+
+        if (info.vocab && info.vocab.length) {
+          info.vocab.forEach(v => {
+            const word = v.word || (v.jp ? v.jp.replace(/<[^>]+>/g, '') : '');
+            const reading = (v.reading && v.reading !== '...') ? v.reading : '';
+            const meaning = v.meaning_vi || v.meaning || v.vn || '';
+
+            // Card hiển thị cho Khu vực Từ vựng trực tiếp dưới thẻ
+            if (mainVocabGrid) {
+              const card = document.createElement('div');
+              card.className = 'bg-washi p-3 rounded-xl border border-washi-border flex flex-col justify-between hover:border-torii/50 hover:shadow-sm transition-all text-center';
+              card.innerHTML = `
+                <div class="font-kanji text-base md:text-lg font-bold text-sumi tracking-wide">${word}</div>
+                <div class="text-xs font-semibold text-torii font-kanji mt-1">${reading}</div>
+                <div class="text-xs text-sumi-muted mt-1.5 font-medium leading-relaxed">${meaning}</div>
+              `;
+              mainVocabGrid.appendChild(card);
+            }
+
+            // Card hiển thị trên mặt sau Flashcard
+            if (vocabContainer) {
+              const backItem = document.createElement('div');
+              backItem.className = 'bg-washi p-2.5 rounded-xl border border-washi-border flex flex-col justify-between hover:border-torii/40 transition-all text-center';
+              backItem.innerHTML = `
+                <div class="font-kanji text-sm md:text-base font-bold text-sumi">${word}</div>
+                <div class="text-[11px] font-semibold text-torii font-kanji mt-0.5">${reading}</div>
+                <div class="text-[11px] text-sumi-muted mt-1 font-medium">${meaning}</div>
+              `;
+              vocabContainer.appendChild(backItem);
+            }
+          });
+        }
+
+        // Câu ví dụ minh họa
+        document.getElementById('exampleSentenceJp').innerHTML = info.exampleJp;
+        document.getElementById('exampleSentenceVn').textContent = info.exampleVn.startsWith('→') ? info.exampleVn : `→ Dịch nghĩa: ${info.exampleVn}`;
+
+        // Links tra cứu
+        const encoded = encodeURIComponent(kanji);
+        document.getElementById('linkMazii').href = `https://mazii.net/vi/search/kanji/${encoded}`;
+        document.getElementById('linkJisho').href = `https://jisho.org/search/${encoded}%23kanji`;
+      }
+
+      // 9. Render Flashcard Học tập
+      async function renderFlashcard() {
+        if (!currentList.length) return;
+        const kanji = currentList[currentIndex];
+
+        // Đưa về mặt trước khi chuyển thẻ
+        if (isFlipped) {
+          isFlipped = false;
+          document.getElementById('flashcardScene').classList.remove('card-flipped');
+        }
+
+        // Bước 1: Render ngay lập tức dữ liệu cục bộ hoặc cache trước (0ms latency)
+        const initialInfo = getKanjiInfo(kanji);
+        updateCardView(initialInfo, kanji);
+
+        // Cập nhật trạng thái tiến trình
+        document.getElementById('cardProgressText').textContent = `${currentIndex + 1} / ${currentList.length} chữ`;
+        const percent = ((currentIndex + 1) / currentList.length) * 100;
+        document.getElementById('studyProgressBar').style.width = `${percent}%`;
+        document.getElementById('btnPrevCard').disabled = currentIndex === 0;
+        document.getElementById('btnNextCard').disabled = currentIndex === currentList.length - 1;
+
+        // Bước 2: Tải chi tiết KANJIDIC2 & JMdict bất đồng bộ và lưu cache LocalStorage
+        const { data: liveData, fromCache } = await loadLiveKanjiDictionary(kanji, currentLevel);
+
+        // Kiểm tra race condition: nếu người dùng vẫn đang xem đúng chữ này
+        if (currentList[currentIndex] === kanji && liveData) {
+          updateCardView(liveData, kanji);
+          const statusText = document.getElementById('dictStatusText');
+          if (statusText) {
+            statusText.textContent = fromCache ? '✓ KANJIDIC2 (Cache)' : '✓ KANJIDIC2 (Live)';
+          }
+          const backSource = document.getElementById('backDictSourceBadge');
+          if (backSource) {
+            backSource.textContent = fromCache ? 'KANJIDIC2 (Đã lưu offline)' : 'KANJIDIC2 & JMdict (Live)';
+          }
+        }
+      }
+
+      // 9. Chuyển Level
+      function switchLevel(lvl) {
+        if (!kanjiRaw[lvl] || !kanjiRaw[lvl].length) return;
+        currentLevel = lvl;
+        originalList = [...kanjiRaw[lvl]];
+        currentList = isShuffled ? shuffle([...originalList]) : [...originalList];
+        currentIndex = 0;
+
+        document.querySelectorAll('.level-tab-btn').forEach(btn => {
+          if (btn.dataset.level === lvl) {
+            btn.className = 'level-tab-btn flex-1 py-2 rounded-xl text-xs md:text-sm font-bold transition-all bg-torii text-white shadow-sm';
+          } else {
+            btn.className = 'level-tab-btn flex-1 py-2 rounded-xl text-xs md:text-sm font-bold transition-all text-sumi-muted hover:text-sumi hover:bg-washi-dark';
+          }
+        });
+
+        renderFlashcard();
+      }
+
+      function shuffle(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      }
+
+      // 10. Đánh dấu "Chưa nhớ" (Đưa vào Sổ tay ôn tập)
+      function markForgotten(char = null) {
+        const kanji = char || currentList[currentIndex];
+        if (!kanji) return;
+        const info = getKanjiInfo(kanji);
+        let forgotten = getForgottenCards();
+
+        const existing = forgotten.find(item => item.kanji === kanji);
+        if (existing) {
+          existing.failCount = (existing.failCount || 1) + 1;
+          existing.lastTested = new Date().toLocaleDateString('vi-VN');
+        } else {
+          forgotten.push({
+            kanji: kanji,
+            level: currentLevel,
+            hanViet: info.hanViet,
+            meaning: info.meaning,
+            mnemonic: info.mnemonic,
+            failCount: 1,
+            addedAt: new Date().toLocaleDateString('vi-VN')
+          });
+        }
+        saveForgottenCards(forgotten);
+        showToast(`Đã lưu "${kanji}" (${info.hanViet}) vào Sổ tay ôn tập`, '🏮');
+
+        // Tự động chuyển tiếp nếu đang ở thẻ flashcard
+        if (!char && currentIndex < currentList.length - 1) {
+          currentIndex++;
+          renderFlashcard();
+        }
+      }
+
+      // 11. Đánh dấu "Đã nhớ"
+      function markMastered() {
+        const kanji = currentList[currentIndex];
+        const info = getKanjiInfo(kanji);
+        showToast(`Đã ghi nhớ "${kanji}" (${info.hanViet})!`, '💮');
+
+        if (currentIndex < currentList.length - 1) {
+          currentIndex++;
+          renderFlashcard();
+        } else {
+          showToast(`Chúc mừng! Bạn đã hoàn thành toàn bộ chữ ${currentLevel}!`, '🎉');
+        }
+      }
+
+      // 12. Quản lý Chế độ Quiz (Trắc nghiệm 4 đáp án)
+      function generateQuizQuestion(sourceList = null) {
+        const list = (sourceList && sourceList.length) ? sourceList : (kanjiRaw[currentLevel] || kanjiRaw['N5']);
+        const randomKanji = list[Math.floor(Math.random() * list.length)];
+        currentQuizKanji = randomKanji;
+        isQuizAnswered = false;
+
+        const correctInfo = getKanjiInfo(randomKanji);
+        const correctAns = `${correctInfo.hanViet} (${correctInfo.meaning.split(',')[0].replace('Nghĩa: ', '')})`;
+
+        // Lấy 3 đáp án sai ngẫu nhiên
+        const wrongAnswers = [];
+        const allKeys = Object.keys(HAN_VIET_FALLBACK_MAP);
+        while (wrongAnswers.length < 3) {
+          const candidate = allKeys[Math.floor(Math.random() * allKeys.length)];
+          if (candidate !== randomKanji) {
+            const cInfo = getKanjiInfo(candidate);
+            const ansText = `${cInfo.hanViet} (${cInfo.meaning.split(',')[0].replace('Nghĩa: ', '')})`;
+            if (!wrongAnswers.includes(ansText) && ansText !== correctAns) {
+              wrongAnswers.push(ansText);
+            }
+          }
+        }
+
+        const options = shuffle([correctAns, ...wrongAnswers]);
+
+        // Hiển thị giao diện Quiz
+        document.getElementById('quizLevelBadge').textContent = `JLPT ${currentLevel} QUIZ`;
+        document.getElementById('quizKanjiDisplay').textContent = randomKanji;
+        document.getElementById('quizFeedbackBox').classList.add('hidden');
+        document.getElementById('btnNextQuizQuestion').classList.add('hidden');
+
+        const optContainer = document.getElementById('quizOptionsContainer');
+        optContainer.innerHTML = '';
+
+        options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = 'w-full p-3 rounded-xl border border-washi-border bg-washi hover:bg-washi-dark text-xs md:text-sm font-bold text-sumi transition-all text-left flex items-center justify-between shadow-sm active:scale-98';
+          btn.innerHTML = `<span>${opt}</span><span class="w-6 h-6 rounded-full border border-washi-border flex items-center justify-center text-xs text-sumi-muted">?</span>`;
+
+          btn.addEventListener('click', () => {
+            if (isQuizAnswered) return;
+            isQuizAnswered = true;
+            handleQuizAnswer(opt === correctAns, btn, correctAns, correctInfo);
+          });
+          optContainer.appendChild(btn);
+        });
+      }
+
+      function handleQuizAnswer(isCorrect, clickedBtn, correctAns, correctInfo) {
+        const feedback = document.getElementById('quizFeedbackBox');
+        feedback.classList.remove('hidden');
+
+        if (isCorrect) {
+          quizStreak++;
+          document.getElementById('quizStreakCount').textContent = `${quizStreak} 🔥`;
+          clickedBtn.classList.remove('bg-washi', 'border-washi-border');
+          clickedBtn.classList.add('bg-bamboo/20', 'border-bamboo', 'text-bamboo');
+          clickedBtn.querySelector('span:last-child').textContent = '✓';
+          clickedBtn.querySelector('span:last-child').classList.add('bg-bamboo', 'text-white', 'border-bamboo');
+
+          feedback.className = 'w-full mt-4 p-4 rounded-xl border border-bamboo/40 bg-bamboo/10 text-bamboo text-sm font-bold text-left';
+          feedback.innerHTML = `
+            <div class="flex items-center gap-2 mb-1 text-base">
+              <span>🎉</span>
+              <span>Chính xác! Đáp án đúng là: <strong>${correctAns}</strong></span>
+            </div>
+            <div class="mt-2 pt-2 border-t border-bamboo/20 text-xs font-normal text-sumi leading-relaxed">
+              <span class="font-bold text-bamboo">💡 Mẹo nhớ:</span> ${correctInfo.mnemonic}
+            </div>
+          `;
+          showToast('Chính xác! Tiếp tục phát huy!', '💮');
+
+          // Nếu đang ở bài ôn tập lại từ sổ tay, xóa chữ này khỏi sổ tay!
+          if (activeMode === 'notebook') {
+            removeKanjiFromNotebook(currentQuizKanji);
+            showToast(`Tuyệt vời! Đã gỡ "${currentQuizKanji}" khỏi sổ tay quên!`, '🏆');
+          }
+        } else {
+          quizStreak = 0;
+          document.getElementById('quizStreakCount').textContent = `0 🔥`;
+          clickedBtn.classList.remove('bg-washi', 'border-washi-border');
+          clickedBtn.classList.add('bg-torii/20', 'border-torii', 'text-torii');
+          clickedBtn.querySelector('span:last-child').textContent = '✕';
+          clickedBtn.querySelector('span:last-child').classList.add('bg-torii', 'text-white', 'border-torii');
+
+          // Làm nổi bật nút đúng
+          document.querySelectorAll('#quizOptionsContainer button').forEach(b => {
+            if (b.innerText.includes(correctAns.split(' ')[0])) {
+              b.classList.add('bg-bamboo/15', 'border-bamboo', 'text-bamboo');
+            }
+          });
+
+          feedback.className = 'w-full mt-4 p-4 rounded-xl border border-torii/40 bg-torii/10 text-torii text-sm font-bold text-left';
+          feedback.innerHTML = `
+            <div class="flex items-center gap-2 mb-1 text-base">
+              <span>❌</span>
+              <span>Chưa chính xác! Chữ này là: <strong>${correctAns}</strong></span>
+            </div>
+            <div class="mt-2 pt-2 border-t border-torii/20 text-xs font-normal text-sumi leading-relaxed">
+              <span class="font-bold text-torii">💡 Mẹo nhớ giúp bạn không quên:</span> ${correctInfo.mnemonic}
+            </div>
+            <div class="text-[11px] text-sumi-muted mt-1 italic font-normal">
+              → Đã tự động lưu vào Sổ tay ôn tập để bạn rèn luyện lại.
+            </div>
+          `;
+
+          // Rung thẻ lỗi và tự động lưu vào sổ tay
+          document.getElementById('quizSection').firstElementChild.classList.add('shake-card');
+          setTimeout(() => document.getElementById('quizSection').firstElementChild.classList.remove('shake-card'), 500);
+
+          markForgotten(currentQuizKanji);
+        }
+
+        document.getElementById('btnNextQuizQuestion').classList.remove('hidden');
+      }
+
+      // 13. Xóa chữ khỏi sổ tay khi đã thuộc
+      function removeKanjiFromNotebook(kanji) {
+        let forgotten = getForgottenCards();
+        forgotten = forgotten.filter(item => item.kanji !== kanji);
+        saveForgottenCards(forgotten);
+        renderNotebookList();
+      }
+
+      // 14. Render Sổ tay chữ hay quên (Kèm Mẹo nhớ chiết tự)
+      function renderNotebookList() {
+        const container = document.getElementById('notebookCardsContainer');
+        const emptyState = document.getElementById('notebookEmptyState');
+        const totalCount = document.getElementById('notebookTotalCount');
+        const forgotten = getForgottenCards();
+
+        totalCount.textContent = `${forgotten.length} chữ`;
+        container.innerHTML = '';
+
+        if (forgotten.length === 0) {
+          emptyState.classList.remove('hidden');
+          container.classList.add('hidden');
+          return;
+        }
+
+        emptyState.classList.add('hidden');
+        container.classList.remove('hidden');
+
+        forgotten.forEach(item => {
+          const info = getKanjiInfo(item.kanji);
+          const card = document.createElement('div');
+          card.className = 'bg-washi-light p-4 rounded-xl border border-washi-border shadow-sm flex flex-col justify-between hover:border-torii/40 transition-all';
+          card.innerHTML = `
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-washi-dark text-sumi-muted">${item.level || 'JLPT'}</span>
+                <span class="text-[10px] text-torii font-bold bg-torii/10 px-1.5 py-0.5 rounded">Sai ${item.failCount || 1} lần</span>
+              </div>
+              <div class="my-3 text-center">
+                <span class="text-4xl font-kanji font-black text-sumi block">${item.kanji}</span>
+                <span class="text-sm font-bold text-torii mt-1 block">${info.hanViet}</span>
+                <span class="text-[11px] text-sumi-muted mt-0.5 block">${info.meaning.replace('Nghĩa: ', '')}</span>
+              </div>
+              <!-- Ô Mẹo nhớ chiết tự trong Sổ tay -->
+              <div class="bg-washi-dark/80 p-2.5 rounded-lg border border-washi-border text-[11px] text-sumi leading-relaxed mb-3 text-left">
+                <span class="text-torii font-bold block mb-0.5">💡 Mẹo nhớ:</span>
+                <p class="italic text-sumi-light">${info.mnemonic}</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center justify-between pt-2 border-t border-washi-border text-xs">
+              <button class="text-torii font-bold hover:underline btn-study-again flex items-center gap-1" data-kanji="${item.kanji}">
+                <span>🎴</span> Học lại
+              </button>
+              <div class="flex items-center gap-2">
+                <button class="text-bamboo font-bold hover:underline btn-review-single" data-kanji="${item.kanji}">Đã thuộc ✓</button>
+                <button class="text-sumi-muted hover:text-torii btn-delete-single" data-kanji="${item.kanji}">Xóa</button>
+              </div>
+            </div>
+          `;
+
+          // Sự kiện: Học lại ngay chữ này trên Flashcard
+          card.querySelector('.btn-study-again').addEventListener('click', () => {
+            const foundIdx = currentList.indexOf(item.kanji);
+            if (foundIdx !== -1) {
+              currentIndex = foundIdx;
+            } else {
+              // Thêm tạm vào đầu danh sách
+              currentList.unshift(item.kanji);
+              currentIndex = 0;
+            }
+            setDisplayMode('study');
+            renderFlashcard();
+          });
+
+          // Sự kiện xóa hoặc đánh dấu đã thuộc
+          card.querySelector('.btn-review-single').addEventListener('click', () => {
+            removeKanjiFromNotebook(item.kanji);
+            showToast(`Tuyệt vời! Đã loại bỏ "${item.kanji}" khỏi sổ tay`, '💮');
+          });
+          card.querySelector('.btn-delete-single').addEventListener('click', () => {
+            removeKanjiFromNotebook(item.kanji);
+            showToast(`Đã xóa chữ "${item.kanji}"`, '🗑️');
+          });
+
+          container.appendChild(card);
+        });
+      }
+
+      // 15. Chuyển Chế độ Màn hình (Study, Quiz, Notebook)
+      function setDisplayMode(mode) {
+        activeMode = mode;
+        const studySec = document.getElementById('studySection');
+        const quizSec = document.getElementById('quizSection');
+        const notebookSec = document.getElementById('notebookSection');
+
+        document.querySelectorAll('.nav-mode-btn').forEach(btn => {
+          btn.className = 'nav-mode-btn px-4 py-2 rounded-lg text-xs md:text-sm font-bold flex items-center gap-1.5 text-sumi-muted hover:text-sumi transition-all';
+        });
+
+        studySec.classList.add('hidden');
+        quizSec.classList.add('hidden');
+        notebookSec.classList.add('hidden');
+
+        if (mode === 'study') {
+          studySec.classList.remove('hidden');
+          document.getElementById('modeStudyBtn').className = 'nav-mode-btn active px-4 py-2 rounded-lg text-xs md:text-sm font-bold flex items-center gap-1.5 transition-all bg-torii text-white shadow-sm';
+          renderFlashcard();
+        } else if (mode === 'quiz') {
+          quizSec.classList.remove('hidden');
+          document.getElementById('modeQuizBtn').className = 'nav-mode-btn active px-4 py-2 rounded-lg text-xs md:text-sm font-bold flex items-center gap-1.5 transition-all bg-torii text-white shadow-sm';
+          generateQuizQuestion();
+        } else if (mode === 'notebook') {
+          notebookSec.classList.remove('hidden');
+          document.getElementById('modeNotebookBtn').className = 'nav-mode-btn active px-4 py-2 rounded-lg text-xs md:text-sm font-bold flex items-center gap-1.5 transition-all bg-torii text-white shadow-sm relative';
+          renderNotebookList();
+        }
+      }
+
+      // 16. Modal Mục Lục Toàn Bộ Kanji
+      function openGridModal() {
+        const modal = document.getElementById('gridModal');
+        document.getElementById('gridModalTitle').textContent = `Mục lục chữ Kanji cấp độ ${currentLevel} (${currentList.length} chữ)`;
+        renderGridModalItems();
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.getElementById('gridSearchInput').value = '';
+        document.getElementById('gridSearchInput').focus();
+      }
+
+      function closeGridModal() {
+        const modal = document.getElementById('gridModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+
+      function renderGridModalItems(filter = '') {
+        const body = document.getElementById('gridModalBody');
+        body.innerHTML = '';
+        const filtered = currentList.map((k, idx) => ({ k, idx, info: getKanjiInfo(k) }))
+          .filter(item => !filter || item.k.includes(filter) || item.info.hanViet.toLowerCase().includes(filter.toLowerCase()));
+
+        filtered.forEach(item => {
+          const btn = document.createElement('button');
+          btn.className = 'aspect-square rounded-xl bg-washi border border-washi-border flex flex-col items-center justify-center hover:bg-torii hover:text-white transition-all ' + (item.idx === currentIndex ? 'border-torii bg-torii/15 text-torii font-bold' : 'text-sumi');
+          btn.innerHTML = `<span class="font-kanji text-xl">${item.k}</span><span class="text-[9px] opacity-80 mt-0.5 truncate max-w-full px-0.5 leading-none">${item.info.hanViet}</span>`;
+          btn.addEventListener('click', () => {
+            currentIndex = item.idx;
+            renderFlashcard();
+            closeGridModal();
+          });
+          body.appendChild(btn);
+        });
+      }
+
+      // 17. Gắn các sự kiện tương tác
+      document.getElementById('modeStudyBtn').addEventListener('click', () => setDisplayMode('study'));
+      document.getElementById('modeQuizBtn').addEventListener('click', () => setDisplayMode('quiz'));
+      document.getElementById('modeNotebookBtn').addEventListener('click', () => setDisplayMode('notebook'));
+
+      // Chuyển level
+      document.querySelectorAll('.level-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchLevel(btn.dataset.level));
+      });
+
+      // Lật thẻ flashcard
+      const cardScene = document.getElementById('flashcardScene');
+      cardScene.addEventListener('click', (e) => {
+        if (e.target.closest('button') || e.target.closest('a')) return;
+        isFlipped = !isFlipped;
+        cardScene.classList.toggle('card-flipped', isFlipped);
+      });
+
+      // Điều hướng thẻ
+      document.getElementById('btnPrevCard').addEventListener('click', () => {
+        if (currentIndex > 0) { currentIndex--; renderFlashcard(); }
+      });
+      document.getElementById('btnNextCard').addEventListener('click', () => {
+        if (currentIndex < currentList.length - 1) { currentIndex++; renderFlashcard(); }
+      });
+
+      // Chưa nhớ / Đã nhớ
+      document.getElementById('btnMarkForgotten').addEventListener('click', () => markForgotten());
+      document.getElementById('btnMarkMastered').addEventListener('click', () => markMastered());
+
+      // Xáo trộn
+      document.getElementById('btnShuffleToggle').addEventListener('click', () => {
+        isShuffled = !isShuffled;
+        const ind = document.getElementById('shuffleIndicator');
+        const currKanji = currentList[currentIndex];
+        if (isShuffled) {
+          currentList = shuffle(originalList);
+          ind.classList.remove('hidden');
+          ind.classList.add('inline-flex');
+          showToast('Đã kích hoạt xáo trộn ngẫu nhiên', '🔀');
+        } else {
+          currentList = [...originalList];
+          ind.classList.add('hidden');
+          ind.classList.remove('inline-flex');
+          showToast('Quay lại thứ tự ban đầu', '📜');
+        }
+        const found = currentList.indexOf(currKanji);
+        currentIndex = found !== -1 ? found : 0;
+        renderFlashcard();
+      });
+
+      // Audio
+      document.getElementById('btnAudioFront').addEventListener('click', (e) => {
+        e.stopPropagation();
+        speakJapanese(currentList[currentIndex]);
+      });
+      document.getElementById('btnAudioBack').addEventListener('click', (e) => {
+        e.stopPropagation();
+        speakJapanese(currentList[currentIndex]);
+      });
+      document.getElementById('btnAudioQuiz').addEventListener('click', () => {
+        if (currentQuizKanji) speakJapanese(currentQuizKanji);
+      });
+
+      // Quiz tiếp tục
+      document.getElementById('btnNextQuizQuestion').addEventListener('click', () => {
+        generateQuizQuestion();
+      });
+
+      // Ôn tập lại từ Sổ tay
+      document.getElementById('btnStartSmartReview').addEventListener('click', () => {
+        const forgotten = getForgottenCards();
+        if (forgotten.length === 0) {
+          showToast('Sổ tay của bạn hiện chưa có chữ nào cần ôn!', '🌸');
+          return;
+        }
+        setDisplayMode('quiz');
+        const forgottenKanjiList = forgotten.map(f => f.kanji);
+        generateQuizQuestion(forgottenKanjiList);
+        showToast(`Bắt đầu đề thi ôn tập ${forgottenKanjiList.length} chữ hay quên!`, '🎯');
+      });
+
+      document.getElementById('btnClearNotebook').addEventListener('click', () => {
+        if (confirm('Bạn có chắc chắn muốn xóa toàn bộ danh sách chữ hay quên trong sổ tay?')) {
+          localStorage.removeItem(STORAGE_KEY_FORGOTTEN);
+          updateNotebookBadge();
+          renderNotebookList();
+          showToast('Đã xóa sạch sổ tay', '🗑️');
+        }
+      });
+
+      // Modal
+      document.getElementById('btnOpenGridModal').addEventListener('click', openGridModal);
+      document.getElementById('btnCloseGridModal').addEventListener('click', closeGridModal);
+      document.getElementById('gridModal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('gridModal')) closeGridModal();
+      });
+      document.getElementById('gridSearchInput').addEventListener('input', (e) => {
+        renderGridModalItems(e.target.value.trim());
+      });
+
+      // Phím tắt bàn phím
+      window.addEventListener('keydown', (e) => {
+        if (document.activeElement === document.getElementById('gridSearchInput')) {
+          if (e.key === 'Escape') closeGridModal();
+          return;
+        }
+        if (!document.getElementById('gridModal').classList.contains('hidden')) {
+          if (e.key === 'Escape') closeGridModal();
+          return;
+        }
+
+        if (activeMode === 'study') {
+          if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            if (currentIndex > 0) { currentIndex--; renderFlashcard(); }
+          } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            if (currentIndex < currentList.length - 1) { currentIndex++; renderFlashcard(); }
+          } else if (e.key === ' ') {
+            e.preventDefault();
+            isFlipped = !isFlipped;
+            cardScene.classList.toggle('card-flipped', isFlipped);
+          } else if (e.key === 'a' || e.key === 'A') {
+            speakJapanese(currentList[currentIndex]);
+          } else if (e.key === 's' || e.key === 'S') {
+            document.getElementById('btnShuffleToggle').click();
+          } else if (e.key === 'g' || e.key === 'G') {
+            openGridModal();
+          } else if (['1', '2', '3', '4', '5'].includes(e.key)) {
+            const map = { '1': 'N5', '2': 'N4', '3': 'N3', '4': 'N2', '5': 'N1' };
+            switchLevel(map[e.key]);
+          }
+        }
+      });
+
+      // 18. Khởi tạo ban đầu
+      try {
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith(DICT_CACHE_PREFIX)) {
+            keysToRemove.push(k);
+          }
+        }
+        keysToRemove.forEach(k => localStorage.removeItem(k));
+      } catch (e) { }
+
+      updateNotebookBadge();
+      switchLevel('N5');
+
+      // Cho phép mở trực tiếp chữ Kanji qua URL query (?kanji=分) hoặc hash (#分)
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetKanji = urlParams.get('kanji') || decodeURIComponent(window.location.hash.replace('#', '')).trim();
+        if (targetKanji) {
+          for (const lvl of ['N5', 'N4', 'N3', 'N2', 'N1']) {
+            if (kanjiRaw[lvl] && kanjiRaw[lvl].includes(targetKanji)) {
+              if (currentLevel !== lvl) switchLevel(lvl);
+              const foundIdx = currentList.indexOf(targetKanji);
+              if (foundIdx !== -1) {
+                currentIndex = foundIdx;
+                renderFlashcard();
+              }
+              break;
+            }
+          }
+        }
+      } catch (e) { }
+    })();
+  </script>
+</body>
+
+</html>
