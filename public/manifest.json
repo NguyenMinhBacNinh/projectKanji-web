@@ -1,0 +1,36 @@
+{
+  "name": "Học Kanji Nhật Bản | 漢字学習帳",
+  "short_name": "Kanji Nhật",
+  "description": "Sổ tay học chữ Hán Kanji tiếng Nhật JLPT N5 - N1 phong cách Washi cổ truyền, hỗ trợ Flashcard, tập viết nét bút, chiết tự bộ thủ và trắc nghiệm phản xạ.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f1e8",
+  "theme_color": "#b91c1c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": [
+    "education",
+    "books",
+    "productivity"
+  ],
+  "lang": "vi",
+  "dir": "ltr"
+}
