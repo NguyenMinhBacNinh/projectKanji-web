@@ -491,6 +491,46 @@ export default function StudySection({
         </div>
       )}
 
+      {/* Câu ví dụ minh họa tiếng Nhật (hiển thị trực tiếp phía dưới phần Từ vựng) */}
+      {cardInfo?.exampleJp && (
+        <div className="w-full max-w-xl">
+          <div className="karuta-card p-4 rounded-2xl border border-washi-border shadow-xs flex flex-col gap-1.5 text-left">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-torii flex items-center gap-1.5">
+                <span>🌸</span> Câu ví dụ minh họa:
+              </span>
+              <button
+                onClick={() => {
+                  playWaterDrop();
+                  const cleanSentence = cardInfo.example?.sentence || cardInfo.exampleJp.replace(/<[^>]+>/g, '');
+                  playJapaneseSpeech(cleanSentence);
+                }}
+                className="text-[11px] font-bold text-torii hover:underline flex items-center gap-1 opacity-80 hover:opacity-100 cursor-pointer"
+                title="Nghe đọc câu ví dụ"
+              >
+                <span>🔊</span> Nghe câu
+              </button>
+            </div>
+            <p
+              className="font-kanji text-sm sm:text-base font-semibold leading-relaxed"
+              dangerouslySetInnerHTML={{
+                __html: (cardInfo.exampleJp.includes(currentChar) && !cardInfo.exampleJp.includes('text-torii'))
+                  ? cardInfo.exampleJp.replace(new RegExp(currentChar, 'g'), `<span class="text-torii font-bold underline decoration-torii/40">${currentChar}</span>`)
+                  : cardInfo.exampleJp
+              }}
+            />
+            {cardInfo.example?.reading && (
+              <p className="text-xs text-torii/80 font-kanji">
+                {cardInfo.example.reading}
+              </p>
+            )}
+            <p className="text-xs opacity-75 italic font-medium">
+              → Dịch nghĩa: {cardInfo.exampleVn || cardInfo.example?.translation || ''}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Action Buttons: Forgotten / Mastered */}
       <div className="w-full max-w-xl flex items-center justify-between gap-3 px-1">
         <button

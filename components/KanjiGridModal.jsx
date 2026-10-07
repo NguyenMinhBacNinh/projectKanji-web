@@ -10,6 +10,7 @@ export default function KanjiGridModal({
   currentLevel,
   currentIndex,
   onSelectKanji,
+  fullDb = null,
 }) {
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -17,10 +18,12 @@ export default function KanjiGridModal({
     if (!searchTerm.trim()) return kanjiList;
     const term = searchTerm.trim().toUpperCase();
     return kanjiList.filter((char) => {
-      const hv = (HAN_VIET_FALLBACK_MAP[char] || '').toUpperCase();
-      return char.includes(term) || hv.includes(term);
+      const dbItem = fullDb && fullDb[char] ? fullDb[char] : null;
+      const hv = (dbItem?.hanViet || HAN_VIET_FALLBACK_MAP[char] || '').toUpperCase();
+      const mean = (dbItem?.meaning || '').toUpperCase();
+      return char.includes(term) || hv.includes(term) || mean.includes(term);
     });
-  }, [kanjiList, searchTerm]);
+  }, [kanjiList, searchTerm, fullDb]);
 
   if (!isOpen) return null;
 
@@ -70,7 +73,7 @@ export default function KanjiGridModal({
           {filteredList.map((char) => {
             const originalIndex = kanjiList.indexOf(char);
             const isCurrent = originalIndex === currentIndex;
-            const hv = HAN_VIET_FALLBACK_MAP[char] || '';
+            const hv = fullDb?.[char]?.hanViet || HAN_VIET_FALLBACK_MAP[char] || '';
 
             return (
               <button

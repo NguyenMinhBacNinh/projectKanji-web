@@ -536,6 +536,7 @@ export default function Home() {
         kanjiList={KANJI_DATA[currentLevel] || []}
         currentLevel={currentLevel}
         currentIndex={currentIndex}
+        fullDb={fullDb}
         onSelectKanji={(idx) => {
           setCurrentIndex(idx);
           setIsFlipped(false);
