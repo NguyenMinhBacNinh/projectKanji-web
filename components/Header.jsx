@@ -93,9 +93,11 @@ export default function Header({
 
   return (
     <header className="w-full max-w-6xl flex flex-col items-center gap-2.5 relative z-30 select-none">
-      {/* Unified Top Navigation Bar (Phong cách thẻ giấy Washi sáng, hài hòa nền trang) */}
-      <div className="w-full flex items-center justify-between py-2 px-3 sm:px-4 rounded-2xl bg-washi-light/90 dark:bg-stone-900/90 border border-washi-border dark:border-stone-700/80 shadow-xs backdrop-blur-md gap-2">
-        {/* Left: Brand Identity */}
+      {/* Unified Top Navigation Shell (Tích hợp 2 tầng, tránh phân mảnh) */}
+      <div className="w-full rounded-2xl bg-washi-light/95 dark:bg-stone-900/95 border border-washi-border dark:border-stone-700/80 shadow-xs backdrop-blur-md overflow-hidden">
+        {/* Tier 1: Main Top Navigation Bar */}
+        <div className="w-full flex items-center justify-between py-2 px-3 sm:px-4 gap-2">
+          {/* Left: Brand Identity */}
         <div
           onClick={() => handleSelectPrimary('kanji')}
           className="flex items-center gap-2.5 cursor-pointer group shrink-0"
@@ -391,128 +393,129 @@ export default function Header({
         </div>
       </div>
 
-      {/* Sub-Navigation Pills: Chỉ hiện khi ở 'knowledge' hoặc 'practice' */}
-      {primaryGroup === 'knowledge' && (
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-washi-light/90 dark:bg-stone-900/90 border border-washi-border dark:border-stone-700 text-xs font-bold animate-fadeIn shadow-xs flex-wrap justify-center">
-          <button
-            onClick={() => {
-              playWoodClapper();
-              setActiveMode('kana');
-            }}
-            className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
-              activeMode === 'kana'
-                ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
-                : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
-            }`}
-          >
-            <OrigamiCraneIcon className="w-3.5 h-3.5" />
-            <span>Bảng Kana</span>
-          </button>
-          <button
-            onClick={() => {
-              playWoodClapper();
-              setActiveMode('vocab');
-            }}
-            className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
-              activeMode === 'vocab'
-                ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
-                : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
-            }`}
-          >
-            <BambooIcon className="w-3.5 h-3.5" />
-            <span>Từ vựng JLPT</span>
-          </button>
-          <button
-            onClick={() => {
-              playWoodClapper();
-              setActiveMode('grammar');
-            }}
-            className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
-              activeMode === 'grammar'
-                ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
-                : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
-            }`}
-          >
-            <ScrollUnfurledIcon className="w-3.5 h-3.5" />
-            <span>Ngữ pháp JLPT</span>
-          </button>
-          <button
-            onClick={() => {
-              playWoodClapper();
-              setActiveMode('reading');
-            }}
-            className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
-              activeMode === 'reading'
-                ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
-                : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
-            }`}
-          >
-            <JapaneseBridgeIcon className="w-3.5 h-3.5" />
-            <span>Đọc hiểu Dokkai</span>
-          </button>
-        </div>
-      )}
+        {/* Tier 2: Integrated Sub-Navigation Ribbon (Chỉ hiện khi ở 'knowledge' hoặc 'practice') */}
+        {primaryGroup === 'knowledge' && (
+          <div className="w-full border-t border-washi-border/70 dark:border-stone-700/70 py-1.5 px-3 bg-washi/40 dark:bg-stone-850/40 flex items-center justify-center gap-1 sm:gap-1.5 text-xs font-bold animate-fadeIn flex-wrap">
+            <button
+              onClick={() => {
+                playWoodClapper();
+                setActiveMode('kana');
+              }}
+              className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
+                activeMode === 'kana'
+                  ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
+                  : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
+              }`}
+            >
+              <OrigamiCraneIcon className="w-3.5 h-3.5" />
+              <span>Bảng Kana</span>
+            </button>
+            <button
+              onClick={() => {
+                playWoodClapper();
+                setActiveMode('vocab');
+              }}
+              className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
+                activeMode === 'vocab'
+                  ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
+                  : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
+              }`}
+            >
+              <BambooIcon className="w-3.5 h-3.5" />
+              <span>Từ vựng JLPT</span>
+            </button>
+            <button
+              onClick={() => {
+                playWoodClapper();
+                setActiveMode('grammar');
+              }}
+              className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
+                activeMode === 'grammar'
+                  ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
+                  : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
+              }`}
+            >
+              <ScrollUnfurledIcon className="w-3.5 h-3.5" />
+              <span>Ngữ pháp JLPT</span>
+            </button>
+            <button
+              onClick={() => {
+                playWoodClapper();
+                setActiveMode('reading');
+              }}
+              className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
+                activeMode === 'reading'
+                  ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
+                  : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
+              }`}
+            >
+              <JapaneseBridgeIcon className="w-3.5 h-3.5" />
+              <span>Đọc hiểu Dokkai</span>
+            </button>
+          </div>
+        )}
 
-      {primaryGroup === 'practice' && (
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-washi-light/90 dark:bg-stone-900/90 border border-washi-border dark:border-stone-700 text-xs font-bold animate-fadeIn shadow-xs flex-wrap justify-center">
-          <button
-            onClick={() => {
-              playWoodClapper();
-              setActiveMode('quiz');
-            }}
-            className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
-              activeMode === 'quiz'
-                ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
-                : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
-            }`}
-          >
-            <PagodaIcon className="w-3.5 h-3.5" />
-            <span>Trắc nghiệm Quiz</span>
-          </button>
-          <button
-            onClick={() => {
-              playWoodClapper();
-              setActiveMode('listening');
-            }}
-            className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
-              activeMode === 'listening'
-                ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
-                : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
-            }`}
-          >
-            <VolumeIcon className="w-3.5 h-3.5" />
-            <span>Luyện nghe Choukai</span>
-          </button>
-          <button
-            onClick={() => {
-              playWoodClapper();
-              setActiveMode('karuta');
-            }}
-            className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
-              activeMode === 'karuta'
-                ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
-                : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
-            }`}
-          >
-            <SensuFanIcon className="w-3.5 h-3.5" />
-            <span>Thẻ Karuta</span>
-          </button>
-          <button
-            onClick={() => {
-              playWoodClapper();
-              setActiveMode('speed');
-            }}
-            className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
-              activeMode === 'speed'
-                ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
-                : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
-            }`}
-          >
-            <KatanaIcon className="w-3.5 h-3.5" />
-            <span>Đấu trường 60s</span>
-          </button>
-        </div>
-      )}
+        {primaryGroup === 'practice' && (
+          <div className="w-full border-t border-washi-border/70 dark:border-stone-700/70 py-1.5 px-3 bg-washi/40 dark:bg-stone-850/40 flex items-center justify-center gap-1 sm:gap-1.5 text-xs font-bold animate-fadeIn flex-wrap">
+            <button
+              onClick={() => {
+                playWoodClapper();
+                setActiveMode('quiz');
+              }}
+              className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
+                activeMode === 'quiz'
+                  ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
+                  : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
+              }`}
+            >
+              <PagodaIcon className="w-3.5 h-3.5" />
+              <span>Trắc nghiệm Quiz</span>
+            </button>
+            <button
+              onClick={() => {
+                playWoodClapper();
+                setActiveMode('listening');
+              }}
+              className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
+                activeMode === 'listening'
+                  ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
+                  : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
+              }`}
+            >
+              <VolumeIcon className="w-3.5 h-3.5" />
+              <span>Luyện nghe Choukai</span>
+            </button>
+            <button
+              onClick={() => {
+                playWoodClapper();
+                setActiveMode('karuta');
+              }}
+              className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
+                activeMode === 'karuta'
+                  ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
+                  : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
+              }`}
+            >
+              <SensuFanIcon className="w-3.5 h-3.5" />
+              <span>Thẻ Karuta</span>
+            </button>
+            <button
+              onClick={() => {
+                playWoodClapper();
+                setActiveMode('speed');
+              }}
+              className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
+                activeMode === 'speed'
+                  ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
+                  : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
+              }`}
+            >
+              <KatanaIcon className="w-3.5 h-3.5" />
+              <span>Đấu trường 60s</span>
+            </button>
+          </div>
+        )}
+      </div>
     </header>
   );
 }

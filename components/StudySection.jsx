@@ -71,9 +71,9 @@ export default function StudySection({
 
   return (
     <section className="w-full max-w-6xl flex flex-col items-center gap-3 sm:gap-3.5 z-20">
-      {/* 1. TOP BAR: Level Tabs & Progress Bar hợp nhất gọn gàng 1 dòng (Zero-Scroll Studio Header) */}
-      <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-2 p-1 rounded-2xl bg-washi-light/80 dark:bg-stone-850/80 border border-washi-border dark:border-stone-700/80 shadow-2xs">
-        {/* Level Tabs (Thẻ Mộc bài Kifuda - 木札) */}
+      {/* 1. TOP BAR: Level Tabs, Progress & Quick Tools hợp nhất 1 dòng khoa học (Unified Studio Toolbar) */}
+      <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-2 p-1.5 rounded-2xl bg-washi-light/90 dark:bg-stone-850/90 border border-washi-border dark:border-stone-700/80 shadow-2xs">
+        {/* Left: Level Tabs (Thẻ Mộc bài Kifuda - 木札) */}
         <div className="flex items-center gap-1 w-full sm:w-auto">
           {['N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => {
             const count = levels[lvl]?.length || 0;
@@ -85,7 +85,7 @@ export default function StudySection({
                   playWoodClapper();
                   onChangeLevel(lvl);
                 }}
-                className={`flex-1 sm:flex-initial py-1.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all text-center relative ${
+                className={`py-1.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all text-center relative ${
                   isActive
                     ? 'bg-torii text-white shadow-sm font-black scale-[1.02]'
                     : 'text-stone-700 dark:text-stone-300 hover:text-torii dark:hover:text-torii-light hover:bg-torii/10 dark:hover:bg-torii/20'
@@ -100,27 +100,49 @@ export default function StudySection({
           })}
         </div>
 
-        {/* Progress Bar & Indicators */}
-        <div className="flex items-center gap-3 px-2 w-full sm:w-auto justify-between sm:justify-end">
-          <div className="flex items-center gap-2">
-            <span className="text-torii dark:text-torii-light font-black font-kanji text-sm sm:text-base">
-              {total > 0 ? currentIndex + 1 : 0} / {total} chữ
-            </span>
-            {isShuffled && (
-              <span className="px-2 py-0.5 rounded-full bg-amber-500/15 dark:bg-amber-400/20 text-amber-900 dark:text-amber-200 text-[10px] font-bold border border-amber-500/30">
-                Đang xáo trộn
-              </span>
-            )}
+        {/* Center: Progress Bar & Counter */}
+        <div className="flex items-center gap-2.5 px-2">
+          <span className="text-torii dark:text-torii-light font-black font-kanji text-xs sm:text-sm">
+            {total > 0 ? currentIndex + 1 : 0} / {total} chữ
+          </span>
+          <div className="w-20 sm:w-28 h-2 rounded-full overflow-hidden bg-stone-200 dark:bg-stone-800 border border-stone-300/50 dark:border-stone-700">
+            <div
+              className="h-full bg-torii dark:bg-torii-light transition-all duration-300 rounded-full"
+              style={{ width: `${progressPercent}%` }}
+            />
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-24 sm:w-36 h-2 rounded-full overflow-hidden bg-stone-200 dark:bg-stone-800 border border-stone-300/50 dark:border-stone-700">
-              <div
-                className="h-full bg-torii dark:bg-torii-light transition-all duration-300 rounded-full"
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
-            <span className="text-stone-700 dark:text-stone-200 font-bold text-xs">{progressPercent}%</span>
-          </div>
+          <span className="text-stone-600 dark:text-stone-300 font-bold text-[11px]">{progressPercent}%</span>
+        </div>
+
+        {/* Right: Quick Tools (Xáo trộn & Mục lục) */}
+        <div className="flex items-center gap-1.5 w-full sm:w-auto justify-end">
+          <button
+            onClick={() => {
+              playWoodClapper();
+              onToggleShuffle();
+            }}
+            className={`py-1.5 px-2.5 rounded-xl border text-xs font-bold transition-all shadow-2xs flex items-center gap-1 ${
+              isShuffled
+                ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-600'
+                : 'bg-washi dark:bg-stone-800 border-washi-border dark:border-stone-700 hover:border-torii/40 text-stone-700 dark:text-stone-200'
+            }`}
+            title="Đảo ngẫu nhiên danh sách"
+          >
+            <ShuffleIcon className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">Xáo trộn</span>
+          </button>
+
+          <button
+            onClick={() => {
+              playWoodClapper();
+              onOpenGridModal();
+            }}
+            className="py-1.5 px-2.5 bg-washi dark:bg-stone-800 border border-washi-border dark:border-stone-700 hover:border-torii/40 rounded-xl text-xs font-bold shadow-2xs flex items-center gap-1 transition-all active:scale-95 text-stone-700 dark:text-stone-200"
+            title="Mục lục Hán tự [Phím G]"
+          >
+            <GridIcon className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">Mục lục</span>
+          </button>
         </div>
       </div>
 
@@ -146,6 +168,8 @@ export default function StudySection({
             >
               {/* Card Front */}
               <div className="card-face card-front absolute inset-0 w-full h-full rounded-3xl karuta-card select-none dark:bg-stone-900 dark:border-stone-700 overflow-hidden">
+                <div className="karuta-inner-border" />
+
                 {/* Dấu triện "ĐÃ THUỘC" (済 - Sumi) nếu chữ này đã thuộc */}
                 {isMastered && (
                   <div className="absolute top-14 right-7 pointer-events-none stamp-animated z-20">
@@ -154,11 +178,6 @@ export default function StudySection({
                     </div>
                   </div>
                 )}
-
-                {/* Biểu tượng Thủy mặc Chìm Phù Tang (Japanese Cultural Watermark) */}
-                <div className="absolute -bottom-8 -right-8 w-44 h-44 text-torii/6 dark:text-torii/10 pointer-events-none select-none z-0 rotate-12">
-                  <ToriiShrineIcon className="w-full h-full" />
-                </div>
 
                 {/* Front Content */}
                 <div className="w-full h-full p-5 sm:p-6 flex flex-col justify-between relative z-10">
@@ -542,7 +561,7 @@ export default function StudySection({
           </div>
 
           {/* Action Buttons: Forgotten [1] & Mastered [2] (TRỰC TIẾP DƯỚI THẺ - ĐỘ TƯƠNG PHẢN CAO) */}
-          <div className="w-full flex items-center justify-between gap-2.5">
+          <div className="w-full flex items-center justify-between gap-2 sm:gap-2.5">
             <button
               onClick={() => {
                 playHankoStamp();
@@ -568,56 +587,38 @@ export default function StudySection({
             </button>
           </div>
 
-          {/* Navigation Controls: Prev, Shuffle, Grid, Next */}
+          {/* Navigation Controls: Prev, Flip Space, Next */}
           <div className="w-full flex items-center justify-between gap-2">
             <button
               onClick={() => {
                 playWoodClapper();
                 onPrevCard();
               }}
-              className="py-2 px-3.5 karuta-card dark:bg-stone-800 border border-washi-border dark:border-stone-700 rounded-xl text-xs sm:text-sm font-bold shadow-2xs flex items-center gap-1.5 transition-all active:scale-95 hover:border-torii/40 text-stone-800 dark:text-stone-100"
+              className="flex-1 py-2.5 px-3 karuta-card dark:bg-stone-800 border border-washi-border dark:border-stone-700 rounded-2xl text-xs sm:text-sm font-bold shadow-2xs flex items-center justify-center gap-1.5 transition-all active:scale-95 hover:border-torii/40 text-stone-800 dark:text-stone-100"
               title="Chữ trước [←]"
             >
               <ChevronLeftIcon className="w-4 h-4" />
               <span>Trước</span>
             </button>
 
-            <div className="flex items-center gap-1.5">
-              <button
-                onClick={() => {
-                  playWoodClapper();
-                  onToggleShuffle();
-                }}
-                className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5 ${
-                  isShuffled
-                    ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-600'
-                    : 'karuta-card dark:bg-stone-800 border-washi-border dark:border-stone-700 hover:border-torii/40 text-stone-800 dark:text-stone-100'
-                }`}
-                title="Đảo ngẫu nhiên danh sách"
-              >
-                <ShuffleIcon className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Xáo trộn</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  playWoodClapper();
-                  onOpenGridModal();
-                }}
-                className="py-2 px-3 karuta-card dark:bg-stone-800 border border-washi-border dark:border-stone-700 rounded-xl text-xs font-bold shadow-2xs flex items-center gap-1.5 transition-all active:scale-95 hover:border-torii/40 text-stone-800 dark:text-stone-100"
-                title="Danh sách Hán tự [G]"
-              >
-                <GridIcon className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Mục lục</span>
-              </button>
-            </div>
+            <button
+              onClick={() => {
+                playWoodClapper();
+                setIsFlipped(!isFlipped);
+              }}
+              className="flex-1 py-2.5 px-3 karuta-card dark:bg-stone-800 border border-washi-border dark:border-stone-700 rounded-2xl text-xs sm:text-sm font-bold shadow-2xs flex items-center justify-center gap-1.5 transition-all active:scale-95 hover:border-torii/40 text-stone-800 dark:text-stone-100"
+              title="Lật thẻ [Space]"
+            >
+              <span>{isFlipped ? 'Mặt trước' : 'Lật thẻ'}</span>
+              <span className="text-torii dark:text-torii-light font-bold">↻</span>
+            </button>
 
             <button
               onClick={() => {
                 playWoodClapper();
                 onNextCard();
               }}
-              className="py-2 px-4.5 bg-torii hover:bg-torii-light dark:bg-red-600 dark:hover:bg-red-500 text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs flex items-center gap-1.5 transition-all active:scale-95"
+              className="flex-1 py-2.5 px-4 bg-torii hover:bg-torii-light dark:bg-red-600 dark:hover:bg-red-500 text-white rounded-2xl text-xs sm:text-sm font-bold shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95"
               title="Chữ sau [→]"
             >
               <span>Tiếp</span>
@@ -644,65 +645,68 @@ export default function StudySection({
           {/* Station Card: Chiều cao khớp hoàn hảo cột trái (~465px) */}
           <div className="w-full h-full min-h-[460px] karuta-card dark:bg-stone-900 dark:border-stone-700 p-3.5 sm:p-4 rounded-3xl border border-washi-border flex flex-col justify-between shadow-xs">
             {!isAnalysisMode ? (
-              /* CHẾ ĐỘ TINH GIẢN (ZEN FOCUS): 4 Từ ghép cốt lõi sạch sẽ + Nút mở Phân tích */
-              <div className="w-full h-full flex flex-col justify-between flex-1 animate-fadeIn">
-                {/* Header Tinh Giản */}
-                <div className="w-full flex items-center justify-between pb-2.5 border-b border-washi-border/70 dark:border-stone-700/80">
+              /* CHẾ ĐỘ TINH GIẢN (ZEN FOCUS): Cấu trúc chữ + Danh sách từ ghép cốt lõi thanh lịch */
+              <div className="w-full h-full flex flex-col justify-between flex-1 animate-fadeIn gap-2.5">
+                {/* Header Tinh Giản: Tiêu đề + Thông tin bộ thủ */}
+                <div className="w-full flex items-center justify-between pb-2 border-b border-washi-border/70 dark:border-stone-700/80">
                   <div className="flex items-center gap-2">
                     <BambooIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                     <span className="font-bold text-xs sm:text-sm text-stone-800 dark:text-stone-200">
-                      Từ ghép cốt lõi với 「{currentChar}」
+                      Từ ghép với 「{currentChar}」
                     </span>
                   </div>
-                  <button
-                    onClick={() => {
-                      playWaterDrop();
-                      onToggleAnalysisMode?.();
-                    }}
-                    className="text-xs font-bold text-torii dark:text-torii-light hover:underline flex items-center gap-1.5 cursor-pointer bg-torii/10 dark:bg-torii/20 px-2.5 py-1 rounded-xl border border-torii/30 transition-all active:scale-95 shadow-2xs"
-                    title="Mở Chế độ Phân tích chi tiết bộ thủ & cao độ"
-                  >
-                    <span>Mở Phân tích</span>
-                    <kbd className="px-1 py-0.2 bg-black/10 dark:bg-white/15 rounded text-[9px] font-mono">D</kbd>
-                    <span>→</span>
-                  </button>
+                  <div className="text-[11px] font-semibold text-stone-600 dark:text-stone-400 bg-washi dark:bg-stone-800 px-2 py-0.5 rounded-lg border border-washi-border dark:border-stone-700">
+                    Bộ: <strong className="text-torii dark:text-torii-light">{cardInfo?.radical || currentChar}</strong>
+                    {cardInfo?.strokeCount ? ` • ${cardInfo.strokeCount} nét` : ''}
+                  </div>
                 </div>
 
-                {/* Danh sách 4 từ ghép trực quan to rõ, không rối mắt */}
-                <div className="flex-1 py-3 flex flex-col justify-center">
+                {/* Danh sách 4 từ ghép thiết kế dạng list items thanh lịch */}
+                <div className="flex-1 py-1 flex flex-col justify-between gap-2">
                   {cardInfo?.vocab && cardInfo.vocab.length > 0 ? (
-                    <div className="grid grid-cols-2 gap-3 h-full items-stretch">
-                      {cardInfo.vocab.slice(0, 4).map((v, i) => (
+                    cardInfo.vocab.slice(0, 4).map((v, i) => (
+                      <div
+                        key={i}
+                        onClick={() => {
+                          playWaterDrop();
+                          playJapaneseSpeech(v.word || v.reading || currentChar);
+                        }}
+                        className="p-2 sm:p-2.5 px-3 rounded-2xl border border-washi-border/80 dark:border-stone-700/80 bg-stone-50/80 dark:bg-stone-800/80 hover:border-torii/50 hover:bg-torii/5 transition-all flex items-center justify-between group cursor-pointer active:scale-99 shadow-2xs"
+                      >
+                        {/* Left: Index & Kanji & Reading */}
+                        <div className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0 pr-2">
+                          <span className="w-5 h-5 rounded-full bg-stone-200/80 dark:bg-stone-700 flex items-center justify-center text-[10px] font-bold text-stone-600 dark:text-stone-300 shrink-0">
+                            {i + 1}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-baseline gap-2">
+                              <span className="font-kanji text-base sm:text-lg font-black text-stone-900 dark:text-stone-50 group-hover:text-torii dark:group-hover:text-torii-light transition-colors">
+                                {v.word}
+                              </span>
+                              <span className="text-xs font-bold text-torii dark:text-torii-light font-kanji">
+                                {v.reading}
+                              </span>
+                            </div>
+                            <div className="text-[11px] text-stone-600 dark:text-stone-300 font-ui truncate">
+                              {v.hanViet ? `[${v.hanViet}] • ` : ''}{v.meaning_vi || v.vn}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right: Audio button */}
                         <button
-                          key={i}
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             playWaterDrop();
                             playJapaneseSpeech(v.word || v.reading || currentChar);
                           }}
-                          className="p-3.5 rounded-2xl border border-washi-border dark:border-stone-700/80 bg-stone-100/70 dark:bg-stone-800/80 hover:border-torii/60 dark:hover:border-torii-light hover:shadow-sm transition-all flex flex-col justify-between items-center text-center group cursor-pointer active:scale-98"
+                          className="p-1.5 sm:p-2 rounded-xl text-torii group-hover:bg-torii group-hover:text-white transition-all shadow-2xs bg-washi dark:bg-stone-700 border border-torii/20 shrink-0"
+                          title="Nghe phát âm"
                         >
-                          {/* Kanji + Reading */}
-                          <div className="w-full flex flex-col items-center justify-center my-auto">
-                            <div className="font-kanji text-xl sm:text-2xl font-black text-stone-900 dark:text-stone-50 group-hover:text-torii dark:group-hover:text-torii-light transition-colors">
-                              {v.word}
-                            </div>
-                            <div className="text-xs sm:text-sm font-bold text-torii dark:text-torii-light font-kanji mt-0.5">
-                              {v.reading}
-                            </div>
-                          </div>
-
-                          {/* Meaning + Audio button */}
-                          <div className="w-full pt-2 border-t border-washi-border/60 dark:border-stone-700/60 flex items-center justify-between text-left">
-                            <span className="text-xs font-bold text-stone-800 dark:text-stone-200 line-clamp-1 flex-1">
-                              {v.meaning_vi || v.vn}
-                            </span>
-                            <span className="p-1 rounded-lg text-torii group-hover:bg-torii group-hover:text-white transition-all ml-1.5 shrink-0 shadow-2xs">
-                              <VolumeIcon className="w-3.5 h-3.5" />
-                            </span>
-                          </div>
+                          <VolumeIcon className="w-3.5 h-3.5" />
                         </button>
-                      ))}
-                    </div>
+                      </div>
+                    ))
                   ) : (
                     <div className="p-8 text-center text-xs text-stone-500">
                       Chưa có từ ghép cho chữ Hán này.
