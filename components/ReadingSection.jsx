@@ -9,6 +9,7 @@ import {
   playQuizSuccess,
   playQuizError,
 } from '../lib/traditionalAudio';
+import { VolumeIcon } from './ZenIcons';
 
 export default function ReadingSection() {
   const [selectedArticleId, setSelectedArticleId] = useState(READING_ARTICLES[0].id);
@@ -98,7 +99,7 @@ export default function ReadingSection() {
             className="px-3 py-1.5 rounded-xl bg-torii text-white text-xs font-bold shadow-xs hover:opacity-90 active:scale-95 transition-all flex items-center gap-1.5"
             title="Đọc toàn bộ bài bằng giọng đọc bản xứ"
           >
-            <span>🔊</span>
+            <VolumeIcon className="w-4 h-4" />
             <span className="hidden sm:inline">Nghe bài</span>
           </button>
         </div>
@@ -148,9 +149,10 @@ export default function ReadingSection() {
                   playWaterDrop();
                   playJapaneseSpeech(selectedWord.ruby || selectedWord.text);
                 }}
-                className="px-2.5 py-1 rounded-lg bg-torii text-white font-bold text-xs shadow-xs hover:opacity-90 active:scale-95"
+                className="px-2.5 py-1 rounded-lg bg-torii text-white font-bold text-xs shadow-xs hover:opacity-90 active:scale-95 flex items-center gap-1"
               >
-                🔊 Nghe
+                <VolumeIcon className="w-3.5 h-3.5" />
+                <span>Nghe</span>
               </button>
               <button
                 onClick={() => setSelectedWord(null)}

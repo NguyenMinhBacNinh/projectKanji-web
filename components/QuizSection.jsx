@@ -11,6 +11,7 @@ import {
   playHankoStamp,
 } from '../lib/traditionalAudio';
 import EnsoCircle from './EnsoCircle';
+import { VolumeIcon } from './ZenIcons';
 
 const SPEEDRUN_DURATION = 60; // 60 giây
 const HIGH_SCORE_KEY = 'project_kanji_speedrun_highscore_v1';
@@ -630,10 +631,10 @@ export default function QuizSection({
                       playWaterDrop();
                       playJapaneseSpeech(displayItem.ttsText || displayItem.word || displayItem.kanji);
                     }}
-                    className="p-1.5 rounded-xl bg-washi hover:bg-torii text-torii hover:text-white border border-torii/30 transition-all cursor-pointer"
+                    className="p-1.5 rounded-xl bg-washi hover:bg-torii text-torii hover:text-white border border-torii/30 transition-all cursor-pointer flex items-center justify-center"
                     title="Nghe phát âm"
                   >
-                    🔊
+                    <VolumeIcon className="w-3.5 h-3.5" />
                   </button>
                 </div>
               )}
@@ -725,7 +726,7 @@ export default function QuizSection({
                       }}
                       className="text-xs font-bold underline flex items-center gap-1 opacity-80 hover:opacity-100"
                     >
-                      <span>🔊</span> Nghe phát âm
+                      <VolumeIcon className="w-3.5 h-3.5" /> Nghe phát âm
                     </button>
                   )}
                 </div>

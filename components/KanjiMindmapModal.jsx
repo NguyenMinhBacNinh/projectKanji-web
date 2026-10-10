@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { playJapaneseSpeech } from '../lib/kanjiService';
 import { playWaterDrop, playWoodClapper } from '../lib/traditionalAudio';
+import { VolumeIcon } from './ZenIcons';
 
 export default function KanjiMindmapModal({
   isOpen,
@@ -93,8 +94,8 @@ export default function KanjiMindmapModal({
             <span className="text-xs font-extrabold tracking-wider mt-1 opacity-95">
               {cardInfo?.hanViet || '—'}
             </span>
-            <span className="text-[10px] opacity-80 uppercase tracking-widest mt-0.5">
-              🔊 Nghe chữ
+            <span className="text-[10px] opacity-80 uppercase tracking-widest mt-1 flex items-center gap-1">
+              <VolumeIcon className="w-3 h-3" /> Nghe chữ
             </span>
           </div>
 
@@ -119,7 +120,7 @@ export default function KanjiMindmapModal({
                   {comp.positionTag}
                 </span>
                 <span className="text-xs opacity-60 group-hover:text-torii group-hover:opacity-100 transition-colors">
-                  🔊
+                  <VolumeIcon className="w-3.5 h-3.5" />
                 </span>
               </div>
 

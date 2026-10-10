@@ -19,6 +19,7 @@ import {
   SensuFanIcon,
   ScrollUnfurledIcon,
   KatanaIcon,
+  OrigamiCraneIcon,
 } from './ZenIcons';
 
 
@@ -282,8 +283,13 @@ export default function VocabSection({ onSaveToNotebook }) {
                   style={{ height: '100%', width: '100%', position: 'relative' }}
                 >
                   {/* Mặt trước: Kanji & Chú âm */}
-                  <div className="card-face card-front absolute inset-0 w-full h-full rounded-3xl karuta-card p-6 flex flex-col justify-between select-none">
+                  <div className="card-face card-front absolute inset-0 w-full h-full rounded-3xl karuta-card p-6 flex flex-col justify-between select-none overflow-hidden">
                     <div className="karuta-inner-border" />
+
+                    {/* Watermark Crest */}
+                    <div className="absolute -bottom-8 -right-8 pointer-events-none opacity-[0.06] dark:opacity-[0.1] text-torii">
+                      <OrigamiCraneIcon className="w-48 h-48" />
+                    </div>
 
                     <div className="w-full flex items-center justify-between relative z-10 border-b border-washi-border/60 pb-2">
                       <span className="hanko-stamp text-[10px] py-0.5 px-2">
@@ -295,10 +301,10 @@ export default function VocabSection({ onSaveToNotebook }) {
                           playWaterDrop();
                           playJapaneseSpeech(currentWord?.kanji);
                         }}
-                        className="p-1.5 rounded-xl bg-washi hover:bg-torii hover:text-white text-torii transition-all active:scale-95"
+                        className="p-2 rounded-xl bg-washi hover:bg-torii hover:text-white text-torii transition-all active:scale-95 border border-washi-border shadow-2xs"
                         title="Nghe phát âm"
                       >
-                        <span className="text-sm">🔊</span>
+                        <VolumeIcon className="w-4 h-4" />
                       </button>
                     </div>
 
@@ -333,8 +339,13 @@ export default function VocabSection({ onSaveToNotebook }) {
                   </div>
 
                   {/* Mặt sau: Nghĩa & Câu ví dụ */}
-                  <div className="card-face card-back absolute inset-0 w-full h-full rounded-3xl karuta-card p-6 flex flex-col justify-between select-none">
+                  <div className="card-face card-back absolute inset-0 w-full h-full rounded-3xl karuta-card p-6 flex flex-col justify-between select-none overflow-hidden">
                     <div className="karuta-inner-border" />
+
+                    {/* Watermark Crest */}
+                    <div className="absolute -bottom-6 -right-6 pointer-events-none opacity-[0.06] dark:opacity-[0.1] text-bamboo">
+                      <SensuFanIcon className="w-44 h-44" />
+                    </div>
 
                     <div className="w-full flex items-center justify-between relative z-10 border-b border-washi-border/60 pb-2">
                       <div className="flex items-center gap-2">
@@ -364,10 +375,10 @@ export default function VocabSection({ onSaveToNotebook }) {
                                 playWaterDrop();
                                 playJapaneseSpeech(currentWord.exampleJp);
                               }}
-                              className="text-xs hover:scale-110 transition-transform"
+                              className="p-1 rounded-md hover:bg-torii/10 text-torii transition-transform hover:scale-110"
                               title="Nghe câu ví dụ"
                             >
-                              🔊
+                              <VolumeIcon className="w-3.5 h-3.5" />
                             </button>
                           </div>
                           <div className="font-kanji font-semibold text-sm leading-relaxed">
@@ -489,7 +500,7 @@ export default function VocabSection({ onSaveToNotebook }) {
 
           <div className="w-full flex items-center justify-between pb-3 border-b border-washi-border relative z-10 text-xs">
             <span className="font-bold text-torii flex items-center gap-1.5">
-              <span>⚡</span> Trắc nghiệm phản xạ từ vựng
+              <KatanaIcon className="w-4 h-4 text-torii" /> Trắc nghiệm phản xạ từ vựng
             </span>
             <span className="font-bold opacity-70">
               Câu {quizIndex}/10 • Điểm: <strong className="text-torii">{quizScore}</strong>
@@ -507,10 +518,10 @@ export default function VocabSection({ onSaveToNotebook }) {
                       playWaterDrop();
                       playJapaneseSpeech(quizQuestion.target.kanji);
                     }}
-                    className="text-lg opacity-70 hover:opacity-100 hover:scale-110 transition-transform"
+                    className="p-1 rounded-lg hover:bg-torii/10 text-torii opacity-80 hover:opacity-100 hover:scale-110 transition-transform"
                     title="Nghe phát âm"
                   >
-                    🔊
+                    <VolumeIcon className="w-5 h-5" />
                   </button>
                 </div>
                 <div className="text-xs font-kanji opacity-75 mt-1.5">

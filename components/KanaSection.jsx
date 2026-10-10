@@ -10,7 +10,7 @@ import {
   playQuizError,
   playHankoStamp,
 } from '../lib/traditionalAudio';
-import { OrigamiCraneIcon, KatanaIcon } from './ZenIcons';
+import { OrigamiCraneIcon, KatanaIcon, VolumeIcon } from './ZenIcons';
 
 
 export default function KanaSection() {
@@ -265,7 +265,8 @@ export default function KanaSection() {
                   }}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl bg-torii text-white font-bold text-xs shadow-sm hover:opacity-90 active:scale-95 transition-all"
                 >
-                  <span>🔊 Phát âm</span>
+                  <VolumeIcon className="w-4 h-4" />
+                  <span>Phát âm</span>
                 </button>
 
                 {selectedKana.tip && (

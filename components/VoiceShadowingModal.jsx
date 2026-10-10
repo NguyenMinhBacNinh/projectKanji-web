@@ -9,6 +9,7 @@ import {
   playQuizSuccess,
   playQuizError,
 } from '../lib/traditionalAudio';
+import { VolumeIcon } from './ZenIcons';
 
 export default function VoiceShadowingModal({
   isOpen,
@@ -195,7 +196,8 @@ export default function VoiceShadowingModal({
             }}
             className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-torii text-white font-bold text-xs shadow-xs hover:opacity-90 active:scale-95 transition-all mt-1"
           >
-            <span>🔊 Nghe câu mẫu</span>
+            <VolumeIcon className="w-3.5 h-3.5" />
+            <span>Nghe câu mẫu</span>
           </button>
         </div>
 

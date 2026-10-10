@@ -9,7 +9,7 @@ import {
   playQuizSuccess,
   playQuizError,
 } from '../lib/traditionalAudio';
-import { ScrollUnfurledIcon, KatanaIcon, SearchIcon } from './ZenIcons';
+import { ScrollUnfurledIcon, KatanaIcon, SearchIcon, VolumeIcon } from './ZenIcons';
 
 
 export default function GrammarSection() {
@@ -270,7 +270,7 @@ export default function GrammarSection() {
                             className="p-1 rounded-lg text-torii hover:bg-torii hover:text-white transition-all text-xs"
                             title="Nghe phát âm câu này"
                           >
-                            🔊
+                            <VolumeIcon className="w-3.5 h-3.5" />
                           </button>
                         </div>
                         <div className="text-[10px] text-torii font-mono font-semibold">
