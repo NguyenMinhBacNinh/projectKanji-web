@@ -86,6 +86,9 @@ export default function Home() {
   // Cherry blossom petals animation toggle
   const [petalsEnabled, setPetalsEnabled] = useState(true);
 
+  // Study Mode: false = Tinh Giản (Zen Focus - Mặc định), true = Phân Tích Chuyên Sâu
+  const [isAnalysisMode, setIsAnalysisMode] = useState(false);
+
   // Apply theme class to <html> element
   useEffect(() => {
     const root = document.documentElement;
@@ -101,7 +104,7 @@ export default function Home() {
     }
   }, [theme]);
 
-  // Load persisted theme + audio preference
+  // Load persisted theme + audio preference + study mode
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('project_kanji_theme');
@@ -109,8 +112,27 @@ export default function Home() {
       const muted = getAudioMuted();
       setIsMuted(muted);
       setAudioMuted(muted);
+
+      const savedMode = localStorage.getItem('project_kanji_analysis_mode');
+      if (savedMode !== null) {
+        setIsAnalysisMode(savedMode === 'true');
+      }
     }
   }, []);
+
+  const handleToggleAnalysisMode = () => {
+    setIsAnalysisMode((prev) => {
+      const next = !prev;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('project_kanji_analysis_mode', String(next));
+      }
+      showToast(
+        next ? 'Đã bật Chế độ Phân tích chuyên sâu' : 'Đã về Chế độ Học Tinh giản (Zen Focus)',
+        next ? '🔍' : '⛩️'
+      );
+      return next;
+    });
+  };
 
   const handleToggleTheme = () => {
     setTheme((t) => (t === 'washi' ? 'yozakura' : 'washi'));
@@ -338,6 +360,9 @@ export default function Home() {
         } else if (e.key === 'w' || e.key === 'W') {
           e.preventDefault();
           setIsPracticeModalOpen(true);
+        } else if (e.key === 'd' || e.key === 'D') {
+          e.preventDefault();
+          handleToggleAnalysisMode();
         } else if (e.key === 'r' || e.key === 'R') {
           e.preventDefault();
           setIsRadicalModalOpen(true);
@@ -383,6 +408,7 @@ export default function Home() {
     handleMarkMastered,
     handleNextCard,
     handlePrevCard,
+    handleToggleAnalysisMode,
   ]);
 
   const isMastered = masteredList.includes(currentChar);
@@ -416,6 +442,8 @@ export default function Home() {
           onToggleZenMusic={handleToggleZenMusic}
           petalsEnabled={petalsEnabled}
           onTogglePetals={() => setPetalsEnabled((prev) => !prev)}
+          isAnalysisMode={isAnalysisMode}
+          onToggleAnalysisMode={handleToggleAnalysisMode}
         />
 
         {activeMode === 'study' && (
@@ -444,6 +472,8 @@ export default function Home() {
             onSrsReview={handleSrsReview}
             dueCount={dueKanjiList.length}
             isMastered={isMastered}
+            isAnalysisMode={isAnalysisMode}
+            onToggleAnalysisMode={handleToggleAnalysisMode}
           />
         )}
 

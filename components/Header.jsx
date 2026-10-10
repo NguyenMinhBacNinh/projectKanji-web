@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
 import { playWoodClapper, playWaterDrop } from '../lib/traditionalAudio';
 import {
   SearchIcon,
@@ -21,6 +22,7 @@ import {
   KatanaIcon,
   LotusZenIcon,
   FountainPenIcon,
+  SettingsSlidersIcon,
 } from './ZenIcons';
 
 
@@ -40,7 +42,27 @@ export default function Header({
   onToggleZenMusic,
   petalsEnabled = true,
   onTogglePetals,
+  isAnalysisMode = false,
+  onToggleAnalysisMode,
 }) {
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const settingsRef = useRef(null);
+
+  // Close settings on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (settingsRef.current && !settingsRef.current.contains(e.target)) {
+        setIsSettingsOpen(false);
+      }
+    };
+    if (isSettingsOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSettingsOpen]);
+
   // Xác định nhóm chính hiện tại dựa trên activeMode
   const getPrimaryGroup = () => {
     if (activeMode === 'study') return 'kanji';
@@ -156,6 +178,30 @@ export default function Header({
 
         {/* Right: Clean Unified Tool Icons */}
         <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+          {/* Mode Switch: ⛩️ Tinh Giản / 🔍 Phân Tích */}
+          {onToggleAnalysisMode && (
+            <button
+              onClick={() => {
+                playWaterDrop();
+                onToggleAnalysisMode();
+              }}
+              className={`h-8 sm:h-9 px-2.5 sm:px-3 rounded-xl border flex items-center gap-1.5 text-xs font-bold transition-all active:scale-95 shadow-2xs ${
+                isAnalysisMode
+                  ? 'bg-amber-500/15 border-amber-500/60 text-amber-900 dark:text-amber-200 shadow-xs'
+                  : 'bg-torii/10 border-torii/40 text-torii dark:text-torii-light'
+              }`}
+              title="Phím tắt [D]: Chuyển đổi Chế độ Học Tinh Giản & Phân Tích Chuyên Sâu"
+            >
+              <span className="text-sm">{isAnalysisMode ? '🔍' : '⛩️'}</span>
+              <span className="hidden sm:inline font-bold">
+                {isAnalysisMode ? 'Phân tích' : 'Tinh giản'}
+              </span>
+              <kbd className="hidden md:inline px-1 py-0.2 text-[9px] rounded bg-black/5 dark:bg-white/10 font-mono opacity-75">
+                D
+              </kbd>
+            </button>
+          )}
+
           {/* Quick Search Spotlight */}
           {onOpenSpotlight && (
             <button
@@ -163,126 +209,185 @@ export default function Header({
                 playWaterDrop();
                 onOpenSpotlight();
               }}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-washi-border dark:border-stone-700 bg-washi dark:bg-stone-800 hover:border-torii/50 dark:hover:border-torii-light/50 hover:bg-torii/10 dark:hover:bg-torii/20 text-torii dark:text-torii-light flex items-center justify-center transition-all text-xs font-bold active:scale-95 shadow-2xs"
-              title="Tìm kiếm nhanh Hán tự (Phím tắt ⌘K)"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-washi-border dark:border-stone-700 bg-washi dark:bg-stone-800 hover:border-torii/50 hover:bg-torii/10 text-torii dark:text-torii-light flex items-center justify-center transition-all text-xs font-bold active:scale-95 shadow-2xs"
+              title="Tìm kiếm nhanh Hán tự [⌘K]"
             >
               <SearchIcon className="w-4 h-4" />
             </button>
           )}
 
-          {/* AI Voice Shadowing (Luyện nói) */}
-          {onOpenVoiceShadowing && (
-            <button
-              onClick={() => {
-                playWaterDrop();
-                onOpenVoiceShadowing();
-              }}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-washi-border dark:border-stone-700 bg-washi dark:bg-stone-800 hover:border-torii/50 dark:hover:border-torii-light/50 hover:bg-torii/10 dark:hover:bg-torii/20 text-torii dark:text-torii-light flex items-center justify-center transition-all text-xs font-bold active:scale-95 shadow-2xs"
-              title="Luyện phát âm & Shadowing AI qua Micro"
-            >
-              <MicShadowingIcon className="w-4 h-4" />
-            </button>
-          )}
-
-          {/* In phiếu tập viết ô Mễ (Printable Worksheet) */}
-          {onOpenWorksheetModal && (
-            <button
-              onClick={() => {
-                playWaterDrop();
-                onOpenWorksheetModal();
-              }}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-washi-border dark:border-stone-700 bg-washi dark:bg-stone-800 hover:border-torii/50 dark:hover:border-torii-light/50 hover:bg-torii/10 dark:hover:bg-torii/20 text-torii dark:text-torii-light flex items-center justify-center transition-all text-xs font-bold active:scale-95 hidden sm:flex shadow-2xs"
-              title="In phiếu tập viết ô mễ (米字格) ra giấy A4"
-            >
-              <FountainPenIcon className="w-4 h-4" />
-            </button>
-          )}
-
-          {/* Thống kê tiến độ */}
-          {onOpenStatsModal && (
-            <button
-              onClick={() => {
-                playWaterDrop();
-                onOpenStatsModal();
-              }}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-washi-border dark:border-stone-700 bg-washi dark:bg-stone-800 hover:border-torii/50 dark:hover:border-torii-light/50 hover:bg-torii/10 dark:hover:bg-torii/20 text-torii dark:text-torii-light flex items-center justify-center transition-all text-xs font-bold active:scale-95 shadow-2xs"
-              title="Thống kê tiến độ & Lịch Heatmap"
-            >
-              <StatsIcon className="w-4 h-4" />
-            </button>
-          )}
-
-          {/* Bật/Tắt Hiệu ứng Hoa Anh Đào (Sakura Petals) */}
-          {onTogglePetals && (
-            <button
-              onClick={() => {
-                playWaterDrop();
-                onTogglePetals();
-              }}
-              className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl border flex items-center justify-center transition-all text-xs font-bold active:scale-95 shadow-2xs ${
-                petalsEnabled
-                  ? 'border-pink-300 dark:border-pink-600 bg-pink-50 dark:bg-pink-950/40 text-pink-600 dark:text-pink-300'
-                  : 'border-washi-border dark:border-stone-700 bg-washi dark:bg-stone-800 text-stone-400 hover:text-pink-500'
-              }`}
-              title={petalsEnabled ? 'Tắt hiệu ứng cánh hoa anh đào rơi' : 'Bật hiệu ứng cánh hoa anh đào rơi'}
-            >
-              <SakuraFlowerIcon className="w-4 h-4" />
-            </button>
-          )}
-
-          {/* Bật/Tắt Hiệu ứng Âm thanh Click */}
-          {onToggleMute && (
-            <button
-              onClick={() => {
-                onToggleMute();
-              }}
-              className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl border flex items-center justify-center transition-all text-xs font-bold active:scale-95 shadow-2xs ${
-                isMuted
-                  ? 'border-stone-300 dark:border-stone-700 bg-stone-100 dark:bg-stone-800 text-stone-400'
-                  : 'border-washi-border dark:border-stone-700 bg-washi dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:text-torii'
-              }`}
-              title={isMuted ? 'Bật hiệu ứng âm thanh click' : 'Tắt hiệu ứng âm thanh click'}
-            >
-              {isMuted ? <VolumeMuteIcon className="w-4 h-4" /> : <VolumeIcon className="w-4 h-4" />}
-            </button>
-          )}
-
-          {/* Nhạc thiền Zen Hirajoshi */}
-          {onToggleZenMusic && (
-            <button
-              onClick={() => {
-                onToggleZenMusic();
-              }}
-              className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl border flex items-center justify-center transition-all text-xs font-bold relative active:scale-95 shadow-2xs ${
-                isZenMusicPlaying
-                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
-                  : 'border-washi-border dark:border-stone-700 bg-washi dark:bg-stone-800 hover:border-emerald-500/50 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300'
-              }`}
-              title={isZenMusicPlaying ? 'Tắt nhạc thiền Zen đàn Koto' : 'Bật nhạc thiền Zen đàn Koto'}
-            >
-              <LotusZenIcon className="w-4 h-4" />
-              {isZenMusicPlaying && (
-                <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-white animate-ping" />
-              )}
-            </button>
-          )}
-
-          {/* Giao diện Ngày/Đêm (Chế độ tối / sáng) */}
+          {/* Giao diện Ngày/Đêm */}
           <button
             onClick={() => {
               playWaterDrop();
               onToggleTheme();
             }}
-            className="h-8 sm:h-9 px-2 sm:px-2.5 rounded-xl border border-washi-border dark:border-stone-700 bg-washi dark:bg-stone-800 hover:border-torii/50 hover:bg-torii/10 text-sumi dark:text-stone-200 flex items-center justify-center gap-1.5 transition-all text-xs font-bold active:scale-95 shadow-2xs"
-            title={theme === 'yozakura' ? 'Chuyển sang chế độ Sáng (Washi)' : 'Chuyển sang chế độ Tối (Đêm Kyoto Yozakura)'}
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-washi-border dark:border-stone-700 bg-washi dark:bg-stone-800 hover:border-torii/50 hover:bg-torii/10 text-sumi dark:text-stone-200 flex items-center justify-center transition-all text-xs font-bold active:scale-95 shadow-2xs"
+            title={theme === 'yozakura' ? 'Chuyển sang chế độ Sáng (Washi)' : 'Chuyển sang chế độ Tối (Đêm Kyoto)'}
           >
-            <span className="transition-transform duration-300 hover:rotate-12 text-amber-500 dark:text-amber-300">
-              {theme === 'yozakura' ? <MoonIcon className="w-4 h-4" /> : <SunIcon className="w-4 h-4" />}
-            </span>
-            <span className="text-[11px] font-semibold hidden md:inline">
-              {theme === 'yozakura' ? 'Đêm' : 'Ngày'}
-            </span>
+            {theme === 'yozakura' ? (
+              <MoonIcon className="w-4 h-4 text-amber-300" />
+            ) : (
+              <SunIcon className="w-4 h-4 text-amber-500" />
+            )}
           </button>
+
+          {/* Tiện ích & Cài đặt Dropdown Popover */}
+          <div className="relative" ref={settingsRef}>
+            <button
+              onClick={() => {
+                playWaterDrop();
+                setIsSettingsOpen(!isSettingsOpen);
+              }}
+              className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl border flex items-center justify-center transition-all active:scale-95 shadow-2xs relative ${
+                isSettingsOpen
+                  ? 'border-torii bg-torii text-white'
+                  : 'border-washi-border dark:border-stone-700 bg-washi dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:border-torii/50'
+              }`}
+              title="Tiện ích & Cài đặt nâng cao"
+            >
+              <SettingsSlidersIcon className="w-4 h-4" />
+              {(isZenMusicPlaying || petalsEnabled) && (
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-torii" />
+              )}
+            </button>
+
+            {isSettingsOpen && (
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="absolute right-0 top-full mt-2 w-64 rounded-2xl bg-washi-light dark:bg-stone-800 border-2 border-border-strong dark:border-stone-700 shadow-xl p-2 flex flex-col gap-1 z-50 text-xs animate-fadeIn backdrop-blur-md"
+              >
+                <div className="px-2 py-1 border-b border-washi-border/60 dark:border-stone-700/60 font-bold text-[11px] text-stone-500 dark:text-stone-400 uppercase tracking-wider flex items-center justify-between">
+                  <span>Tiện ích & Cài đặt</span>
+                  <span>⚙️</span>
+                </div>
+
+                {/* Hoa anh đào rơi */}
+                {onTogglePetals && (
+                  <button
+                    onClick={() => {
+                      playWaterDrop();
+                      onTogglePetals();
+                    }}
+                    className="w-full px-2.5 py-2 rounded-xl hover:bg-torii/10 text-left flex items-center justify-between transition-colors text-stone-800 dark:text-stone-100 font-medium"
+                  >
+                    <div className="flex items-center gap-2">
+                      <SakuraFlowerIcon className="w-4 h-4 text-pink-500" />
+                      <span>Cánh hoa Sakura</span>
+                    </div>
+                    <span
+                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                        petalsEnabled
+                          ? 'bg-pink-100 dark:bg-pink-950/60 text-pink-700 dark:text-pink-300'
+                          : 'bg-stone-200 dark:bg-stone-700 text-stone-500'
+                      }`}
+                    >
+                      {petalsEnabled ? 'Bật' : 'Tắt'}
+                    </span>
+                  </button>
+                )}
+
+                {/* Âm thanh click */}
+                {onToggleMute && (
+                  <button
+                    onClick={() => {
+                      onToggleMute();
+                    }}
+                    className="w-full px-2.5 py-2 rounded-xl hover:bg-torii/10 text-left flex items-center justify-between transition-colors text-stone-800 dark:text-stone-100 font-medium"
+                  >
+                    <div className="flex items-center gap-2">
+                      {isMuted ? (
+                        <VolumeMuteIcon className="w-4 h-4 text-stone-400" />
+                      ) : (
+                        <VolumeIcon className="w-4 h-4 text-torii" />
+                      )}
+                      <span>Âm thanh thao tác</span>
+                    </div>
+                    <span
+                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                        !isMuted
+                          ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
+                          : 'bg-stone-200 dark:bg-stone-700 text-stone-500'
+                      }`}
+                    >
+                      {!isMuted ? 'Bật' : 'Tắt'}
+                    </span>
+                  </button>
+                )}
+
+                {/* Nhạc thiền Zen */}
+                {onToggleZenMusic && (
+                  <button
+                    onClick={() => {
+                      onToggleZenMusic();
+                    }}
+                    className="w-full px-2.5 py-2 rounded-xl hover:bg-torii/10 text-left flex items-center justify-between transition-colors text-stone-800 dark:text-stone-100 font-medium"
+                  >
+                    <div className="flex items-center gap-2">
+                      <LotusZenIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                      <span>Nhạc thiền Zen Koto</span>
+                    </div>
+                    <span
+                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                        isZenMusicPlaying
+                          ? 'bg-emerald-600 text-white animate-pulse'
+                          : 'bg-stone-200 dark:bg-stone-700 text-stone-500'
+                      }`}
+                    >
+                      {isZenMusicPlaying ? 'Đang phát' : 'Dừng'}
+                    </span>
+                  </button>
+                )}
+
+                <div className="my-0.5 border-t border-washi-border/60 dark:border-stone-700/60" />
+
+                {/* AI Shadowing */}
+                {onOpenVoiceShadowing && (
+                  <button
+                    onClick={() => {
+                      setIsSettingsOpen(false);
+                      playWaterDrop();
+                      onOpenVoiceShadowing();
+                    }}
+                    className="w-full px-2.5 py-2 rounded-xl hover:bg-torii hover:text-white text-left flex items-center gap-2 transition-colors text-stone-800 dark:text-stone-100 font-medium"
+                  >
+                    <MicShadowingIcon className="w-4 h-4 text-torii" />
+                    <span>Luyện nói AI Shadowing</span>
+                  </button>
+                )}
+
+                {/* Printable Worksheet */}
+                {onOpenWorksheetModal && (
+                  <button
+                    onClick={() => {
+                      setIsSettingsOpen(false);
+                      playWaterDrop();
+                      onOpenWorksheetModal();
+                    }}
+                    className="w-full px-2.5 py-2 rounded-xl hover:bg-torii hover:text-white text-left flex items-center gap-2 transition-colors text-stone-800 dark:text-stone-100 font-medium"
+                  >
+                    <FountainPenIcon className="w-4 h-4 text-torii" />
+                    <span>In phiếu tập viết ô mễ A4</span>
+                  </button>
+                )}
+
+                {/* Thống kê Heatmap */}
+                {onOpenStatsModal && (
+                  <button
+                    onClick={() => {
+                      setIsSettingsOpen(false);
+                      playWaterDrop();
+                      onOpenStatsModal();
+                    }}
+                    className="w-full px-2.5 py-2 rounded-xl hover:bg-torii hover:text-white text-left flex items-center gap-2 transition-colors text-stone-800 dark:text-stone-100 font-medium"
+                  >
+                    <StatsIcon className="w-4 h-4 text-torii" />
+                    <span>Thống kê tiến độ & Heatmap</span>
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

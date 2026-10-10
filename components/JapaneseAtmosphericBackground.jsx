@@ -78,7 +78,7 @@ export default function JapaneseAtmosphericBackground({ theme = 'washi' }) {
           2. TRỤ CẢNH BỜ TÂY (LEFT FLANK VIGNETTE - DÀNH CHO MÀN HÌNH RỘNG XL & 2XL)
           Bao gồm: Cổng Torii thần đạo, Rừng trúc Sagano, Đèn đá Kasuga phát sáng ấm
           ========================================================================= */}
-      <div className="hidden xl:block absolute left-2 top-0 bottom-0 w-44 2xl:w-60 pointer-events-none z-0 opacity-80 transition-opacity">
+      <div className="hidden xl:block absolute left-2 top-0 bottom-0 w-44 2xl:w-60 pointer-events-none z-0 opacity-30 2xl:opacity-40 transition-opacity duration-700">
         <svg
           className="w-full h-full"
           viewBox="0 0 240 800"
@@ -171,7 +171,7 @@ export default function JapaneseAtmosphericBackground({ theme = 'washi' }) {
           3. TRỤ CẢNH BỜ ĐÔNG (RIGHT FLANK VIGNETTE - DÀNH CHO MÀN HÌNH RỘNG XL & 2XL)
           Bao gồm: Cành Hoa Anh Đào rủ, Chùa 5 tầng Kyoto (Gojūnotō), Cây tùng Matsu
           ========================================================================= */}
-      <div className="hidden xl:block absolute right-2 top-0 bottom-0 w-44 2xl:w-60 pointer-events-none z-0 opacity-80 transition-opacity">
+      <div className="hidden xl:block absolute right-2 top-0 bottom-0 w-44 2xl:w-60 pointer-events-none z-0 opacity-30 2xl:opacity-40 transition-opacity duration-700">
         <svg
           className="w-full h-full"
           viewBox="0 0 240 800"

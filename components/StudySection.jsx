@@ -58,6 +58,8 @@ export default function StudySection({
   onSrsReview,
   dueCount = 0,
   isMastered = false,
+  isAnalysisMode = false,
+  onToggleAnalysisMode,
 }) {
   const [showFurigana, setShowFurigana] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -171,24 +173,26 @@ export default function StudySection({
                       <span className="text-[11px] font-bold text-stone-700 dark:text-stone-200 bg-washi dark:bg-stone-800 px-2 py-0.5 rounded-lg border border-washi-border dark:border-stone-700">
                         {total > 0 ? `${currentIndex + 1} / ${total}` : '1'}
                       </span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          playWaterDrop();
-                          setShowFurigana(!showFurigana);
-                        }}
-                        className={`px-2 py-0.5 rounded-lg text-xs font-bold border transition-all flex items-center gap-1 ${
-                          showFurigana
-                            ? 'bg-matcha/15 dark:bg-matcha/25 text-matcha dark:text-emerald-300 border-matcha/40 dark:border-emerald-500/40'
-                            : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 border-stone-200 dark:border-stone-700'
-                        }`}
-                        title="Bật/tắt Furigana âm Kunyomi [Phím F]"
-                      >
-                        <span className="font-kanji">あ</span>
-                        <span className="text-[10px] hidden sm:inline">
-                          Furigana {showFurigana ? 'ON' : 'OFF'}
-                        </span>
-                      </button>
+                      {isAnalysisMode && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            playWaterDrop();
+                            setShowFurigana(!showFurigana);
+                          }}
+                          className={`px-2 py-0.5 rounded-lg text-xs font-bold border transition-all flex items-center gap-1 ${
+                            showFurigana
+                              ? 'bg-matcha/15 dark:bg-matcha/25 text-matcha dark:text-emerald-300 border-matcha/40 dark:border-emerald-500/40'
+                              : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 border-stone-200 dark:border-stone-700'
+                          }`}
+                          title="Bật/tắt Furigana âm Kunyomi [Phím F]"
+                        >
+                          <span className="font-kanji">あ</span>
+                          <span className="text-[10px] hidden sm:inline">
+                            Furigana {showFurigana ? 'ON' : 'OFF'}
+                          </span>
+                        </button>
+                      )}
                       {dueCount > 0 && (
                         <span className="px-2 py-0.5 rounded-full bg-amber-500/15 dark:bg-amber-400/20 text-amber-900 dark:text-amber-200 border border-amber-500/30 text-[10px] font-bold animate-pulse">
                           Cần ôn: {dueCount}
@@ -213,21 +217,24 @@ export default function StudySection({
                       </button>
 
                       {/* Tập viết nét bút */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          playWoodClapper();
-                          onOpenPracticeModal();
-                        }}
-                        className="p-1.5 sm:px-2.5 sm:py-1 rounded-xl bg-washi dark:bg-stone-800 hover:bg-torii dark:hover:bg-torii text-torii dark:text-torii-light hover:text-white dark:hover:text-white border border-torii/30 dark:border-stone-700 transition-all text-xs font-bold flex items-center gap-1.5 active:scale-95 shadow-2xs"
-                        title="Tập viết & Thứ tự nét bút (Phím W)"
-                      >
-                        <BrushIcon className="w-3.5 h-3.5" />
-                        <span className="hidden sm:inline text-xs">Tập viết</span>
-                      </button>
+                      {isAnalysisMode && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            playWoodClapper();
+                            onOpenPracticeModal();
+                          }}
+                          className="p-1.5 sm:px-2.5 sm:py-1 rounded-xl bg-washi dark:bg-stone-800 hover:bg-torii dark:hover:bg-torii text-torii dark:text-torii-light hover:text-white dark:hover:text-white border border-torii/30 dark:border-stone-700 transition-all text-xs font-bold flex items-center gap-1.5 active:scale-95 shadow-2xs"
+                          title="Tập viết & Thứ tự nét bút (Phím W)"
+                        >
+                          <BrushIcon className="w-3.5 h-3.5" />
+                          <span className="hidden sm:inline text-xs">Tập viết</span>
+                        </button>
+                      )}
 
                       {/* Nút menu công cụ bổ trợ (⋯) */}
-                      <div className="relative">
+                      {isAnalysisMode && (
+                        <div className="relative">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -299,8 +306,9 @@ export default function StudySection({
                           </div>
                         )}
                       </div>
-                    </div>
+                    )}
                   </div>
+                </div>
 
                   {/* Center: Hero Calligraphy Kanji & Han-Viet Dignified Typography */}
                   <div className="my-auto py-1 flex flex-col items-center justify-center text-center">
@@ -337,7 +345,9 @@ export default function StudySection({
                     <div className="bg-stone-100/80 dark:bg-stone-800/80 py-1.5 px-2.5 rounded-xl border border-stone-200/80 dark:border-stone-700/80">
                       <div className="flex items-center justify-center gap-1.5">
                         <span className="text-[10px] sm:text-[11px] uppercase font-bold text-stone-600 dark:text-stone-400 tracking-wider">Âm Kun (Kunyomi)</span>
-                        <PitchAccentVisualizer word={currentChar} reading={cardInfo?.kun} />
+                        {isAnalysisMode && (
+                          <PitchAccentVisualizer word={currentChar} reading={cardInfo?.kun} />
+                        )}
                       </div>
                       <span className="text-xs sm:text-sm font-bold text-torii dark:text-torii-light font-kanji mt-0.5 block truncate">
                         {cardInfo?.kun || '—'}
@@ -449,14 +459,16 @@ export default function StudySection({
                     </div>
                   </div>
 
-                  {/* Radical Breakdown Card Widget */}
-                  <div className="my-1.5 shrink-0">
-                    <RadicalBreakdownCard
-                      currentChar={currentChar}
-                      cardInfo={cardInfo}
-                      onOpenRadicalModal={onOpenRadicalModal}
-                    />
-                  </div>
+                  {/* Radical Breakdown Card Widget (Chỉ hiện khi phân tích) */}
+                  {isAnalysisMode && (
+                    <div className="my-1.5 shrink-0">
+                      <RadicalBreakdownCard
+                        currentChar={currentChar}
+                        cardInfo={cardInfo}
+                        onOpenRadicalModal={onOpenRadicalModal}
+                      />
+                    </div>
+                  )}
 
                   {/* Khung hình tượng & Mẹo ghi nhớ trực quan */}
                   <div className="my-1 shrink-0">
@@ -631,8 +643,96 @@ export default function StudySection({
         <div className="lg:col-span-5 flex flex-col gap-2">
           {/* Station Card: Chiều cao khớp hoàn hảo cột trái (~465px) */}
           <div className="w-full h-full min-h-[460px] karuta-card dark:bg-stone-900 dark:border-stone-700 p-3.5 sm:p-4 rounded-3xl border border-washi-border flex flex-col justify-between shadow-xs">
-            {/* Tab Selector Header (Chuyển đổi 4 trạm tri thức) */}
-            <div className="w-full flex items-center justify-between pb-2.5 border-b border-washi-border/70 dark:border-stone-700/80 gap-1">
+            {!isAnalysisMode ? (
+              /* CHẾ ĐỘ TINH GIẢN (ZEN FOCUS): 4 Từ ghép cốt lõi sạch sẽ + Nút mở Phân tích */
+              <div className="w-full h-full flex flex-col justify-between flex-1 animate-fadeIn">
+                {/* Header Tinh Giản */}
+                <div className="w-full flex items-center justify-between pb-2.5 border-b border-washi-border/70 dark:border-stone-700/80">
+                  <div className="flex items-center gap-2">
+                    <BambooIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                    <span className="font-bold text-xs sm:text-sm text-stone-800 dark:text-stone-200">
+                      Từ ghép cốt lõi với 「{currentChar}」
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      playWaterDrop();
+                      onToggleAnalysisMode?.();
+                    }}
+                    className="text-xs font-bold text-torii dark:text-torii-light hover:underline flex items-center gap-1.5 cursor-pointer bg-torii/10 dark:bg-torii/20 px-2.5 py-1 rounded-xl border border-torii/30 transition-all active:scale-95 shadow-2xs"
+                    title="Mở Chế độ Phân tích chi tiết bộ thủ & cao độ"
+                  >
+                    <span>Mở Phân tích</span>
+                    <kbd className="px-1 py-0.2 bg-black/10 dark:bg-white/15 rounded text-[9px] font-mono">D</kbd>
+                    <span>→</span>
+                  </button>
+                </div>
+
+                {/* Danh sách 4 từ ghép trực quan to rõ, không rối mắt */}
+                <div className="flex-1 py-3 flex flex-col justify-center">
+                  {cardInfo?.vocab && cardInfo.vocab.length > 0 ? (
+                    <div className="grid grid-cols-2 gap-3 h-full items-stretch">
+                      {cardInfo.vocab.slice(0, 4).map((v, i) => (
+                        <button
+                          key={i}
+                          onClick={() => {
+                            playWaterDrop();
+                            playJapaneseSpeech(v.word || v.reading || currentChar);
+                          }}
+                          className="p-3.5 rounded-2xl border border-washi-border dark:border-stone-700/80 bg-stone-100/70 dark:bg-stone-800/80 hover:border-torii/60 dark:hover:border-torii-light hover:shadow-sm transition-all flex flex-col justify-between items-center text-center group cursor-pointer active:scale-98"
+                        >
+                          {/* Kanji + Reading */}
+                          <div className="w-full flex flex-col items-center justify-center my-auto">
+                            <div className="font-kanji text-xl sm:text-2xl font-black text-stone-900 dark:text-stone-50 group-hover:text-torii dark:group-hover:text-torii-light transition-colors">
+                              {v.word}
+                            </div>
+                            <div className="text-xs sm:text-sm font-bold text-torii dark:text-torii-light font-kanji mt-0.5">
+                              {v.reading}
+                            </div>
+                          </div>
+
+                          {/* Meaning + Audio button */}
+                          <div className="w-full pt-2 border-t border-washi-border/60 dark:border-stone-700/60 flex items-center justify-between text-left">
+                            <span className="text-xs font-bold text-stone-800 dark:text-stone-200 line-clamp-1 flex-1">
+                              {v.meaning_vi || v.vn}
+                            </span>
+                            <span className="p-1 rounded-lg text-torii group-hover:bg-torii group-hover:text-white transition-all ml-1.5 shrink-0 shadow-2xs">
+                              <VolumeIcon className="w-3.5 h-3.5" />
+                            </span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-8 text-center text-xs text-stone-500">
+                      Chưa có từ ghép cho chữ Hán này.
+                    </div>
+                  )}
+                </div>
+
+                {/* Banner chuyển sang Chế độ Phân Tích */}
+                <div
+                  onClick={() => {
+                    playWaterDrop();
+                    onToggleAnalysisMode?.();
+                  }}
+                  className="w-full p-2.5 rounded-2xl bg-torii/5 hover:bg-torii/10 dark:bg-torii/15 border border-torii/25 text-center cursor-pointer transition-all flex items-center justify-between px-3 text-xs group"
+                >
+                  <div className="flex items-center gap-2 text-stone-700 dark:text-stone-200 font-semibold text-xs">
+                    <span className="text-base group-hover:scale-110 transition-transform">🔍</span>
+                    <span>Xem chiết tự bộ thủ, mẹo nhớ & câu ví dụ?</span>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-xl bg-torii text-white font-bold text-[10px] shadow-2xs group-hover:bg-torii-light transition-colors flex items-center gap-1">
+                    <span>Bật Phân tích</span>
+                    <kbd className="px-1 py-0.2 bg-white/20 rounded font-mono text-[9px]">D</kbd>
+                  </span>
+                </div>
+              </div>
+            ) : (
+              /* CHẾ ĐỘ PHÂN TÍCH CHUYÊN SÂU (DEEP ANALYSIS MODE): Đầy đủ 4 tab, cao độ Tokyo, chiết tự */
+              <div className="w-full h-full flex flex-col justify-between flex-1 animate-fadeIn">
+                {/* Tab Selector Header (Chuyển đổi 4 trạm tri thức) */}
+                <div className="w-full flex items-center justify-between pb-2.5 border-b border-washi-border/70 dark:border-stone-700/80 gap-1">
               <div className="flex items-center gap-1 p-1 rounded-xl bg-stone-100/80 dark:bg-stone-800/80 border border-stone-200/60 dark:border-stone-700/60 w-full text-xs font-bold">
                 <button
                   onClick={() => {
@@ -869,11 +969,18 @@ export default function StudySection({
               </div>
             )}
 
-            {/* Bottom Station Quick Hint */}
-            <div className="pt-2 border-t border-washi-border/70 dark:border-stone-700/80 flex items-center justify-between text-[11px] text-stone-500 dark:text-stone-400">
-              <span>Trạm tri thức đồng bộ 100%</span>
-              <span className="font-mono font-bold text-torii dark:text-torii-light">Zen Studio Mode</span>
-            </div>
+                {/* Bottom Station Quick Hint */}
+                <div className="pt-2 border-t border-washi-border/70 dark:border-stone-700/80 flex items-center justify-between text-[11px] text-stone-500 dark:text-stone-400">
+                  <span>Trạm tri thức chuyên sâu</span>
+                  <button
+                    onClick={onToggleAnalysisMode}
+                    className="font-mono font-bold text-torii dark:text-torii-light hover:underline cursor-pointer"
+                  >
+                    Về Tinh giản [D] ↻
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

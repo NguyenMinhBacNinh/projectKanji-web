@@ -214,28 +214,28 @@ export function StudioAtmosphericWings() {
   return (
     <div className="hidden 2xl:flex pointer-events-none select-none z-10">
       {/* Cánh Trái: Cổng Thần Đạo & Rừng Trúc */}
-      <div className="fixed left-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-6 opacity-85 animate-fadeIn">
-        <div className="flex flex-col items-center gap-3 p-3.5 rounded-3xl bg-washi-light/80 dark:bg-stone-900/80 border border-washi-border dark:border-stone-700/80 shadow-lg backdrop-blur-md">
+      <div className="fixed left-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-6 opacity-35 hover:opacity-85 transition-opacity duration-500 animate-fadeIn">
+        <div className="flex flex-col items-center gap-3 p-3.5 rounded-3xl bg-washi-light/60 dark:bg-stone-900/60 border border-washi-border/70 dark:border-stone-700/70 shadow-sm backdrop-blur-xs">
           <JapaneseCulturalSeal Icon={ToriiShrineIcon} variant="torii" size="lg" title="Cổng Thần Đạo Torii" />
-          <div className="w-px h-6 bg-gradient-to-b from-torii/50 to-emerald-500/50" />
+          <div className="w-px h-6 bg-gradient-to-b from-torii/40 to-emerald-500/40" />
           <JapaneseCulturalSeal Icon={BambooIcon} variant="matcha" size="lg" title="Rừng trúc Sagano" />
-          <div className="w-px h-6 bg-gradient-to-b from-emerald-500/50 to-pink-500/50" />
+          <div className="w-px h-6 bg-gradient-to-b from-emerald-500/40 to-pink-500/40" />
           <JapaneseCulturalSeal Icon={OrigamiCraneIcon} variant="sakura" size="lg" title="Hạc giấy Orizuru" />
-          <span className="text-[10px] font-kanji font-bold text-sumi/60 dark:text-stone-400 writing-vertical tracking-widest mt-1">
+          <span className="text-[10px] font-kanji font-bold text-sumi/50 dark:text-stone-400 writing-vertical tracking-widest mt-1">
             京都伝統
           </span>
         </div>
       </div>
 
       {/* Cánh Phải: Quạt Trầm & Tháp Chùa Cổ */}
-      <div className="fixed right-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-6 opacity-85 animate-fadeIn">
-        <div className="flex flex-col items-center gap-3 p-3.5 rounded-3xl bg-washi-light/80 dark:bg-stone-900/80 border border-washi-border dark:border-stone-700/80 shadow-lg backdrop-blur-md">
+      <div className="fixed right-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-6 opacity-35 hover:opacity-85 transition-opacity duration-500 animate-fadeIn">
+        <div className="flex flex-col items-center gap-3 p-3.5 rounded-3xl bg-washi-light/60 dark:bg-stone-900/60 border border-washi-border/70 dark:border-stone-700/70 shadow-sm backdrop-blur-xs">
           <JapaneseCulturalSeal Icon={SensuFanIcon} variant="gold" size="lg" title="Quạt nan Sensu" />
-          <div className="w-px h-6 bg-gradient-to-b from-amber-500/50 to-indigo-500/50" />
+          <div className="w-px h-6 bg-gradient-to-b from-amber-500/40 to-indigo-500/40" />
           <JapaneseCulturalSeal Icon={PagodaIcon} variant="indigo" size="lg" title="Tháp chùa Gojūnotō" />
-          <div className="w-px h-6 bg-gradient-to-b from-indigo-500/50 to-torii/50" />
+          <div className="w-px h-6 bg-gradient-to-b from-indigo-500/40 to-torii/40" />
           <JapaneseCulturalSeal Icon={KatanaIcon} variant="torii" size="lg" title="Katana Samurai" />
-          <span className="text-[10px] font-kanji font-bold text-sumi/60 dark:text-stone-400 writing-vertical tracking-widest mt-1">
+          <span className="text-[10px] font-kanji font-bold text-sumi/50 dark:text-stone-400 writing-vertical tracking-widest mt-1">
             武士道
           </span>
         </div>
