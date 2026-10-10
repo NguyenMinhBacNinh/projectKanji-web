@@ -23,7 +23,10 @@ import KanjiWorksheetModal from '../components/KanjiWorksheetModal';
 import StatsModal from '../components/StatsModal';
 import SpotlightSearchModal from '../components/SpotlightSearchModal';
 import Toast from '../components/Toast';
+import { ToriiGateIcon } from '../components/ZenIcons';
+import { StudioAtmosphericWings } from '../components/JapaneseCulturalIcons';
 import { KANJI_DATA } from '../lib/kanjiData';
+
 import {
   loadFullDatabase,
   fetchLiveKanjiInfo,
@@ -80,14 +83,17 @@ export default function Home() {
   // Audio mute state
   const [isMuted, setIsMuted] = useState(false);
 
+  // Cherry blossom petals animation toggle
+  const [petalsEnabled, setPetalsEnabled] = useState(true);
+
   // Apply theme class to <html> element
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'yozakura') {
-      root.classList.add('theme-yozakura');
+      root.classList.add('theme-yozakura', 'dark');
       root.classList.remove('theme-washi');
     } else {
-      root.classList.remove('theme-yozakura');
+      root.classList.remove('theme-yozakura', 'dark');
       root.classList.add('theme-washi');
     }
     if (typeof window !== 'undefined') {
@@ -341,6 +347,16 @@ export default function Home() {
         } else if (isFlipped && ['1', '2', '3', '4'].includes(e.key)) {
           e.preventDefault();
           handleSrsReview(parseInt(e.key, 10));
+        } else if (!isFlipped && e.key === '1') {
+          e.preventDefault();
+          handleMarkForgotten();
+        } else if (!isFlipped && e.key === '2') {
+          e.preventDefault();
+          handleMarkMastered();
+        } else if (e.key === 'a' || e.key === 'A') {
+          e.preventDefault();
+          playWaterDrop();
+          playJapaneseSpeech(currentChar);
         } else if (e.key === 'ArrowRight') {
           handleNextCard();
         } else if (e.key === 'ArrowLeft') {
@@ -361,7 +377,10 @@ export default function Home() {
     isSpotlightOpen,
     isVoiceShadowingOpen,
     isFlipped,
+    currentChar,
     handleSrsReview,
+    handleMarkForgotten,
+    handleMarkMastered,
     handleNextCard,
     handlePrevCard,
   ]);
@@ -369,21 +388,18 @@ export default function Home() {
   const isMastered = masteredList.includes(currentChar);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-between p-4 md:p-6 relative select-none">
-      {/* Họa tiết sóng biển Seigaiha (青海波) - lớp nền trang truyền thống */}
-      <div className="wagara-pattern" aria-hidden="true" />
-
-      {/* Vân xơ giấy Washi */}
-      <div className="washi-grain" aria-hidden="true" />
-
-      {/* Phong cảnh Nhật Bản: Mặt trời đỏ / Trăng bạc, Núi Phú Sĩ & Mây Kasumi */}
+    <div className="min-h-screen flex flex-col items-center justify-between p-3 sm:p-4 lg:p-5 relative select-none overflow-x-hidden">
+      {/* Khung cảnh Mỹ học Nhật Bản bao bọc xung quanh (Núi Phú Sĩ, Torii, Rừng Trúc, Chùa Kyoto, Trăng & Mặt trời) */}
       <JapaneseAtmosphericBackground theme={theme} />
 
-      {/* Cánh hoa anh đào rơi (Sakura) */}
-      <SakuraPetals />
+      {/* Hiệu ứng cánh hoa anh đào Sakura Fubuki rơi lãng mạn */}
+      <SakuraPetals enabled={petalsEnabled} />
+
+      {/* Cụm huy hiệu văn hóa Nhật Bản lơ lửng 2 bên cánh Studio (Desktop Wings) */}
+      <StudioAtmosphericWings />
 
       {/* Main Container */}
-      <div className="w-full max-w-4xl flex flex-col items-center gap-6 relative z-20">
+      <div className="w-full max-w-6xl flex flex-col items-center gap-3 sm:gap-4 relative z-20">
         <Header
           activeMode={activeMode}
           setActiveMode={setActiveMode}
@@ -398,6 +414,8 @@ export default function Home() {
           onOpenVoiceShadowing={() => setIsVoiceShadowingOpen(true)}
           isZenMusicPlaying={isZenPlaying}
           onToggleZenMusic={handleToggleZenMusic}
+          petalsEnabled={petalsEnabled}
+          onTogglePetals={() => setPetalsEnabled((prev) => !prev)}
         />
 
         {activeMode === 'study' && (
@@ -479,7 +497,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="w-full max-w-4xl mt-12 py-6 border-t border-washi-border/50 text-center text-xs opacity-70 flex flex-col sm:flex-row items-center justify-between gap-2 z-20 font-ui">
         <div className="flex items-center gap-2">
-          <span>⛩️</span>
+          <ToriiGateIcon className="w-4 h-4 text-torii" />
           <span>Sổ tay học Kanji tiếng Nhật • Luyện thi JLPT N5 - N1</span>
         </div>
         <div className="text-[11px]">

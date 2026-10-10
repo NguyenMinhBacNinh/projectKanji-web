@@ -10,6 +10,8 @@ import {
   playHankoStamp,
   playWaterDrop,
 } from '../lib/traditionalAudio';
+import { SensuFanIcon } from './ZenIcons';
+
 
 export default function KarutaGameSection({ currentLevel, kanjiList, fullDb, onChangeLevel }) {
   const [gridSize, setGridSize] = useState(12); // 12 cards (6 pairs) hoặc 16 cards (8 pairs)
@@ -216,7 +218,9 @@ export default function KarutaGameSection({ currentLevel, kanjiList, fullDb, onC
         {/* Completion Screen Overlay */}
         {isCompleted && (
           <div className="w-full py-8 text-center flex flex-col items-center gap-3 relative z-10 animate-fadeIn">
-            <div className="text-5xl animate-bounce">🎴</div>
+            <div className="w-20 h-20 rounded-3xl bg-torii/10 dark:bg-torii/20 text-torii dark:text-torii-light flex items-center justify-center border border-torii/30 shadow-inner animate-bounce">
+              <SensuFanIcon className="w-12 h-12" />
+            </div>
             <h3 className="text-2xl sm:text-3xl font-black font-kanji text-torii">
               CHIẾN THẮNG TRÒ CHƠI KARUTA!
             </h3>
@@ -287,10 +291,10 @@ export default function KarutaGameSection({ currentLevel, kanjiList, fullDb, onC
                     </div>
                   ) : (
                     /* Mặt úp của thẻ Karuta */
-                    <div className="flex flex-col items-center justify-center gap-1 opacity-40 hover:opacity-80 transition-opacity">
-                      <span className="text-xl sm:text-2xl">🎴</span>
-                      <span className="text-[9px] font-kanji font-bold uppercase tracking-widest">
-                        花札
+                    <div className="flex flex-col items-center justify-center gap-1.5 opacity-50 hover:opacity-90 transition-opacity">
+                      <SensuFanIcon className="w-7 h-7 text-torii/80" />
+                      <span className="text-[9px] font-kanji font-bold uppercase tracking-widest text-sumi/80 dark:text-stone-300">
+                        かるた
                       </span>
                     </div>
                   )}

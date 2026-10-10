@@ -9,6 +9,8 @@ import {
   playQuizSuccess,
   playQuizError,
 } from '../lib/traditionalAudio';
+import { ScrollUnfurledIcon, KatanaIcon, SearchIcon } from './ZenIcons';
+
 
 export default function GrammarSection() {
   const [activeTab, setActiveTab] = useState('handbook'); // 'handbook' | 'conjugation'
@@ -88,7 +90,8 @@ export default function GrammarSection() {
                 : 'opacity-70 hover:opacity-100'
             }`}
           >
-            <span>📜 Cẩm nang Ngữ pháp</span>
+            <ScrollUnfurledIcon className="w-3.5 h-3.5" />
+            <span>Cẩm nang Ngữ pháp</span>
           </button>
           <button
             onClick={() => {
@@ -101,7 +104,8 @@ export default function GrammarSection() {
                 : 'opacity-70 hover:opacity-100'
             }`}
           >
-            <span>⚙️ Luyện chia động từ</span>
+            <KatanaIcon className="w-3.5 h-3.5" />
+            <span>Luyện chia động từ</span>
           </button>
         </div>
 
@@ -143,7 +147,9 @@ export default function GrammarSection() {
                 placeholder="Tìm ngữ pháp (vd: 〜てください, 〜たい, muốn...)"
                 className="w-full py-2 pl-9 pr-3 text-xs rounded-xl bg-washi border border-washi-border focus:border-torii outline-hidden font-ui"
               />
-              <span className="absolute left-3 top-2.5 text-xs opacity-50">🔍</span>
+              <span className="absolute left-3 top-2.5 opacity-60">
+                <SearchIcon className="w-3.5 h-3.5" />
+              </span>
             </div>
 
             <div className="flex items-center justify-between text-[11px] opacity-60 px-1 pt-1 border-b border-washi-border pb-1.5">

@@ -10,6 +10,17 @@ import {
   playQuizError,
   playHankoStamp,
 } from '../lib/traditionalAudio';
+import {
+  SearchIcon,
+  VolumeIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  MasteredCheckIcon,
+  SensuFanIcon,
+  ScrollUnfurledIcon,
+  KatanaIcon,
+} from './ZenIcons';
+
 
 export default function VocabSection({ onSaveToNotebook }) {
   const [activeView, setActiveView] = useState('flashcard'); // 'flashcard' | 'list' | 'quiz'
@@ -132,7 +143,7 @@ export default function VocabSection({ onSaveToNotebook }) {
                 : 'opacity-70 hover:opacity-100'
             }`}
           >
-            <span>🎴</span>
+            <SensuFanIcon className="w-3.5 h-3.5" />
             <span>Thẻ Flashcard</span>
           </button>
           <button
@@ -146,7 +157,7 @@ export default function VocabSection({ onSaveToNotebook }) {
                 : 'opacity-70 hover:opacity-100'
             }`}
           >
-            <span>📜</span>
+            <ScrollUnfurledIcon className="w-3.5 h-3.5" />
             <span>Danh sách ({filteredList.length})</span>
           </button>
           <button
@@ -157,7 +168,7 @@ export default function VocabSection({ onSaveToNotebook }) {
                 : 'text-amber-800 dark:text-amber-300 hover:text-amber-600'
             }`}
           >
-            <span>⚡</span>
+            <KatanaIcon className="w-3.5 h-3.5" />
             <span>Phản xạ từ vựng</span>
           </button>
         </div>
@@ -222,7 +233,7 @@ export default function VocabSection({ onSaveToNotebook }) {
             placeholder="Tìm từ vựng, Hán Việt..."
             className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-washi border border-washi-border text-xs outline-none focus:border-torii transition-colors font-ui"
           />
-          <span className="absolute left-2.5 top-2 text-xs opacity-50">🔍</span>
+          <SearchIcon className="w-3.5 h-3.5 absolute left-2.5 top-2 text-stone-400" />
           {searchTerm && (
             <button
               onClick={() => setSearchTerm('')}
@@ -380,9 +391,10 @@ export default function VocabSection({ onSaveToNotebook }) {
               <div className="w-full max-w-lg flex items-center justify-between gap-2 px-1">
                 <button
                   onClick={handlePrevCard}
-                  className="py-2.5 px-5 karuta-card border border-washi-border rounded-2xl text-xs md:text-sm font-bold shadow-xs active:scale-95 transition-all"
+                  className="py-2 px-4 karuta-card border border-washi-border rounded-2xl text-xs md:text-sm font-bold shadow-xs active:scale-95 transition-all flex items-center gap-1"
                 >
-                  ← Trước
+                  <ChevronLeftIcon className="w-4 h-4" />
+                  <span>Trước</span>
                 </button>
 
                 <div className="flex items-center gap-2">
@@ -394,7 +406,7 @@ export default function VocabSection({ onSaveToNotebook }) {
                         : 'karuta-card opacity-80 hover:opacity-100'
                     }`}
                   >
-                    <span>{masteredWords.includes(currentWord?.id) ? '✅' : '⚪'}</span>
+                    <MasteredCheckIcon className="w-3.5 h-3.5" />
                     <span>{masteredWords.includes(currentWord?.id) ? 'Đã thuộc' : 'Thuộc từ này'}</span>
                   </button>
 
@@ -406,15 +418,16 @@ export default function VocabSection({ onSaveToNotebook }) {
                     className="p-2.5 karuta-card rounded-2xl border border-washi-border text-xs font-bold shadow-xs active:scale-95"
                     title="Phát âm từ vựng"
                   >
-                    🔊
+                    <VolumeIcon className="w-4 h-4" />
                   </button>
                 </div>
 
                 <button
                   onClick={handleNextCard}
-                  className="py-2.5 px-6 bg-torii hover:bg-torii-light text-white rounded-2xl text-xs md:text-sm font-bold shadow-md active:scale-95 transition-all"
+                  className="py-2 px-5 bg-torii hover:bg-torii-light text-white rounded-2xl text-xs md:text-sm font-bold shadow-md active:scale-95 transition-all flex items-center gap-1"
                 >
-                  Tiếp →
+                  <span>Tiếp</span>
+                  <ChevronRightIcon className="w-4 h-4" />
                 </button>
               </div>
             </>
@@ -429,17 +442,17 @@ export default function VocabSection({ onSaveToNotebook }) {
             {filteredList.map((item) => (
               <div
                 key={item.id}
-                className="p-3.5 rounded-2xl bg-washi/90 border border-washi-border hover:border-torii/50 transition-all flex flex-col justify-between group shadow-2xs"
+                className="p-3.5 rounded-2xl bg-washi/90 dark:bg-stone-800/90 border border-washi-border dark:border-stone-700 hover:border-torii/50 dark:hover:border-torii-light transition-all flex flex-col justify-between group shadow-2xs h-[116px]"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <div className="flex items-baseline gap-2">
-                      <span className="font-kanji text-xl font-black group-hover:text-torii transition-colors">
+                      <span className="font-kanji text-xl font-black text-stone-900 dark:text-stone-50 group-hover:text-torii dark:group-hover:text-torii-light transition-colors">
                         {item.kanji}
                       </span>
-                      <span className="text-xs font-kanji opacity-75">{item.reading}</span>
+                      <span className="text-xs font-kanji font-bold text-torii dark:text-torii-light">{item.reading}</span>
                     </div>
-                    <div className="text-[10px] font-mono opacity-50 uppercase tracking-wide">
+                    <div className="text-[10px] font-mono text-stone-500 dark:text-stone-400 uppercase tracking-wide">
                       {item.romaji} • [{item.hanViet}]
                     </div>
                   </div>
@@ -447,20 +460,20 @@ export default function VocabSection({ onSaveToNotebook }) {
                   <button
                     onClick={() => {
                       playWaterDrop();
-                      playJapaneseSpeech(item.kanji);
+                      playJapaneseSpeech(item.kanji, item.reading);
                     }}
-                    className="p-1 rounded-lg bg-washi border border-washi-border hover:bg-torii hover:text-white transition-all text-xs"
+                    className="p-1 rounded-lg bg-washi dark:bg-stone-700 border border-washi-border dark:border-stone-600 hover:bg-torii hover:text-white transition-all text-xs text-stone-700 dark:text-stone-200"
                     title="Nghe đọc"
                   >
-                    🔊
+                    <VolumeIcon className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
-                <div className="mt-2 pt-2 border-t border-washi-border/60">
-                  <div className="text-xs font-bold text-color-sumi">{item.meaning}</div>
-                  <div className="flex items-center justify-between text-[10px] opacity-60 mt-1">
+                <div className="mt-1.5 pt-1.5 border-t border-washi-border/60 dark:border-stone-700/60">
+                  <div className="text-xs font-bold text-stone-800 dark:text-stone-100 truncate">{item.meaning}</div>
+                  <div className="flex items-center justify-between text-[10px] text-stone-500 dark:text-stone-400 mt-0.5">
                     <span className="hanko-stamp py-0.2 px-1.5 text-[9px]">{item.level}</span>
-                    <span>{item.type}</span>
+                    <span className="font-medium">{item.type}</span>
                   </div>
                 </div>
               </div>

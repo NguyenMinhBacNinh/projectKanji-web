@@ -24,23 +24,24 @@
   --card-shadow: 0 18px 42px -10px rgba(78, 54, 30, 0.16), 0 6px 16px -2px rgba(78, 54, 30, 0.08);
 }
 
-/* Theme: Yozakura - Đêm Kyoto & Hoa anh đào */
-.theme-yozakura {
-  --bg-page: #0a0e17;
-  --bg-gradient: radial-gradient(ellipse at 50% -12%, rgba(239, 68, 68, 0.24) 0%, rgba(10, 14, 23, 0) 65%),
-                 radial-gradient(ellipse at 85% 20%, rgba(236, 72, 153, 0.16) 0%, transparent 45%),
-                 linear-gradient(180deg, #0d121c 0%, #0a0e17 50%, #05080f 100%);
-  --bg-card: #151c28;
-  --bg-subcard: #1c2536;
-  --bg-wood: #222d42;
-  --border-subtle: #2b3952;
-  --border-strong: #3f5070;
-  --color-torii: #ef4444;
-  --color-torii-light: #f87171;
-  --color-gold: #eab308;
-  --color-sumi: #f3f4f6;
+/* Theme: Yozakura - Đêm Kyoto & Hoa anh đào (Chế độ tối Dark Mode) */
+.theme-yozakura,
+.dark {
+  --bg-page: #0b0f17;
+  --bg-gradient: radial-gradient(ellipse at 50% -12%, rgba(239, 68, 68, 0.22) 0%, rgba(11, 15, 23, 0) 65%),
+                 radial-gradient(ellipse at 85% 20%, rgba(236, 72, 153, 0.15) 0%, transparent 45%),
+                 linear-gradient(180deg, #141a24 0%, #0b0f17 50%, #070a10 100%);
+  --bg-card: #141a24;
+  --bg-subcard: #1c2433;
+  --bg-wood: #1e2637;
+  --border-subtle: #2d3748;
+  --border-strong: #4a5568;
+  --color-torii: #f87171;
+  --color-torii-light: #fca5a5;
+  --color-gold: #fbbf24;
+  --color-sumi: #f8fafc;
   --color-muted: #94a3b8;
-  --card-shadow: 0 18px 46px -10px rgba(0, 0, 0, 0.6), 0 0 24px -2px rgba(239, 68, 68, 0.15);
+  --card-shadow: 0 18px 46px -10px rgba(0, 0, 0, 0.75), 0 0 24px -2px rgba(239, 68, 68, 0.18);
 }
 
 body {
@@ -108,6 +109,27 @@ body {
   }
   100% {
     transform: translateY(105vh) translateX(140px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes sakuraDrift {
+  0% {
+    transform: translateY(-5vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.85;
+  }
+  50% {
+    transform: translateY(50vh) translateX(55px) rotate(180deg);
+    opacity: 0.75;
+  }
+  85% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(105vh) translateX(110px) rotate(360deg);
     opacity: 0;
   }
 }
@@ -204,6 +226,42 @@ body {
   border-color: rgba(234, 179, 8, 0.25);
 }
 
+/* Chuẩn mực Furigana Ruby Typography Nhật Bản */
+ruby {
+  ruby-position: over;
+  ruby-align: center;
+}
+
+/* Furigana cho chữ Kanji tiêu đề lớn ở mặt thẻ chính */
+.kanji-hero-ruby {
+  display: inline-flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  line-height: 1;
+}
+
+.kanji-hero-rt {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.16em !important;
+  color: var(--color-torii) !important;
+  opacity: 0.88;
+  user-select: none;
+  font-family: var(--font-kanji);
+  margin-bottom: 3px;
+}
+
+/* Furigana tiêu chuẩn cho từ vựng và văn bản */
+.ruby-furigana rt,
+.ruby-rt {
+  font-size: 0.52em !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  color: var(--color-torii) !important;
+  opacity: 0.95;
+  user-select: none;
+}
 
 /* Con dấu triện đỏ truyền thống Nhật Bản (Hanko) */
 .hanko-stamp {

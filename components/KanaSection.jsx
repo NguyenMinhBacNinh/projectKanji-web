@@ -10,6 +10,8 @@ import {
   playQuizError,
   playHankoStamp,
 } from '../lib/traditionalAudio';
+import { OrigamiCraneIcon, KatanaIcon } from './ZenIcons';
+
 
 export default function KanaSection() {
   const [scriptType, setScriptType] = useState('hiragana'); // 'hiragana' | 'katakana'
@@ -94,26 +96,28 @@ export default function KanaSection() {
               playWoodClapper();
               setScriptType('hiragana');
             }}
-            className={`px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold transition-all flex items-center gap-1.5 ${
               scriptType === 'hiragana'
                 ? 'bg-torii text-white shadow-xs'
                 : 'opacity-70 hover:opacity-100'
             }`}
           >
-            <span>あ Hiragana (Chữ mềm)</span>
+            <OrigamiCraneIcon className="w-3.5 h-3.5" />
+            <span>Hiragana (Chữ mềm)</span>
           </button>
           <button
             onClick={() => {
               playWoodClapper();
               setScriptType('katakana');
             }}
-            className={`px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold transition-all flex items-center gap-1.5 ${
               scriptType === 'katakana'
                 ? 'bg-torii text-white shadow-xs'
                 : 'opacity-70 hover:opacity-100'
             }`}
           >
-            <span>ア Katakana (Chữ cứng)</span>
+            <span className="font-kanji">ア</span>
+            <span>Katakana (Chữ cứng)</span>
           </button>
         </div>
 
@@ -160,13 +164,13 @@ export default function KanaSection() {
           </button>
           <button
             onClick={startQuiz}
-            className={`px-3 py-1.5 rounded-xl transition-all border flex items-center gap-1 ${
+            className={`px-3 py-1.5 rounded-xl transition-all border flex items-center gap-1.5 ${
               category === 'quiz'
                 ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
                 : 'bg-amber-500/15 border-amber-500/40 text-amber-800 dark:text-amber-300 hover:bg-amber-500 hover:text-white'
             }`}
           >
-            <span>⚡</span>
+            <KatanaIcon className="w-3.5 h-3.5" />
             <span>Luyện phản xạ</span>
           </button>
         </div>

@@ -9,6 +9,8 @@ import {
   playHankoStamp,
   playWoodClapper,
 } from '../lib/traditionalAudio';
+import { KatanaIcon, SamuraiKabutoIcon } from './ZenIcons';
+
 
 export default function SamuraiSpeedSection({ kanjiList = [], fullDb, currentLevel = 'N5' }) {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -143,8 +145,8 @@ export default function SamuraiSpeedSection({ kanjiList = [], fullDb, currentLev
       {/* Top Banner / Arena Status */}
       <div className="w-full p-4 sm:p-5 rounded-3xl karuta-card border border-washi-border shadow-md flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-torii text-white flex items-center justify-center text-2xl shadow-sm">
-            ⚔️
+          <div className="w-12 h-12 rounded-2xl bg-torii text-white flex items-center justify-center shadow-xs border border-amber-300/30">
+            <KatanaIcon className="w-6 h-6" />
           </div>
           <div>
             <h2 className="font-black text-lg font-ui text-torii">ĐẤU TRƯỜNG SAMURAI 60S</h2>
@@ -176,9 +178,11 @@ export default function SamuraiSpeedSection({ kanjiList = [], fullDb, currentLev
         {!isPlaying && !isGameOver && (
           /* Ready Screen */
           <div className="flex flex-col items-center gap-5 py-8 text-center relative z-10">
-            <div className="text-5xl">🎌</div>
+            <div className="w-20 h-20 rounded-3xl bg-torii/10 dark:bg-torii/20 text-torii dark:text-torii-light flex items-center justify-center border border-torii/30 shadow-inner">
+              <SamuraiKabutoIcon className="w-14 h-14" />
+            </div>
             <div>
-              <h3 className="text-2xl font-black font-ui mb-2">SẴN SÀNG RA ĐẬU TRƯỜNG?</h3>
+              <h3 className="text-2xl font-black font-ui mb-2">SẴN SÀNG RA ĐẤU TRƯỜNG?</h3>
               <p className="text-xs opacity-70 max-w-sm leading-relaxed">
                 Bạn có đúng <strong>60 giây</strong> để nhận diện càng nhiều chữ Hán càng tốt.
                 Combo càng cao, điểm thưởng nhân lên càng khủng!
@@ -187,9 +191,10 @@ export default function SamuraiSpeedSection({ kanjiList = [], fullDb, currentLev
 
             <button
               onClick={handleStartGame}
-              className="px-8 py-3.5 rounded-2xl bg-torii text-white font-black text-sm shadow-lg hover:opacity-90 active:scale-95 transition-all flex items-center gap-2"
+              className="px-8 py-3.5 rounded-2xl bg-torii text-white font-black text-sm shadow-lg hover:opacity-90 active:scale-95 transition-all flex items-center gap-2.5"
             >
-              <span>⚔️ BẮT ĐẦU ĐẤU TRƯỜNG 60S</span>
+              <KatanaIcon className="w-5 h-5" />
+              <span>BẮT ĐẦU ĐẤU TRƯỜNG 60S</span>
             </button>
           </div>
         )}
@@ -281,9 +286,10 @@ export default function SamuraiSpeedSection({ kanjiList = [], fullDb, currentLev
             <div className="flex items-center gap-3 mt-3">
               <button
                 onClick={handleStartGame}
-                className="px-6 py-3 rounded-xl bg-torii text-white font-bold text-xs shadow-md hover:opacity-90 active:scale-95 transition-all"
+                className="px-6 py-3 rounded-xl bg-torii text-white font-bold text-xs shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center gap-2"
               >
-                ⚔️ ĐẤU LẠI VÁN MỚI
+                <KatanaIcon className="w-4 h-4" />
+                <span>ĐẤU LẠI VÁN MỚI</span>
               </button>
               <button
                 onClick={() => setIsGameOver(false)}
