@@ -308,24 +308,6 @@ export default function StudySection({
                         </span>
                       )}
                     </div>
-
-                    {/* Right: Sound */}
-                    <div className="flex items-center gap-1.5">
-                      {/* Phát âm */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          playWaterDrop();
-                          playJapaneseSpeech(currentChar);
-                        }}
-                        className="p-1.5 sm:px-2.5 sm:py-1 rounded-xl bg-washi dark:bg-stone-800 hover:bg-torii dark:hover:bg-torii text-torii dark:text-torii-light hover:text-white dark:hover:text-white border border-torii/30 dark:border-stone-700 transition-all text-xs font-bold flex items-center gap-1.5 active:scale-95 shadow-2xs"
-                        title="Phát âm chữ này [Phím A]"
-                      >
-                        <VolumeIcon className="w-3.5 h-3.5" />
-                        <span className="hidden sm:inline text-xs">Phát âm</span>
-                        <kbd className="hidden md:inline text-[9px] px-1 py-0.2 rounded bg-black/5 dark:bg-white/10 font-mono">A</kbd>
-                      </button>
-                    </div>
                   </div>
 
                   {/* Center: Hero Calligraphy Kanji & Han-Viet Dignified Typography */}
@@ -401,21 +383,6 @@ export default function StudySection({
                           {cardInfo?.meaning}
                         </span>
                       </div>
-                    </div>
-
-                    <div className="flex items-center gap-1 sm:gap-1.5">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          playWaterDrop();
-                          playJapaneseSpeech(currentChar);
-                        }}
-                        className="p-1.5 sm:px-2.5 sm:py-1 rounded-xl bg-washi dark:bg-stone-800 hover:bg-torii text-torii dark:text-torii-light hover:text-white border border-torii/30 dark:border-stone-700 transition-all text-xs font-bold flex items-center gap-1.5 active:scale-95 shadow-2xs"
-                        title="Phát âm chữ này"
-                      >
-                        <VolumeIcon className="w-3.5 h-3.5" />
-                        <span className="text-xs hidden sm:inline">Phát âm</span>
-                      </button>
                     </div>
                   </div>
 

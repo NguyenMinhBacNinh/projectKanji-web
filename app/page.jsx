@@ -391,10 +391,6 @@ export default function Home() {
         } else if (!isFlipped && e.key === '2') {
           e.preventDefault();
           handleMarkMastered();
-        } else if (e.key === 'a' || e.key === 'A') {
-          e.preventDefault();
-          playWaterDrop();
-          playJapaneseSpeech(currentChar);
         } else if (e.key === 'ArrowRight') {
           handleNextCard();
         } else if (e.key === 'ArrowLeft') {
