@@ -249,9 +249,9 @@ export default function Header({
               title="Tiện ích & Cài đặt nâng cao"
             >
               <SettingsSlidersIcon className="w-4 h-4" />
-              {(isZenMusicPlaying || petalsEnabled) && (
-                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-torii" />
-              )}
+              {!isSettingsOpen && (isZenMusicPlaying ? (
+                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-stone-850 animate-pulse" />
+              ) : null)}
             </button>
 
             {isSettingsOpen && (
