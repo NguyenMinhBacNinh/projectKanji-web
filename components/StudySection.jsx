@@ -378,7 +378,7 @@ export default function StudySection({
                     <div className="bg-stone-100/80 dark:bg-stone-800/80 py-1.5 px-2.5 rounded-xl border border-stone-200/80 dark:border-stone-700/80">
                       <div className="flex items-center justify-center gap-1.5">
                         <span className="text-[10px] sm:text-[11px] uppercase font-bold text-stone-600 dark:text-stone-400 tracking-wider">Âm Kun (Kunyomi)</span>
-                        {cardInfo?.kun && (
+                        {cardInfo?.kun && cardInfo.kun !== '—' && (
                           <PitchAccentVisualizer word={currentChar} reading={cardInfo.kun} />
                         )}
                       </div>
