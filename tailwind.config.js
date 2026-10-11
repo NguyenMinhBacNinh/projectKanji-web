@@ -51,6 +51,10 @@ module.exports = {
         washi: 'var(--card-shadow)',
         hanko: '0 0 0 3px var(--color-torii), 0 4px 12px rgba(185, 28, 28, 0.3)',
       },
+      transitionTimingFunction: {
+        spring: 'cubic-bezier(0.32, 0.72, 0, 1)',
+        karuta: 'cubic-bezier(0.34, 1.15, 0.64, 1)',
+      },
     },
   },
   plugins: [],

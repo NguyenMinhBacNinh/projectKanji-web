@@ -290,17 +290,20 @@ export default function StudySection({
                           playWaterDrop();
                           setShowFurigana(!showFurigana);
                         }}
-                        className={`px-2 py-0.5 rounded-lg text-xs font-bold border transition-all flex items-center gap-1 ${
+                        className={`px-2.5 py-1 rounded-xl text-xs font-bold border transition-all duration-300 ease-spring flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95 ${
                           showFurigana
                             ? 'bg-emerald-500/15 dark:bg-emerald-500/25 text-emerald-800 dark:text-emerald-300 border-emerald-500/40 dark:border-emerald-500/40'
                             : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 border-stone-200 dark:border-stone-700'
                         }`}
                         title="Bật/tắt Furigana âm Kunyomi [Phím F]"
                       >
-                        <span className="font-kanji">あ</span>
-                        <span className="text-[10px] hidden sm:inline">
+                        <span className="font-kanji text-[13px]">あ</span>
+                        <span className="text-[10px] hidden sm:inline font-semibold">
                           Furigana {showFurigana ? 'ON' : 'OFF'}
                         </span>
+                        <kbd className="hidden sm:inline-flex px-1 py-0.2 rounded text-[9px] font-mono bg-black/5 dark:bg-white/10 text-stone-700 dark:text-stone-300 border border-black/10 dark:border-white/10 font-bold">
+                          F
+                        </kbd>
                       </button>
                       {dueCount > 0 && (
                         <span className="px-2 py-0.5 rounded-full bg-amber-500/15 dark:bg-amber-400/20 text-amber-900 dark:text-amber-200 border border-amber-500/30 text-[10px] font-bold animate-pulse">
@@ -467,17 +470,24 @@ export default function StudySection({
           </div>
 
           {/* Action Buttons: Forgotten [1] & Mastered [2] (TRỰC TIẾP DƯỚI THẺ - ĐỘ TƯƠNG PHẢN CAO) */}
+          {/* Bottom Action Controls: SRS Mastery Buttons (Đã thuộc lòng [2] vs Chưa nhớ [1]) */}
           <div className="w-full flex items-center justify-between gap-2 sm:gap-2.5">
             <button
               onClick={() => {
                 playHankoStamp();
                 onMarkForgotten();
               }}
-              className="flex-1 py-2.5 sm:py-3 px-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-xs flex items-center justify-center gap-2 transition-all bg-[#fff7ed] dark:bg-[#2c1d11] border-2 border-amber-500/60 dark:border-amber-600/70 text-amber-950 dark:text-amber-100 hover:bg-amber-500 hover:text-white dark:hover:bg-amber-600 dark:hover:text-white active:scale-95 cursor-pointer"
+              className="flex-1 py-2.5 sm:py-3 px-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-xs flex items-center justify-between transition-all duration-300 ease-spring bg-[#fff7ed] dark:bg-[#2c1d11] border-2 border-amber-500/60 dark:border-amber-600/70 text-amber-950 dark:text-amber-100 hover:bg-amber-500 hover:text-white dark:hover:bg-amber-600 dark:hover:text-white active:scale-[0.97] cursor-pointer group"
               title="Chưa nhớ - Đóng dấu lưu sổ tay [Phím 1]"
             >
-              <ReviewRecallIcon className="w-4 h-4 text-amber-600 dark:text-amber-300" />
-              <span>Chưa nhớ (Sổ tay [1])</span>
+              <div className="flex items-center gap-2">
+                <ReviewRecallIcon className="w-4 h-4 text-amber-600 dark:text-amber-300 group-hover:text-white transition-colors" />
+                <span className="tracking-wide">Chưa nhớ</span>
+                <span className="text-[11px] opacity-70 font-medium hidden sm:inline group-hover:opacity-90">· Sổ tay</span>
+              </div>
+              <kbd className="w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-mono font-black bg-amber-200/80 dark:bg-amber-900/60 text-amber-950 dark:text-amber-200 group-hover:bg-white/25 group-hover:text-white border border-amber-400/50 dark:border-amber-700/60 shadow-2xs transition-colors">
+                1
+              </kbd>
             </button>
 
             <button
@@ -485,15 +495,20 @@ export default function StudySection({
                 playTempleBell();
                 onMarkMastered();
               }}
-              className={`flex-1 py-2.5 sm:py-3 px-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-sm flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer border-2 ${
+              className={`flex-1 py-2.5 sm:py-3 px-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-sm flex items-center justify-between transition-all duration-300 ease-spring active:scale-[0.97] cursor-pointer border-2 ${
                 isMastered
                   ? 'bg-emerald-700 hover:bg-emerald-800 text-white border-emerald-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 dark:border-emerald-500 ring-2 ring-emerald-500/30'
                   : 'bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 dark:border-emerald-500'
               }`}
               title="Đã thuộc lòng [Phím 2]"
             >
-              <MasteredCheckIcon className="w-4 h-4 text-white" />
-              <span>{isMastered ? '✓ Đã thuộc lòng [2]' : 'Đã thuộc lòng [2]'}</span>
+              <div className="flex items-center gap-2">
+                <MasteredCheckIcon className="w-4 h-4 text-white" />
+                <span className="tracking-wide">{isMastered ? '✓ Đã thuộc lòng' : 'Đã thuộc lòng'}</span>
+              </div>
+              <kbd className="w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-mono font-black bg-white/25 text-white border border-white/35 shadow-2xs">
+                2
+              </kbd>
             </button>
           </div>
 
@@ -504,11 +519,14 @@ export default function StudySection({
                 playWoodClapper();
                 onPrevCard();
               }}
-              className="flex-1 py-2.5 px-3 karuta-card dark:bg-stone-800 border border-washi-border dark:border-stone-700 rounded-2xl text-xs sm:text-sm font-bold shadow-2xs flex items-center justify-center gap-1.5 transition-all active:scale-95 hover:border-torii/40 text-stone-800 dark:text-stone-100"
+              className="flex-1 py-2.5 px-3 karuta-card dark:bg-stone-800 border border-washi-border dark:border-stone-700 rounded-2xl text-xs sm:text-sm font-bold shadow-2xs flex items-center justify-center gap-1.5 transition-all duration-300 ease-spring active:scale-[0.97] hover:border-torii/40 text-stone-800 dark:text-stone-100 group"
               title="Chữ trước [←]"
             >
-              <ChevronLeftIcon className="w-4 h-4" />
+              <ChevronLeftIcon className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
               <span>Trước</span>
+              <kbd className="hidden sm:inline-flex px-1.5 py-0.5 rounded text-[10px] font-mono bg-stone-200/70 dark:bg-stone-700/70 text-stone-600 dark:text-stone-300 border border-stone-300/40 dark:border-stone-600">
+                ←
+              </kbd>
             </button>
 
             <button
@@ -516,11 +534,14 @@ export default function StudySection({
                 playWoodClapper();
                 setIsFlipped(!isFlipped);
               }}
-              className="flex-1 py-2.5 px-3 karuta-card dark:bg-stone-800 border border-washi-border dark:border-stone-700 rounded-2xl text-xs sm:text-sm font-bold shadow-2xs flex items-center justify-center gap-1.5 transition-all active:scale-95 hover:border-torii/40 text-stone-800 dark:text-stone-100"
+              className="flex-1 py-2.5 px-3 karuta-card dark:bg-stone-800 border border-washi-border dark:border-stone-700 rounded-2xl text-xs sm:text-sm font-bold shadow-2xs flex items-center justify-center gap-1.5 transition-all duration-300 ease-spring active:scale-[0.97] hover:border-torii/40 text-stone-800 dark:text-stone-100 group"
               title="Lật thẻ [Space]"
             >
               <span>{isFlipped ? 'Mặt trước' : 'Lật thẻ'}</span>
-              <span className="text-torii dark:text-torii-light font-bold">↻</span>
+              <span className="text-torii dark:text-torii-light font-bold transition-transform group-hover:rotate-180 duration-500">↻</span>
+              <kbd className="hidden sm:inline-flex px-1.5 py-0.5 rounded text-[10px] font-mono bg-stone-200/70 dark:bg-stone-700/70 text-stone-600 dark:text-stone-300 border border-stone-300/40 dark:border-stone-600">
+                Space
+              </kbd>
             </button>
 
             <button
@@ -528,11 +549,14 @@ export default function StudySection({
                 playWoodClapper();
                 onNextCard();
               }}
-              className="flex-1 py-2.5 px-4 bg-torii hover:bg-torii-light dark:bg-red-600 dark:hover:bg-red-500 text-white rounded-2xl text-xs sm:text-sm font-bold shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95"
+              className="flex-1 py-2.5 px-4 bg-torii hover:bg-torii-light dark:bg-red-600 dark:hover:bg-red-500 text-white rounded-2xl text-xs sm:text-sm font-bold shadow-xs flex items-center justify-center gap-1.5 transition-all duration-300 ease-spring active:scale-[0.97] group"
               title="Chữ sau [→]"
             >
               <span>Tiếp</span>
-              <ChevronRightIcon className="w-4 h-4" />
+              <kbd className="hidden sm:inline-flex px-1.5 py-0.5 rounded text-[10px] font-mono bg-white/20 text-white border border-white/30">
+                →
+              </kbd>
+              <ChevronRightIcon className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </button>
           </div>
         </div>
