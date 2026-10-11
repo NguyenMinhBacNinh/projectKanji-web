@@ -72,9 +72,9 @@ export default function StudySection({
   const progressPercent = total > 0 ? Math.round(((currentIndex + 1) / total) * 100) : 0;
 
   return (
-    <section className="w-full max-w-6xl flex flex-col items-center gap-3 sm:gap-3.5 z-20">
+    <section className="w-full max-w-6xl flex flex-col items-center gap-1.5 sm:gap-2 lg:gap-2 flex-1 min-h-0 z-20">
       {/* 1. TOP BAR: Level Tabs, Progress & Quick Tools hợp nhất 1 dòng khoa học (Unified Studio Toolbar) */}
-      <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-2 p-1.5 rounded-2xl bg-white/80 dark:bg-stone-900/80 border border-amber-900/10 dark:border-stone-700/80 shadow-xs backdrop-blur-md">
+      <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-1.5 p-1 sm:p-1.5 rounded-2xl bg-white/80 dark:bg-stone-900/80 border border-amber-900/10 dark:border-stone-700/80 shadow-xs backdrop-blur-md shrink-0">
         {/* Left: Level Tabs (Thẻ Mộc bài Kifuda - 木札) */}
         <div className="flex items-center gap-1 w-full sm:w-auto">
           {['N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => {
@@ -87,7 +87,7 @@ export default function StudySection({
                   playWoodClapper();
                   onChangeLevel(lvl);
                 }}
-                className={`py-1.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all text-center relative ${
+                className={`py-1 sm:py-1.5 px-2.5 sm:px-3 rounded-xl text-xs sm:text-sm font-bold transition-all text-center relative ${
                   isActive
                     ? 'bg-gradient-to-r from-torii to-red-700 dark:from-red-600 dark:to-torii-light text-white shadow-sm font-black scale-[1.02] border border-amber-400/40'
                     : 'text-stone-700 dark:text-stone-300 hover:text-torii dark:hover:text-torii-light hover:bg-torii/10 dark:hover:bg-torii/20'
@@ -103,11 +103,11 @@ export default function StudySection({
         </div>
 
         {/* Center: Progress Bar & Counter */}
-        <div className="flex items-center gap-2.5 px-2">
+        <div className="flex items-center gap-2 px-2">
           <span className="text-torii dark:text-torii-light font-black font-kanji text-xs sm:text-sm">
             {total > 0 ? currentIndex + 1 : 0} / {total} chữ
           </span>
-          <div className="w-20 sm:w-28 h-2 rounded-full overflow-hidden bg-stone-200 dark:bg-stone-800 border border-stone-300/50 dark:border-stone-700">
+          <div className="w-16 sm:w-24 h-2 rounded-full overflow-hidden bg-stone-200 dark:bg-stone-800 border border-stone-300/50 dark:border-stone-700">
             <div
               className="h-full bg-gradient-to-r from-torii to-amber-500 transition-all duration-300 rounded-full"
               style={{ width: `${progressPercent}%` }}
@@ -123,7 +123,7 @@ export default function StudySection({
               playWoodClapper();
               onToggleShuffle();
             }}
-            className={`py-1.5 px-2.5 rounded-xl border text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5 ${
+            className={`py-1 px-2.5 rounded-xl border text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5 ${
               isShuffled
                 ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-600'
                 : 'bg-white/90 dark:bg-stone-800/90 border-stone-200 dark:border-stone-700 hover:border-torii/40 text-stone-700 dark:text-stone-200'
@@ -139,7 +139,7 @@ export default function StudySection({
               playWoodClapper();
               onOpenGridModal();
             }}
-            className="py-1.5 px-2.5 bg-white/90 dark:bg-stone-800/90 border border-stone-200 dark:border-stone-700 hover:border-torii/40 rounded-xl text-xs font-bold shadow-2xs flex items-center gap-1.5 transition-all active:scale-95 text-stone-700 dark:text-stone-200"
+            className="py-1 px-2.5 bg-white/90 dark:bg-stone-800/90 border border-stone-200 dark:border-stone-700 hover:border-torii/40 rounded-xl text-xs font-bold shadow-2xs flex items-center gap-1.5 transition-all active:scale-95 text-stone-700 dark:text-stone-200"
             title="Mục lục Hán tự [Phím G]"
           >
             <GridIcon className="w-3.5 h-3.5" />
@@ -149,16 +149,16 @@ export default function StudySection({
       </div>
 
       {/* STUDIO SUITE TOOLBAR: Dải công cụ chuyên sâu cao cấp - 1 chạm mở ngay */}
-      <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 px-0.5">
+      <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-1.5 sm:gap-2 px-0.5 shrink-0">
         <button
           onClick={() => {
             playWoodClapper();
             if (onOpenPracticeModal) onOpenPracticeModal();
           }}
-          className="py-2.5 px-3 rounded-2xl bg-white/80 dark:bg-stone-900/80 hover:bg-torii hover:text-white dark:hover:bg-torii dark:hover:text-white border border-amber-900/10 dark:border-stone-700/80 hover:border-torii text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-2 shadow-xs group active:scale-95 cursor-pointer backdrop-blur-md"
+          className="py-1.5 sm:py-2 px-2.5 rounded-xl bg-white/80 dark:bg-stone-900/80 hover:bg-torii hover:text-white dark:hover:bg-torii dark:hover:text-white border border-amber-900/10 dark:border-stone-700/80 hover:border-torii text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-2 shadow-xs group active:scale-95 cursor-pointer backdrop-blur-md"
           title="Tập viết & Thứ tự nét bút KanjiVG [Phím W]"
         >
-          <div className="w-6 h-6 rounded-lg bg-torii/10 dark:bg-torii/20 group-hover:bg-white/20 flex items-center justify-center transition-colors">
+          <div className="w-5 h-5 rounded-lg bg-torii/10 dark:bg-torii/20 group-hover:bg-white/20 flex items-center justify-center transition-colors">
             <BrushIcon className="w-3.5 h-3.5 text-torii group-hover:text-white transition-colors" />
           </div>
           <span className="truncate">Tập viết</span>
@@ -170,10 +170,10 @@ export default function StudySection({
             playWoodClapper();
             if (onOpenMindmapModal) onOpenMindmapModal();
           }}
-          className="py-2.5 px-3 rounded-2xl bg-white/80 dark:bg-stone-900/80 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white border border-amber-900/10 dark:border-stone-700/80 hover:border-indigo-500 text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-2 shadow-xs group active:scale-95 cursor-pointer backdrop-blur-md"
+          className="py-1.5 sm:py-2 px-2.5 rounded-xl bg-white/80 dark:bg-stone-900/80 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white border border-amber-900/10 dark:border-stone-700/80 hover:border-indigo-500 text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-2 shadow-xs group active:scale-95 cursor-pointer backdrop-blur-md"
           title="Sơ đồ tư duy Kanji Mindmap [Phím M]"
         >
-          <div className="w-6 h-6 rounded-lg bg-indigo-500/10 dark:bg-indigo-500/20 group-hover:bg-white/20 flex items-center justify-center transition-colors">
+          <div className="w-5 h-5 rounded-lg bg-indigo-500/10 dark:bg-indigo-500/20 group-hover:bg-white/20 flex items-center justify-center transition-colors">
             <MindmapIcon className="w-3.5 h-3.5 text-indigo-500 group-hover:text-white transition-colors" />
           </div>
           <span className="truncate">Mindmap</span>
@@ -185,10 +185,10 @@ export default function StudySection({
             playWoodClapper();
             if (onOpenRadicalModal) onOpenRadicalModal();
           }}
-          className="py-2.5 px-3 rounded-2xl bg-white/80 dark:bg-stone-900/80 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white border border-amber-900/10 dark:border-stone-700/80 hover:border-emerald-500 text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-2 shadow-xs group active:scale-95 cursor-pointer backdrop-blur-md"
+          className="py-1.5 sm:py-2 px-2.5 rounded-xl bg-white/80 dark:bg-stone-900/80 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white border border-amber-900/10 dark:border-stone-700/80 hover:border-emerald-500 text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-2 shadow-xs group active:scale-95 cursor-pointer backdrop-blur-md"
           title="Tra cứu 214 Bộ thủ Hán tự [Phím R]"
         >
-          <div className="w-6 h-6 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 group-hover:bg-white/20 flex items-center justify-center transition-colors">
+          <div className="w-5 h-5 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 group-hover:bg-white/20 flex items-center justify-center transition-colors">
             <RadicalIcon className="w-3.5 h-3.5 text-emerald-600 group-hover:text-white transition-colors" />
           </div>
           <span className="truncate">214 Bộ thủ</span>
@@ -200,10 +200,10 @@ export default function StudySection({
             playWaterDrop();
             if (onOpenVoiceShadowing) onOpenVoiceShadowing();
           }}
-          className="py-2.5 px-3 rounded-2xl bg-white/80 dark:bg-stone-900/80 hover:bg-rose-600 hover:text-white dark:hover:bg-rose-600 dark:hover:text-white border border-amber-900/10 dark:border-stone-700/80 hover:border-rose-500 text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-2 shadow-xs group active:scale-95 cursor-pointer backdrop-blur-md"
+          className="py-1.5 sm:py-2 px-2.5 rounded-xl bg-white/80 dark:bg-stone-900/80 hover:bg-rose-600 hover:text-white dark:hover:bg-rose-600 dark:hover:text-white border border-amber-900/10 dark:border-stone-700/80 hover:border-rose-500 text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-2 shadow-xs group active:scale-95 cursor-pointer backdrop-blur-md"
           title="Luyện phát âm AI Shadowing & Chấm điểm"
         >
-          <div className="w-6 h-6 rounded-lg bg-rose-500/10 dark:bg-rose-500/20 group-hover:bg-white/20 flex items-center justify-center transition-colors">
+          <div className="w-5 h-5 rounded-lg bg-rose-500/10 dark:bg-rose-500/20 group-hover:bg-white/20 flex items-center justify-center transition-colors">
             <MicShadowingIcon className="w-3.5 h-3.5 text-rose-500 group-hover:text-white transition-colors" />
           </div>
           <span className="truncate">AI Shadowing</span>
@@ -214,10 +214,10 @@ export default function StudySection({
             playWaterDrop();
             if (onOpenWorksheetModal) onOpenWorksheetModal();
           }}
-          className="py-2.5 px-3 rounded-2xl bg-white/80 dark:bg-stone-900/80 hover:bg-amber-600 hover:text-white dark:hover:bg-amber-600 dark:hover:text-white border border-amber-900/10 dark:border-stone-700/80 hover:border-amber-500 text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-2 shadow-xs group active:scale-95 cursor-pointer backdrop-blur-md"
+          className="py-1.5 sm:py-2 px-2.5 rounded-xl bg-white/80 dark:bg-stone-900/80 hover:bg-amber-600 hover:text-white dark:hover:bg-amber-600 dark:hover:text-white border border-amber-900/10 dark:border-stone-700/80 hover:border-amber-500 text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-2 shadow-xs group active:scale-95 cursor-pointer backdrop-blur-md"
           title="Tạo & In phiếu luyện viết ô vuông A4 Genkouyoushi"
         >
-          <div className="w-6 h-6 rounded-lg bg-amber-500/10 dark:bg-amber-500/20 group-hover:bg-white/20 flex items-center justify-center transition-colors">
+          <div className="w-5 h-5 rounded-lg bg-amber-500/10 dark:bg-amber-500/20 group-hover:bg-white/20 flex items-center justify-center transition-colors">
             <WorksheetIcon className="w-3.5 h-3.5 text-amber-600 group-hover:text-white transition-colors" />
           </div>
           <span className="truncate">In phiếu A4</span>
@@ -228,10 +228,10 @@ export default function StudySection({
             playWoodClapper();
             if (onOpenStatsModal) onOpenStatsModal();
           }}
-          className="py-2.5 px-3 rounded-2xl bg-white/80 dark:bg-stone-900/80 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white border border-amber-900/10 dark:border-stone-700/80 hover:border-blue-500 text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-2 shadow-xs group active:scale-95 cursor-pointer backdrop-blur-md"
+          className="py-1.5 sm:py-2 px-2.5 rounded-xl bg-white/80 dark:bg-stone-900/80 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white border border-amber-900/10 dark:border-stone-700/80 hover:border-blue-500 text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-2 shadow-xs group active:scale-95 cursor-pointer backdrop-blur-md"
           title="Biểu đồ tiến độ học tập & Tỉ lệ ghi nhớ SRS"
         >
-          <div className="w-6 h-6 rounded-lg bg-blue-500/10 dark:bg-blue-500/20 group-hover:bg-white/20 flex items-center justify-center transition-colors">
+          <div className="w-5 h-5 rounded-lg bg-blue-500/10 dark:bg-blue-500/20 group-hover:bg-white/20 flex items-center justify-center transition-colors">
             <StatsIcon className="w-3.5 h-3.5 text-blue-500 group-hover:text-white transition-colors" />
           </div>
           <span className="truncate">Thống kê</span>
@@ -239,13 +239,12 @@ export default function StudySection({
       </div>
 
       {/* 2. MAIN ZERO-SCROLL STUDIO ARENA: 2 Cột song hành trên Desktop / Laptop (1 Khung hình duy nhất) */}
-      <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 items-stretch">
+      <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-2.5 sm:gap-3 lg:gap-3.5 items-stretch flex-1 min-h-0">
         {/* ==================== CỘT TRÁI: THẺ FLASHCARD & ĐIỀU HƯỚNG CHÍNH (7 CỘT) ==================== */}
-        <div className="lg:col-span-7 flex flex-col gap-2.5 sm:gap-3">
+        <div className="lg:col-span-7 flex flex-col gap-1.5 sm:gap-2 flex-1 min-h-0 justify-between">
           {/* 3D Flashcard Container (Tanzaku / Karuta thiền Zen tối giản) */}
           <div
-            className="w-full cursor-pointer perspective relative"
-            style={{ height: '360px', minHeight: '360px' }}
+            className="w-full cursor-pointer perspective relative flex-1 min-h-[250px] max-h-[350px] karuta-card-responsive"
             onClick={() => {
               playWoodClapper();
               setIsFlipped(!isFlipped);
@@ -264,17 +263,17 @@ export default function StudySection({
 
                 {/* Dấu triện "ĐÃ THUỘC" (済 - Sumi) nếu chữ này đã thuộc */}
                 {isMastered && (
-                  <div className="absolute top-14 right-7 pointer-events-none stamp-animated z-20">
-                    <div className="w-12 h-12 rounded-full border-2 border-torii dark:border-torii-light flex items-center justify-center font-kanji font-black text-torii dark:text-torii-light text-xl bg-torii/10 dark:bg-torii/20 shadow-xs rotate-[-12deg]">
+                  <div className="absolute top-12 right-6 pointer-events-none stamp-animated z-20">
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full border-2 border-torii dark:border-torii-light flex items-center justify-center font-kanji font-black text-torii dark:text-torii-light text-lg sm:text-xl bg-torii/10 dark:bg-torii/20 shadow-xs rotate-[-12deg]">
                       済
                     </div>
                   </div>
                 )}
 
                 {/* Front Content */}
-                <div className="w-full h-full p-5 sm:p-6 flex flex-col justify-between relative z-10">
+                <div className="w-full h-full p-3.5 sm:p-5 flex flex-col justify-between relative z-10">
                   {/* Front Header */}
-                  <div className="w-full flex items-center justify-between pb-2.5 border-b border-washi-border/70 dark:border-stone-700/80">
+                  <div className="w-full flex items-center justify-between pb-1.5 sm:pb-2 border-b border-washi-border/70 dark:border-stone-700/80">
                     {/* Left: Hanko stamp, counter, furigana toggle */}
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-torii/10 dark:bg-torii/20 border border-torii/30 text-torii dark:text-torii-light font-black text-xs font-kanji">
@@ -314,38 +313,38 @@ export default function StudySection({
                   </div>
 
                   {/* Center: Hero Calligraphy Kanji & Han-Viet Dignified Typography */}
-                  <div className="my-auto py-1 flex flex-col items-center justify-center text-center">
+                  <div className="my-auto py-0.5 sm:py-1 flex flex-col items-center justify-center text-center">
                     <div className="font-kanji font-black tracking-wider transition-colors duration-200 hover:text-torii dark:hover:text-torii-light select-none flex flex-col items-center">
                       {showFurigana && cardInfo?.kun ? (
                         <ruby className="kanji-hero-ruby">
-                          <span className="text-7xl sm:text-8xl leading-none drop-shadow-xs text-stone-900 dark:text-stone-50">{currentChar}</span>
+                          <span className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl kanji-hero-text leading-none drop-shadow-xs text-stone-900 dark:text-stone-50">{currentChar}</span>
                           <rt className="kanji-hero-rt">{cardInfo.kun.split('、')[0].split('.')[0]}</rt>
                         </ruby>
                       ) : (
-                        <span className="text-7xl sm:text-8xl leading-none drop-shadow-xs text-stone-900 dark:text-stone-50">{currentChar}</span>
+                        <span className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl kanji-hero-text leading-none drop-shadow-xs text-stone-900 dark:text-stone-50">{currentChar}</span>
                       )}
                     </div>
 
                     {/* Sino-Vietnamese Han-Viet reading */}
-                    <div className="mt-2 text-2xl sm:text-3xl font-extrabold text-torii dark:text-torii-light font-kanji tracking-widest">
+                    <div className="mt-1 text-xl sm:text-2xl lg:text-3xl font-extrabold text-torii dark:text-torii-light font-kanji tracking-widest">
                       {cardInfo?.hanViet || '—'}
                     </div>
 
                     {/* Meaning summary - High contrast */}
-                    <div className="text-xs sm:text-sm text-stone-800 dark:text-stone-100 mt-0.5 font-semibold max-w-sm mx-auto text-center leading-relaxed">
+                    <div className="text-xs sm:text-sm text-stone-800 dark:text-stone-100 mt-0.5 font-semibold max-w-sm mx-auto text-center leading-relaxed line-clamp-1 sm:line-clamp-2">
                       {cardInfo?.meaning || 'Đang cập nhật...'}
                     </div>
                   </div>
 
                   {/* Bottom: On / Kun Readings (Độ tương phản cao, khung viền sắc nét) */}
-                  <div className="grid grid-cols-2 gap-2.5 pt-2.5 border-t border-washi-border/70 dark:border-stone-700/80 text-center">
-                    <div className="bg-stone-100/80 dark:bg-stone-800/80 py-1.5 px-2.5 rounded-xl border border-stone-200/80 dark:border-stone-700/80">
+                  <div className="grid grid-cols-2 gap-2 pt-1.5 sm:pt-2 border-t border-washi-border/70 dark:border-stone-700/80 text-center">
+                    <div className="bg-stone-100/80 dark:bg-stone-800/80 py-1 px-2 rounded-xl border border-stone-200/80 dark:border-stone-700/80">
                       <span className="text-[10px] sm:text-[11px] uppercase font-bold text-stone-600 dark:text-stone-400 block tracking-wider">Âm On (Onyomi)</span>
                       <span className="text-xs sm:text-sm font-bold font-kanji text-stone-900 dark:text-stone-100 mt-0.5 block truncate">
                         {cardInfo?.on || '—'}
                       </span>
                     </div>
-                    <div className="bg-stone-100/80 dark:bg-stone-800/80 py-1.5 px-2.5 rounded-xl border border-stone-200/80 dark:border-stone-700/80">
+                    <div className="bg-stone-100/80 dark:bg-stone-800/80 py-1 px-2 rounded-xl border border-stone-200/80 dark:border-stone-700/80">
                       <div className="flex items-center justify-center gap-1.5">
                         <span className="text-[10px] sm:text-[11px] uppercase font-bold text-stone-600 dark:text-stone-400 tracking-wider">Âm Kun (Kunyomi)</span>
                         {cardInfo?.kun && cardInfo.kun !== '—' && (
@@ -359,7 +358,7 @@ export default function StudySection({
                   </div>
 
                   {/* Space to flip hint */}
-                  <div className="text-center text-xs font-semibold text-stone-500 dark:text-stone-400 pt-1.5 flex items-center justify-center gap-1.5">
+                  <div className="text-center text-[11px] sm:text-xs font-semibold text-stone-500 dark:text-stone-400 pt-1 flex items-center justify-center gap-1.5">
                     <span>Chạm hoặc bấm [Phím Space] để lật mặt sau</span>
                     <span className="text-torii dark:text-torii-light">↻</span>
                   </div>
@@ -470,17 +469,18 @@ export default function StudySection({
           </div>
 
           {/* Action Buttons: Forgotten [1] & Mastered [2] (TRỰC TIẾP DƯỚI THẺ - ĐỘ TƯƠNG PHẢN CAO) */}
+          {/* Action Buttons: Forgotten [1] & Mastered [2] (TRỰC TIẾP DƯỚI THẺ - ĐỘ TƯƠNG PHẢN CAO) */}
           {/* Bottom Action Controls: SRS Mastery Buttons (Đã thuộc lòng [2] vs Chưa nhớ [1]) */}
-          <div className="w-full flex items-center justify-between gap-2 sm:gap-2.5">
+          <div className="w-full flex items-center justify-between gap-1.5 sm:gap-2 shrink-0">
             <button
               onClick={() => {
                 playHankoStamp();
                 onMarkForgotten();
               }}
-              className="flex-1 py-2.5 sm:py-3 px-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-xs flex items-center justify-between transition-all duration-300 ease-spring bg-[#fff7ed] dark:bg-[#2c1d11] border-2 border-amber-500/60 dark:border-amber-600/70 text-amber-950 dark:text-amber-100 hover:bg-amber-500 hover:text-white dark:hover:bg-amber-600 dark:hover:text-white active:scale-[0.97] cursor-pointer group"
+              className="flex-1 py-2 sm:py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm shadow-xs flex items-center justify-between transition-all duration-300 ease-spring bg-[#fff7ed] dark:bg-[#2c1d11] border-2 border-amber-500/60 dark:border-amber-600/70 text-amber-950 dark:text-amber-100 hover:bg-amber-500 hover:text-white dark:hover:bg-amber-600 dark:hover:text-white active:scale-[0.97] cursor-pointer group"
               title="Chưa nhớ - Đóng dấu lưu sổ tay [Phím 1]"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <ReviewRecallIcon className="w-4 h-4 text-amber-600 dark:text-amber-300 group-hover:text-white transition-colors" />
                 <span className="tracking-wide">Chưa nhớ</span>
                 <span className="text-[11px] opacity-70 font-medium hidden sm:inline group-hover:opacity-90">· Sổ tay</span>
@@ -495,14 +495,14 @@ export default function StudySection({
                 playTempleBell();
                 onMarkMastered();
               }}
-              className={`flex-1 py-2.5 sm:py-3 px-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-sm flex items-center justify-between transition-all duration-300 ease-spring active:scale-[0.97] cursor-pointer border-2 ${
+              className={`flex-1 py-2 sm:py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm shadow-sm flex items-center justify-between transition-all duration-300 ease-spring active:scale-[0.97] cursor-pointer border-2 ${
                 isMastered
                   ? 'bg-emerald-700 hover:bg-emerald-800 text-white border-emerald-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 dark:border-emerald-500 ring-2 ring-emerald-500/30'
                   : 'bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 dark:border-emerald-500'
               }`}
               title="Đã thuộc lòng [Phím 2]"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <MasteredCheckIcon className="w-4 h-4 text-white" />
                 <span className="tracking-wide">{isMastered ? '✓ Đã thuộc lòng' : 'Đã thuộc lòng'}</span>
               </div>
@@ -513,16 +513,16 @@ export default function StudySection({
           </div>
 
           {/* Navigation Controls: Prev, Flip Space, Next */}
-          <div className="w-full flex items-center justify-between gap-2">
+          <div className="w-full flex items-center justify-between gap-1.5 sm:gap-2 shrink-0">
             <button
               onClick={() => {
                 playWoodClapper();
                 onPrevCard();
               }}
-              className="flex-1 py-2.5 px-3 karuta-card dark:bg-stone-800 border border-washi-border dark:border-stone-700 rounded-2xl text-xs sm:text-sm font-bold shadow-2xs flex items-center justify-center gap-1.5 transition-all duration-300 ease-spring active:scale-[0.97] hover:border-torii/40 text-stone-800 dark:text-stone-100 group"
+              className="flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 karuta-card dark:bg-stone-800 border border-washi-border dark:border-stone-700 rounded-xl text-xs sm:text-sm font-bold shadow-2xs flex items-center justify-center gap-1.5 transition-all duration-300 ease-spring active:scale-[0.97] hover:border-torii/40 text-stone-800 dark:text-stone-100 group"
               title="Chữ trước [←]"
             >
-              <ChevronLeftIcon className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+              <ChevronLeftIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:-translate-x-0.5" />
               <span>Trước</span>
               <kbd className="hidden sm:inline-flex px-1.5 py-0.5 rounded text-[10px] font-mono bg-stone-200/70 dark:bg-stone-700/70 text-stone-600 dark:text-stone-300 border border-stone-300/40 dark:border-stone-600">
                 ←
@@ -534,7 +534,7 @@ export default function StudySection({
                 playWoodClapper();
                 setIsFlipped(!isFlipped);
               }}
-              className="flex-1 py-2.5 px-3 karuta-card dark:bg-stone-800 border border-washi-border dark:border-stone-700 rounded-2xl text-xs sm:text-sm font-bold shadow-2xs flex items-center justify-center gap-1.5 transition-all duration-300 ease-spring active:scale-[0.97] hover:border-torii/40 text-stone-800 dark:text-stone-100 group"
+              className="flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 karuta-card dark:bg-stone-800 border border-washi-border dark:border-stone-700 rounded-xl text-xs sm:text-sm font-bold shadow-2xs flex items-center justify-center gap-1.5 transition-all duration-300 ease-spring active:scale-[0.97] hover:border-torii/40 text-stone-800 dark:text-stone-100 group"
               title="Lật thẻ [Space]"
             >
               <span>{isFlipped ? 'Mặt trước' : 'Lật thẻ'}</span>
@@ -549,41 +549,41 @@ export default function StudySection({
                 playWoodClapper();
                 onNextCard();
               }}
-              className="flex-1 py-2.5 px-4 bg-torii hover:bg-torii-light dark:bg-red-600 dark:hover:bg-red-500 text-white rounded-2xl text-xs sm:text-sm font-bold shadow-xs flex items-center justify-center gap-1.5 transition-all duration-300 ease-spring active:scale-[0.97] group"
+              className="flex-1 py-1.5 sm:py-2 px-2.5 sm:px-4 bg-torii hover:bg-torii-light dark:bg-red-600 dark:hover:bg-red-500 text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs flex items-center justify-center gap-1.5 transition-all duration-300 ease-spring active:scale-[0.97] group"
               title="Chữ sau [→]"
             >
               <span>Tiếp</span>
               <kbd className="hidden sm:inline-flex px-1.5 py-0.5 rounded text-[10px] font-mono bg-white/20 text-white border border-white/30">
                 →
               </kbd>
-              <ChevronRightIcon className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              <ChevronRightIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-0.5" />
             </button>
           </div>
         </div>
 
         {/* ==================== CỘT PHẢI: TRẠM TRI THỨC ĐA CHIỀU (5 CỘT - ZERO-SCROLL STUDIO PANEL) ==================== */}
-        <div className="lg:col-span-5 flex flex-col gap-2">
-          {/* Station Card: Chiều cao khớp hoàn hảo cột trái (~465px) */}
-          <div className="w-full h-full min-h-[460px] karuta-card dark:bg-stone-900 dark:border-stone-700 p-3.5 sm:p-4 rounded-3xl border border-washi-border flex flex-col justify-between shadow-xs relative overflow-hidden">
+        <div className="lg:col-span-5 flex flex-col gap-1.5 flex-1 min-h-0">
+          {/* Station Card: Chiều cao co giãn mượt mà theo viewport */}
+          <div className="w-full h-full min-h-[300px] karuta-card dark:bg-stone-900 dark:border-stone-700 p-2.5 sm:p-3.5 rounded-3xl border border-washi-border flex flex-col justify-between shadow-xs relative overflow-hidden flex-1 min-h-0 station-card-responsive">
             <div className="karuta-inner-border" />
             {/* TRẠM TRI THỨC ĐA CHIỀU (MULTI-DIMENSIONAL KNOWLEDGE STATION): 4 Tab toàn diện, cao độ Tokyo, chiết tự, mẹo nhớ, ví dụ */}
             <div className="w-full h-full flex flex-col justify-between flex-1 animate-fadeIn relative z-10">
               {/* Tab Selector Header (Chuyển đổi 4 trạm tri thức) */}
-              <div className="w-full flex items-center justify-between pb-2.5 border-b border-washi-border/70 dark:border-stone-700/80 gap-1">
+              <div className="w-full flex items-center justify-between pb-1.5 sm:pb-2 border-b border-washi-border/70 dark:border-stone-700/80 gap-1 shrink-0">
                 <div className="flex items-center gap-1 p-1 rounded-xl bg-stone-100/80 dark:bg-stone-800/80 border border-stone-200/60 dark:border-stone-700/60 w-full text-xs font-bold">
                 <button
                   onClick={() => {
                     playWaterDrop();
                     setStudioTab('vocab');
                   }}
-                  className={`flex-1 py-1.5 px-2 rounded-lg transition-all text-center flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-1 sm:py-1.5 px-1.5 sm:px-2 rounded-lg transition-all text-center flex items-center justify-center gap-1 sm:gap-1.5 ${
                     studioTab === 'vocab'
                       ? 'bg-torii text-white shadow-xs font-black'
                       : 'text-stone-700 dark:text-stone-300 hover:text-torii dark:hover:text-torii-light'
                   }`}
                   title="Từ vựng JLPT ghép chữ này"
                 >
-                  <BambooIcon className={`w-4 h-4 ${studioTab === 'vocab' ? 'text-white' : 'text-emerald-600 dark:text-emerald-400'}`} />
+                  <BambooIcon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${studioTab === 'vocab' ? 'text-white' : 'text-emerald-600 dark:text-emerald-400'}`} />
                   <span>Từ ghép</span>
                   <span className="text-[10px] opacity-80">({cardInfo?.vocab?.length || 0})</span>
                 </button>
@@ -593,14 +593,14 @@ export default function StudySection({
                     playWaterDrop();
                     setStudioTab('radical');
                   }}
-                  className={`flex-1 py-1.5 px-2 rounded-lg transition-all text-center flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-1 sm:py-1.5 px-1.5 sm:px-2 rounded-lg transition-all text-center flex items-center justify-center gap-1 sm:gap-1.5 ${
                     studioTab === 'radical'
                       ? 'bg-torii text-white shadow-xs font-black'
                       : 'text-stone-700 dark:text-stone-300 hover:text-torii dark:hover:text-torii-light'
                   }`}
                   title="Chiết tự bộ thủ cấu thành"
                 >
-                  <RadicalIcon className={`w-4 h-4 ${studioTab === 'radical' ? 'text-white' : 'text-torii dark:text-torii-light'}`} />
+                  <RadicalIcon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${studioTab === 'radical' ? 'text-white' : 'text-torii dark:text-torii-light'}`} />
                   <span>Bộ thủ</span>
                 </button>
 
@@ -609,14 +609,14 @@ export default function StudySection({
                     playWaterDrop();
                     setStudioTab('mnemonic');
                   }}
-                  className={`flex-1 py-1.5 px-2 rounded-lg transition-all text-center flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-1 sm:py-1.5 px-1.5 sm:px-2 rounded-lg transition-all text-center flex items-center justify-center gap-1 sm:gap-1.5 ${
                     studioTab === 'mnemonic'
                       ? 'bg-torii text-white shadow-xs font-black'
                       : 'text-stone-700 dark:text-stone-300 hover:text-torii dark:hover:text-torii-light'
                   }`}
                   title="Mẹo ghi nhớ & Tranh tượng hình"
                 >
-                  <MnemonicIcon className={`w-4 h-4 ${studioTab === 'mnemonic' ? 'text-white' : 'text-amber-500 dark:text-amber-400'}`} />
+                  <MnemonicIcon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${studioTab === 'mnemonic' ? 'text-white' : 'text-amber-500 dark:text-amber-400'}`} />
                   <span>Mẹo nhớ</span>
                 </button>
 
@@ -625,14 +625,14 @@ export default function StudySection({
                     playWaterDrop();
                     setStudioTab('example');
                   }}
-                  className={`flex-1 py-1.5 px-2 rounded-lg transition-all text-center flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-1 sm:py-1.5 px-1.5 sm:px-2 rounded-lg transition-all text-center flex items-center justify-center gap-1 sm:gap-1.5 ${
                     studioTab === 'example'
                       ? 'bg-torii text-white shadow-xs font-black'
                       : 'text-stone-700 dark:text-stone-300 hover:text-torii dark:hover:text-torii-light'
                   }`}
                   title="Câu ví dụ thực tế"
                 >
-                  <ScrollUnfurledIcon className={`w-4 h-4 ${studioTab === 'example' ? 'text-white' : 'text-amber-600 dark:text-amber-300'}`} />
+                  <ScrollUnfurledIcon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${studioTab === 'example' ? 'text-white' : 'text-amber-600 dark:text-amber-300'}`} />
                   <span>Ví dụ</span>
                 </button>
               </div>
@@ -640,14 +640,14 @@ export default function StudySection({
 
             {/* TAB 1: TỪ VỰNG JLPT GHÉP CHỮ (Lưới 2x2 đồng bộ 100% kích thước) */}
             {studioTab === 'vocab' && (
-              <div className="flex-1 py-2 flex flex-col justify-between animate-fadeIn">
-                <div className="text-[11px] font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider mb-2 flex items-center justify-between">
+              <div className="flex-1 py-1 sm:py-1.5 flex flex-col justify-between animate-fadeIn min-h-0">
+                <div className="text-[10px] sm:text-[11px] font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider mb-1 sm:mb-1.5 flex items-center justify-between shrink-0">
                   <span>Từ ghép với 「{currentChar}」</span>
-                  <span className="text-[10px] text-torii dark:text-torii-light font-semibold lowercase">chạm để nghe phát âm</span>
+                  <span className="text-[9px] sm:text-[10px] text-torii dark:text-torii-light font-semibold lowercase">chạm để nghe phát âm</span>
                 </div>
 
                 {cardInfo?.vocab && cardInfo.vocab.length > 0 ? (
-                  <div className="grid grid-cols-2 gap-2.5 flex-1 items-stretch">
+                  <div className="grid grid-cols-2 gap-1.5 sm:gap-2 flex-1 min-h-0 items-stretch">
                     {cardInfo.vocab.slice(0, 4).map((v, i) => (
                       <button
                         key={i}
@@ -655,11 +655,11 @@ export default function StudySection({
                           playWaterDrop();
                           playJapaneseSpeech(v.word || v.reading || currentChar);
                         }}
-                        className="p-2.5 rounded-2xl border border-washi-border dark:border-stone-700/80 bg-stone-100/70 dark:bg-stone-800/80 hover:border-torii/60 dark:hover:border-torii-light hover:shadow-xs transition-all flex flex-col justify-between items-center text-center group cursor-pointer active:scale-98 min-h-[125px]"
+                        className="p-1.5 sm:p-2 rounded-xl border border-washi-border dark:border-stone-700/80 bg-stone-100/70 dark:bg-stone-800/80 hover:border-torii/60 dark:hover:border-torii-light hover:shadow-xs transition-all flex flex-col justify-between items-center text-center group cursor-pointer active:scale-98 min-h-[85px] sm:min-h-[100px]"
                       >
-                        {/* 1. Kanji + Furigana Slot (40px) */}
-                        <div className="h-10 w-full flex items-center justify-center">
-                          <div className="font-kanji text-base sm:text-lg font-bold text-stone-900 dark:text-stone-50 group-hover:text-torii dark:group-hover:text-torii-light transition-colors leading-none">
+                        {/* 1. Kanji + Furigana Slot (32-36px) */}
+                        <div className="h-7 sm:h-8 w-full flex items-center justify-center">
+                          <div className="font-kanji text-sm sm:text-base font-bold text-stone-900 dark:text-stone-50 group-hover:text-torii dark:group-hover:text-torii-light transition-colors leading-none">
                             {showFurigana ? (
                               <ruby className="ruby-furigana">
                                 {v.word}
@@ -671,8 +671,8 @@ export default function StudySection({
                           </div>
                         </div>
 
-                        {/* 2. Pitch Accent Slot (22px) */}
-                        <div className="h-[22px] w-full flex items-center justify-center">
+                        {/* 2. Pitch Accent Slot (18-20px) */}
+                        <div className="h-4 sm:h-[18px] w-full flex items-center justify-center">
                           {v.reading ? (
                             <PitchAccentVisualizer word={v.word} reading={v.reading} />
                           ) : (
@@ -680,9 +680,9 @@ export default function StudySection({
                           )}
                         </div>
 
-                        {/* 3. Vietnamese Meaning Slot (32px) */}
-                        <div className="h-8 w-full flex items-center justify-center pt-1 border-t border-washi-border/60 dark:border-stone-700/60">
-                          <span className="text-[11px] font-semibold leading-tight text-stone-700 dark:text-stone-200 line-clamp-2 w-full text-center">
+                        {/* 3. Vietnamese Meaning Slot (24-28px) */}
+                        <div className="h-6 sm:h-7 w-full flex items-center justify-center pt-0.5 border-t border-washi-border/60 dark:border-stone-700/60">
+                          <span className="text-[10px] sm:text-[11px] font-semibold leading-tight text-stone-700 dark:text-stone-200 line-clamp-1 sm:line-clamp-2 w-full text-center">
                             {v.meaning_vi || v.vn}
                           </span>
                         </div>
@@ -825,35 +825,35 @@ export default function StudySection({
           3. DẢI TIÊU CHUẨN SƯ PHẠM ĐẠT GIẢI (PEDAGOGICAL CREDENTIAL RIBBON)
           Tôn vinh 4 nền tảng khoa học giáo dục Nhật Bản để thuyết phục Ban Giám Khảo
           ========================================================================= */}
-      <div className="w-full mt-2.5 pt-2 border-t border-washi-border/60 dark:border-stone-800/80 flex flex-wrap items-center justify-between gap-2 text-stone-600 dark:text-stone-400">
-        <div className="flex items-center gap-1.5 text-xs font-bold text-torii dark:text-amber-400">
+      <div className="w-full mt-1 sm:mt-1.5 pt-1 sm:pt-1.5 border-t border-washi-border/60 dark:border-stone-800/80 flex flex-wrap items-center justify-between gap-1 sm:gap-2 text-stone-600 dark:text-stone-400 shrink-0 text-[10px] sm:text-[11px]">
+        <div className="flex items-center gap-1.5 font-bold text-torii dark:text-amber-400">
           <span className="w-1.5 h-1.5 rounded-full bg-torii dark:bg-amber-400 animate-pulse" />
           <span>Tiêu chuẩn sư phạm ứng dụng:</span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] font-medium">
-          <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-stone-100/90 dark:bg-stone-800/90 border border-stone-200/70 dark:border-stone-700/70 shadow-2xs">
+        <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 font-medium">
+          <div className="flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full bg-stone-100/90 dark:bg-stone-800/90 border border-stone-200/70 dark:border-stone-700/70 shadow-2xs">
             <span className="text-emerald-600 dark:text-emerald-400">🧠</span>
             <span className="font-bold text-stone-800 dark:text-stone-200">SuperMemo SM-2</span>
-            <span className="text-[10px] text-stone-500 dark:text-stone-400 hidden sm:inline">• Lặp lại ngắt quãng SRS</span>
+            <span className="text-[10px] text-stone-500 dark:text-stone-400 hidden md:inline">• Lặp lại ngắt quãng SRS</span>
           </div>
 
-          <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-stone-100/90 dark:bg-stone-800/90 border border-stone-200/70 dark:border-stone-700/70 shadow-2xs">
+          <div className="flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full bg-stone-100/90 dark:bg-stone-800/90 border border-stone-200/70 dark:border-stone-700/70 shadow-2xs">
             <span className="text-amber-500">🎵</span>
             <span className="font-bold text-stone-800 dark:text-stone-200">NHK Tokyo Pitch</span>
-            <span className="text-[10px] text-stone-500 dark:text-stone-400 hidden sm:inline">• 4 Thanh điệu ngữ âm</span>
+            <span className="text-[10px] text-stone-500 dark:text-stone-400 hidden md:inline">• 4 Thanh điệu ngữ âm</span>
           </div>
 
-          <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-stone-100/90 dark:bg-stone-800/90 border border-stone-200/70 dark:border-stone-700/70 shadow-2xs">
+          <div className="flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full bg-stone-100/90 dark:bg-stone-800/90 border border-stone-200/70 dark:border-stone-700/70 shadow-2xs">
             <span className="text-torii">🖌️</span>
             <span className="font-bold text-stone-800 dark:text-stone-200">KanjiVG Vector</span>
-            <span className="text-[10px] text-stone-500 dark:text-stone-400 hidden sm:inline">• Động học thứ tự nét</span>
+            <span className="text-[10px] text-stone-500 dark:text-stone-400 hidden md:inline">• Động học thứ tự nét</span>
           </div>
 
-          <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-stone-100/90 dark:bg-stone-800/90 border border-stone-200/70 dark:border-stone-700/70 shadow-2xs">
+          <div className="flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full bg-stone-100/90 dark:bg-stone-800/90 border border-stone-200/70 dark:border-stone-700/70 shadow-2xs">
             <span className="text-indigo-500">⛩️</span>
             <span className="font-bold text-stone-800 dark:text-stone-200">Khang Hy 214</span>
-            <span className="text-[10px] text-stone-500 dark:text-stone-400 hidden sm:inline">• Chiết tự lục thư</span>
+            <span className="text-[10px] text-stone-500 dark:text-stone-400 hidden md:inline">• Chiết tự lục thư</span>
           </div>
         </div>
       </div>
