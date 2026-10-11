@@ -37,6 +37,11 @@ module.exports = {
           light: '#d97706',
           bg: '#fffbeb',
         },
+        matcha: {
+          DEFAULT: '#059669',
+          light: '#10b981',
+          dark: '#047857',
+        },
       },
       fontFamily: {
         kanji: ['var(--font-kanji)', '"Shippori Mincho"', '"Noto Serif JP"', 'serif'],

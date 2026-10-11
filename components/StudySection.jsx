@@ -292,7 +292,7 @@ export default function StudySection({
                         }}
                         className={`px-2 py-0.5 rounded-lg text-xs font-bold border transition-all flex items-center gap-1 ${
                           showFurigana
-                            ? 'bg-matcha/15 dark:bg-matcha/25 text-matcha dark:text-emerald-300 border-matcha/40 dark:border-emerald-500/40'
+                            ? 'bg-emerald-500/15 dark:bg-emerald-500/25 text-emerald-800 dark:text-emerald-300 border-emerald-500/40 dark:border-emerald-500/40'
                             : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 border-stone-200 dark:border-stone-700'
                         }`}
                         title="Bật/tắt Furigana âm Kunyomi [Phím F]"
@@ -473,7 +473,7 @@ export default function StudySection({
                 playHankoStamp();
                 onMarkForgotten();
               }}
-              className="flex-1 py-2.5 px-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-xs flex items-center justify-center gap-2 transition-all bg-amber-500/15 dark:bg-amber-500/25 border border-amber-600/40 dark:border-amber-400/50 text-amber-900 dark:text-amber-200 hover:bg-amber-600 hover:text-white dark:hover:bg-amber-500 dark:hover:text-white active:scale-95"
+              className="flex-1 py-2.5 sm:py-3 px-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-xs flex items-center justify-center gap-2 transition-all bg-[#fff7ed] dark:bg-[#2c1d11] border-2 border-amber-500/60 dark:border-amber-600/70 text-amber-950 dark:text-amber-100 hover:bg-amber-500 hover:text-white dark:hover:bg-amber-600 dark:hover:text-white active:scale-95 cursor-pointer"
               title="Chưa nhớ - Đóng dấu lưu sổ tay [Phím 1]"
             >
               <ReviewRecallIcon className="w-4 h-4 text-amber-600 dark:text-amber-300" />
@@ -485,11 +485,15 @@ export default function StudySection({
                 playTempleBell();
                 onMarkMastered();
               }}
-              className="flex-1 py-2.5 px-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-xs flex items-center justify-center gap-2 transition-all bg-matcha dark:bg-emerald-700 text-white border border-matcha dark:border-emerald-600 hover:bg-matcha-dark dark:hover:bg-emerald-600 active:scale-95"
+              className={`flex-1 py-2.5 sm:py-3 px-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-sm flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer border-2 ${
+                isMastered
+                  ? 'bg-emerald-700 hover:bg-emerald-800 text-white border-emerald-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 dark:border-emerald-500 ring-2 ring-emerald-500/30'
+                  : 'bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 dark:border-emerald-500'
+              }`}
               title="Đã thuộc lòng [Phím 2]"
             >
-              <MasteredCheckIcon className="w-4 h-4" />
-              <span>Đã thuộc lòng [2]</span>
+              <MasteredCheckIcon className="w-4 h-4 text-white" />
+              <span>{isMastered ? '✓ Đã thuộc lòng [2]' : 'Đã thuộc lòng [2]'}</span>
             </button>
           </div>
 
