@@ -35,15 +35,12 @@ export default function Header({
   isMuted,
   onToggleMute,
   onOpenSpotlight,
-  onOpenStatsModal,
-  onOpenVoiceShadowing,
-  onOpenWorksheetModal,
   isZenMusicPlaying,
   onToggleZenMusic,
   petalsEnabled = true,
   onTogglePetals,
-  isAnalysisMode = false,
-  onToggleAnalysisMode,
+  autoSpeechEnabled = false,
+  onToggleAutoSpeech,
 }) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const settingsRef = useRef(null);
@@ -176,29 +173,6 @@ export default function Header({
 
           {/* Right: Clean Unified Tool Icons */}
           <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
-            {/* Mode Switch: ⛩️ Tinh Giản / 🔍 Phân Tích */}
-            {onToggleAnalysisMode && (
-              <button
-                onClick={() => {
-                  playWaterDrop();
-                  onToggleAnalysisMode();
-                }}
-                className={`h-8 sm:h-9 px-2.5 sm:px-3 rounded-xl border flex items-center gap-1.5 text-xs font-bold transition-all active:scale-95 shadow-2xs ${isAnalysisMode
-                    ? 'bg-amber-500/15 border-amber-500/60 text-amber-900 dark:text-amber-200 shadow-xs'
-                    : 'bg-torii/10 border-torii/40 text-torii dark:text-torii-light'
-                  }`}
-                title="Phím tắt [D]: Chuyển đổi Chế độ Học Tinh Giản & Phân Tích Chuyên Sâu"
-              >
-                <span className="text-sm">{isAnalysisMode ? '🔍' : '⛩️'}</span>
-                <span className="hidden sm:inline font-bold">
-                  {isAnalysisMode ? 'Phân tích' : 'Tinh giản'}
-                </span>
-                <kbd className="hidden md:inline px-1 py-0.2 text-[9px] rounded bg-black/5 dark:bg-white/10 font-mono opacity-75">
-                  D
-                </kbd>
-              </button>
-            )}
-
             {/* Quick Search Spotlight */}
             {onOpenSpotlight && (
               <button
@@ -229,7 +203,7 @@ export default function Header({
               )}
             </button>
 
-            {/* Tiện ích & Cài đặt Dropdown Popover */}
+            {/* Tiện ích & Cài đặt Dropdown Popover (Chuyên biệt Tùy chỉnh & Môi trường) */}
             <div className="relative" ref={settingsRef}>
               <button
                 onClick={() => {
@@ -241,7 +215,7 @@ export default function Header({
                     ? 'border-torii bg-torii text-white shadow-sm ring-2 ring-torii/30'
                     : 'border-washi-border dark:border-stone-700 bg-washi dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:border-torii/50 hover:bg-torii/10'
                 }`}
-                title="Cài đặt tiện ích & Âm thanh (Sakura, Nhạc Zen, AI, In ấn, Thống kê)"
+                title="Cài đặt không gian & Âm thanh Zen"
               >
                 <SettingsSlidersIcon className="w-4 h-4" />
                 {isZenMusicPlaying && !isSettingsOpen && (
@@ -259,22 +233,22 @@ export default function Header({
                     <div>
                       <div className="font-bold text-[12px] text-stone-900 dark:text-stone-100 flex items-center gap-1.5">
                         <SettingsSlidersIcon className="w-3.5 h-3.5 text-torii" />
-                        <span>Tiện ích & Cài đặt</span>
+                        <span>Cài đặt không gian Zen</span>
                       </div>
-                      <div className="text-[10px] text-stone-500 dark:text-stone-400 font-medium">Tùy biến không gian học Zen</div>
+                      <div className="text-[10px] text-stone-500 dark:text-stone-400 font-medium">Tùy biến môi trường & âm thanh</div>
                     </div>
                     <button
                       onClick={() => setIsSettingsOpen(false)}
-                      className="w-5 h-5 rounded-md hover:bg-stone-200 dark:hover:bg-stone-800 flex items-center justify-center text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 text-xs font-bold transition-colors"
+                      className="w-5 h-5 rounded-md hover:bg-stone-200 dark:hover:bg-stone-800 flex items-center justify-center text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 text-xs font-bold transition-colors cursor-pointer"
                       title="Đóng menu"
                     >
                       ✕
                     </button>
                   </div>
 
-                  {/* Nhóm 1: Không gian & Âm thanh */}
+                  {/* Nhóm Cài đặt Môi trường & Âm thanh */}
                   <div className="text-[10px] uppercase font-bold tracking-wider text-stone-400 dark:text-stone-500 px-1 pt-0.5">
-                    Không gian & Âm thanh
+                    Hiệu ứng & Âm thanh
                   </div>
 
                   {/* Hoa anh đào rơi */}
@@ -284,7 +258,7 @@ export default function Header({
                         playWaterDrop();
                         onTogglePetals();
                       }}
-                      className="w-full px-2.5 py-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800/80 text-left flex items-center justify-between transition-colors text-stone-800 dark:text-stone-100 font-medium border border-transparent hover:border-stone-200 dark:hover:border-stone-700"
+                      className="w-full px-2.5 py-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800/80 text-left flex items-center justify-between transition-colors text-stone-800 dark:text-stone-100 font-medium border border-transparent hover:border-stone-200 dark:hover:border-stone-700 cursor-pointer"
                     >
                       <div className="flex items-center gap-2">
                         <SakuraFlowerIcon className="w-4 h-4 text-pink-500 shrink-0" />
@@ -310,7 +284,7 @@ export default function Header({
                       onClick={() => {
                         onToggleMute();
                       }}
-                      className="w-full px-2.5 py-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800/80 text-left flex items-center justify-between transition-colors text-stone-800 dark:text-stone-100 font-medium border border-transparent hover:border-stone-200 dark:hover:border-stone-700"
+                      className="w-full px-2.5 py-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800/80 text-left flex items-center justify-between transition-colors text-stone-800 dark:text-stone-100 font-medium border border-transparent hover:border-stone-200 dark:hover:border-stone-700 cursor-pointer"
                     >
                       <div className="flex items-center gap-2">
                         {isMuted ? (
@@ -340,7 +314,7 @@ export default function Header({
                       onClick={() => {
                         onToggleZenMusic();
                       }}
-                      className="w-full px-2.5 py-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800/80 text-left flex items-center justify-between transition-colors text-stone-800 dark:text-stone-100 font-medium border border-transparent hover:border-stone-200 dark:hover:border-stone-700"
+                      className="w-full px-2.5 py-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800/80 text-left flex items-center justify-between transition-colors text-stone-800 dark:text-stone-100 font-medium border border-transparent hover:border-stone-200 dark:hover:border-stone-700 cursor-pointer"
                     >
                       <div className="flex items-center gap-2">
                         <LotusZenIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
@@ -360,73 +334,30 @@ export default function Header({
                     </button>
                   )}
 
-                  <div className="my-0.5 border-t border-[#ebdccb] dark:border-stone-700/80" />
-
-                  {/* Nhóm 2: Công cụ học tập */}
-                  <div className="text-[10px] uppercase font-bold tracking-wider text-stone-400 dark:text-stone-500 px-1 pt-0.5">
-                    Công cụ học tập chuyên sâu
-                  </div>
-
-                  {/* AI Shadowing */}
-                  {onOpenVoiceShadowing && (
+                  {/* Tự động phát âm thanh khi chuyển thẻ */}
+                  {onToggleAutoSpeech && (
                     <button
                       onClick={() => {
-                        setIsSettingsOpen(false);
                         playWaterDrop();
-                        onOpenVoiceShadowing();
+                        onToggleAutoSpeech();
                       }}
-                      className="w-full px-2.5 py-2 rounded-xl hover:bg-torii hover:text-white text-left flex items-center justify-between transition-all text-stone-800 dark:text-stone-100 font-medium group border border-transparent hover:border-torii"
+                      className="w-full px-2.5 py-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800/80 text-left flex items-center justify-between transition-colors text-stone-800 dark:text-stone-100 font-medium border border-transparent hover:border-stone-200 dark:hover:border-stone-700 cursor-pointer"
                     >
                       <div className="flex items-center gap-2">
-                        <MicShadowingIcon className="w-4 h-4 text-torii group-hover:text-white shrink-0" />
+                        <VolumeIcon className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
                         <div>
-                          <div className="font-bold text-xs">Luyện nói AI Shadowing</div>
-                          <div className="text-[10px] opacity-75">Chuẩn ngữ điệu Tokyo Pitch</div>
+                          <div className="font-bold text-xs">Tự động đọc Hán tự</div>
+                          <div className="text-[10px] text-stone-500 dark:text-stone-400 font-normal">Phát âm khi chuyển thẻ</div>
                         </div>
                       </div>
-                      <span className="text-stone-400 group-hover:text-white text-xs">→</span>
-                    </button>
-                  )}
-
-                  {/* Printable Worksheet */}
-                  {onOpenWorksheetModal && (
-                    <button
-                      onClick={() => {
-                        setIsSettingsOpen(false);
-                        playWaterDrop();
-                        onOpenWorksheetModal();
-                      }}
-                      className="w-full px-2.5 py-2 rounded-xl hover:bg-torii hover:text-white text-left flex items-center justify-between transition-all text-stone-800 dark:text-stone-100 font-medium group border border-transparent hover:border-torii"
-                    >
-                      <div className="flex items-center gap-2">
-                        <FountainPenIcon className="w-4 h-4 text-torii group-hover:text-white shrink-0" />
-                        <div>
-                          <div className="font-bold text-xs">In phiếu tập viết ô mễ A4</div>
-                          <div className="text-[10px] opacity-75">Xuất file PDF luyện viết tay</div>
-                        </div>
-                      </div>
-                      <span className="text-stone-400 group-hover:text-white text-xs">→</span>
-                    </button>
-                  )}
-
-                  {/* Thống kê Heatmap */}
-                  {onOpenStatsModal && (
-                    <button
-                      onClick={() => {
-                        setIsSettingsOpen(false);
-                        playWaterDrop();
-                        onOpenStatsModal();
-                      }}
-                      className="w-full px-2.5 py-2 rounded-xl hover:bg-torii hover:text-white text-left flex items-center justify-between transition-all text-stone-800 dark:text-stone-100 font-medium group border border-transparent hover:border-torii"
-                    >
-                      <div className="flex items-center gap-2">
-                        <StatsIcon className="w-4 h-4 text-torii group-hover:text-white shrink-0" />
-                        <div>
-                          <div className="font-bold text-xs">Thống kê tiến độ & Heatmap</div>
-                          <div className="text-[10px] opacity-75">Chu kỳ nhớ & tần suất ôn</div>
-                        </div>
-                      </div>
-                      <span className="text-stone-400 group-hover:text-white text-xs">→</span>
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${autoSpeechEnabled
+                            ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300'
+                            : 'bg-stone-200 dark:bg-stone-700 text-stone-500'
+                          }`}
+                      >
+                        {autoSpeechEnabled ? 'Đang bật' : 'Tắt'}
+                      </span>
                     </button>
                   )}
                 </div>

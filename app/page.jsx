@@ -86,7 +86,10 @@ export default function Home() {
   // Cherry blossom petals animation toggle
   const [petalsEnabled, setPetalsEnabled] = useState(true);
 
-  // Study Mode: false = Tinh Giản (Zen Focus), true = Phân Tích Chuyên Sâu (Mặc định đầy đủ tính năng)
+  // Auto speech on card change toggle
+  const [autoSpeechEnabled, setAutoSpeechEnabled] = useState(false);
+
+  // Analysis / Zen focus mode state
   const [isAnalysisMode, setIsAnalysisMode] = useState(true);
 
   // Apply theme class to <html> element
@@ -191,6 +194,16 @@ export default function Home() {
 
   // 3. Update current card info
   const currentChar = kanjiList[currentIndex] || '';
+
+  // Tự động phát âm khi chuyển sang chữ Hán mới nếu bật Auto Speech
+  useEffect(() => {
+    if (autoSpeechEnabled && activeMode === 'study' && currentChar) {
+      const timer = setTimeout(() => {
+        playJapaneseSpeech(currentChar);
+      }, 180);
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex, currentChar, autoSpeechEnabled, activeMode]);
 
   useEffect(() => {
     if (!currentChar) return;
@@ -435,15 +448,12 @@ export default function Home() {
           isMuted={isMuted}
           onToggleMute={handleToggleMute}
           onOpenSpotlight={() => setIsSpotlightOpen(true)}
-          onOpenStatsModal={() => setIsStatsModalOpen(true)}
-          onOpenWorksheetModal={() => setIsWorksheetModalOpen(true)}
-          onOpenVoiceShadowing={() => setIsVoiceShadowingOpen(true)}
           isZenMusicPlaying={isZenPlaying}
           onToggleZenMusic={handleToggleZenMusic}
           petalsEnabled={petalsEnabled}
           onTogglePetals={() => setPetalsEnabled((prev) => !prev)}
-          isAnalysisMode={isAnalysisMode}
-          onToggleAnalysisMode={handleToggleAnalysisMode}
+          autoSpeechEnabled={autoSpeechEnabled}
+          onToggleAutoSpeech={() => setAutoSpeechEnabled((prev) => !prev)}
         />
 
         {activeMode === 'study' && (

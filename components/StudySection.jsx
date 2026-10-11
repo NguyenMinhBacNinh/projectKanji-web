@@ -309,7 +309,7 @@ export default function StudySection({
                       )}
                     </div>
 
-                    {/* Right: Sound & Quick Practice */}
+                    {/* Right: Sound */}
                     <div className="flex items-center gap-1.5">
                       {/* Phát âm */}
                       <button
@@ -324,21 +324,6 @@ export default function StudySection({
                         <VolumeIcon className="w-3.5 h-3.5" />
                         <span className="hidden sm:inline text-xs">Phát âm</span>
                         <kbd className="hidden md:inline text-[9px] px-1 py-0.2 rounded bg-black/5 dark:bg-white/10 font-mono">A</kbd>
-                      </button>
-
-                      {/* Tập viết nét bút */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          playWoodClapper();
-                          if (onOpenPracticeModal) onOpenPracticeModal();
-                        }}
-                        className="p-1.5 sm:px-2.5 sm:py-1 rounded-xl bg-washi dark:bg-stone-800 hover:bg-torii dark:hover:bg-torii text-torii dark:text-torii-light hover:text-white dark:hover:text-white border border-torii/30 dark:border-stone-700 transition-all text-xs font-bold flex items-center gap-1.5 active:scale-95 shadow-2xs"
-                        title="Tập viết & Thứ tự nét bút [Phím W]"
-                      >
-                        <BrushIcon className="w-3.5 h-3.5" />
-                        <span className="hidden sm:inline text-xs">Tập viết</span>
-                        <kbd className="hidden md:inline text-[9px] px-1 py-0.2 rounded bg-black/5 dark:bg-white/10 font-mono">W</kbd>
                       </button>
                     </div>
                   </div>
@@ -430,19 +415,6 @@ export default function StudySection({
                       >
                         <VolumeIcon className="w-3.5 h-3.5" />
                         <span className="text-xs hidden sm:inline">Phát âm</span>
-                      </button>
-
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          playWoodClapper();
-                          onOpenPracticeModal();
-                        }}
-                        className="p-1.5 sm:px-2.5 sm:py-1 rounded-xl bg-washi dark:bg-stone-800 hover:bg-torii text-torii dark:text-torii-light hover:text-white border border-torii/30 dark:border-stone-700 transition-all text-xs font-bold flex items-center gap-1.5 active:scale-95 shadow-2xs"
-                        title="Tập viết & Thứ tự nét"
-                      >
-                        <BrushIcon className="w-3.5 h-3.5" />
-                        <span className="text-xs hidden sm:inline">Tập viết</span>
                       </button>
                     </div>
                   </div>
@@ -591,19 +563,6 @@ export default function StudySection({
               <span>Tiếp</span>
               <ChevronRightIcon className="w-4 h-4" />
             </button>
-          </div>
-
-          {/* Keyboard Navigation Hint Bar */}
-          <div className="w-full hidden sm:flex items-center justify-center gap-2 text-xs text-stone-600 dark:text-stone-300 font-mono py-0.5">
-            <span><kbd className="px-1.5 py-0.2 bg-black/5 dark:bg-white/10 rounded font-bold">Space</kbd> Lật</span>
-            <span>•</span>
-            <span><kbd className="px-1.5 py-0.2 bg-black/5 dark:bg-white/10 rounded font-bold">1</kbd> Quên</span>
-            <span>•</span>
-            <span><kbd className="px-1.5 py-0.2 bg-black/5 dark:bg-white/10 rounded font-bold">2</kbd> Thuộc</span>
-            <span>•</span>
-            <span><kbd className="px-1.5 py-0.2 bg-black/5 dark:bg-white/10 rounded font-bold">←/→</kbd> Chuyển</span>
-            <span>•</span>
-            <span><kbd className="px-1.5 py-0.2 bg-black/5 dark:bg-white/10 rounded font-bold">A</kbd> Đọc</span>
           </div>
         </div>
 
