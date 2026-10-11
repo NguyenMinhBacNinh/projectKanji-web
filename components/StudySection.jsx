@@ -17,6 +17,7 @@ import {
   RadicalIcon,
   MicShadowingIcon,
   WorksheetIcon,
+  StatsIcon,
   MoreHorizontalIcon,
   ReviewRecallIcon,
   MasteredCheckIcon,
@@ -55,10 +56,11 @@ export default function StudySection({
   onOpenMindmapModal,
   onOpenVoiceShadowing,
   onOpenWorksheetModal,
+  onOpenStatsModal,
   onSrsReview,
   dueCount = 0,
   isMastered = false,
-  isAnalysisMode = false,
+  isAnalysisMode = true,
   onToggleAnalysisMode,
 }) {
   const [showFurigana, setShowFurigana] = useState(true);
@@ -146,6 +148,84 @@ export default function StudySection({
         </div>
       </div>
 
+      {/* STUDIO SUITE TOOLBAR: Dải công cụ chuyên sâu cao cấp - 1 chạm mở ngay */}
+      <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 px-0.5">
+        <button
+          onClick={() => {
+            playWoodClapper();
+            if (onOpenPracticeModal) onOpenPracticeModal();
+          }}
+          className="py-2 px-2.5 rounded-2xl bg-washi-light/90 dark:bg-stone-850/90 hover:bg-torii hover:text-white dark:hover:bg-torii dark:hover:text-white border border-washi-border dark:border-stone-700/80 text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs group active:scale-95 cursor-pointer"
+          title="Tập viết & Thứ tự nét bút KanjiVG [Phím W]"
+        >
+          <BrushIcon className="w-3.5 h-3.5 text-torii group-hover:text-white transition-colors" />
+          <span className="truncate">Tập viết</span>
+          <kbd className="hidden lg:inline text-[9px] px-1 py-0.2 rounded bg-black/5 dark:bg-white/10 group-hover:bg-white/20 font-mono">W</kbd>
+        </button>
+
+        <button
+          onClick={() => {
+            playWoodClapper();
+            if (onOpenMindmapModal) onOpenMindmapModal();
+          }}
+          className="py-2 px-2.5 rounded-2xl bg-washi-light/90 dark:bg-stone-850/90 hover:bg-torii hover:text-white dark:hover:bg-torii dark:hover:text-white border border-washi-border dark:border-stone-700/80 text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs group active:scale-95 cursor-pointer"
+          title="Sơ đồ tư duy Kanji Mindmap [Phím M]"
+        >
+          <MindmapIcon className="w-3.5 h-3.5 text-indigo-500 group-hover:text-white transition-colors" />
+          <span className="truncate">Mindmap</span>
+          <kbd className="hidden lg:inline text-[9px] px-1 py-0.2 rounded bg-black/5 dark:bg-white/10 group-hover:bg-white/20 font-mono">M</kbd>
+        </button>
+
+        <button
+          onClick={() => {
+            playWoodClapper();
+            if (onOpenRadicalModal) onOpenRadicalModal();
+          }}
+          className="py-2 px-2.5 rounded-2xl bg-washi-light/90 dark:bg-stone-850/90 hover:bg-torii hover:text-white dark:hover:bg-torii dark:hover:text-white border border-washi-border dark:border-stone-700/80 text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs group active:scale-95 cursor-pointer"
+          title="Tra cứu 214 Bộ thủ Hán tự [Phím R]"
+        >
+          <RadicalIcon className="w-3.5 h-3.5 text-emerald-600 group-hover:text-white transition-colors" />
+          <span className="truncate">214 Bộ thủ</span>
+          <kbd className="hidden lg:inline text-[9px] px-1 py-0.2 rounded bg-black/5 dark:bg-white/10 group-hover:bg-white/20 font-mono">R</kbd>
+        </button>
+
+        <button
+          onClick={() => {
+            playWaterDrop();
+            if (onOpenVoiceShadowing) onOpenVoiceShadowing();
+          }}
+          className="py-2 px-2.5 rounded-2xl bg-washi-light/90 dark:bg-stone-850/90 hover:bg-torii hover:text-white dark:hover:bg-torii dark:hover:text-white border border-washi-border dark:border-stone-700/80 text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs group active:scale-95 cursor-pointer"
+          title="Luyện phát âm AI Shadowing & Chấm điểm"
+        >
+          <MicShadowingIcon className="w-3.5 h-3.5 text-rose-500 group-hover:text-white transition-colors" />
+          <span className="truncate">AI Shadowing</span>
+        </button>
+
+        <button
+          onClick={() => {
+            playWaterDrop();
+            if (onOpenWorksheetModal) onOpenWorksheetModal();
+          }}
+          className="py-2 px-2.5 rounded-2xl bg-washi-light/90 dark:bg-stone-850/90 hover:bg-torii hover:text-white dark:hover:bg-torii dark:hover:text-white border border-washi-border dark:border-stone-700/80 text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs group active:scale-95 cursor-pointer"
+          title="Tạo & In phiếu luyện viết ô vuông A4 Genkouyoushi"
+        >
+          <WorksheetIcon className="w-3.5 h-3.5 text-amber-600 group-hover:text-white transition-colors" />
+          <span className="truncate">In phiếu A4</span>
+        </button>
+
+        <button
+          onClick={() => {
+            playWoodClapper();
+            if (onOpenStatsModal) onOpenStatsModal();
+          }}
+          className="py-2 px-2.5 rounded-2xl bg-washi-light/90 dark:bg-stone-850/90 hover:bg-torii hover:text-white dark:hover:bg-torii dark:hover:text-white border border-washi-border dark:border-stone-700/80 text-stone-800 dark:text-stone-200 transition-all font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs group active:scale-95 cursor-pointer"
+          title="Biểu đồ tiến độ học tập & Tỉ lệ ghi nhớ SRS"
+        >
+          <StatsIcon className="w-3.5 h-3.5 text-blue-500 group-hover:text-white transition-colors" />
+          <span className="truncate">Thống kê</span>
+        </button>
+      </div>
+
       {/* 2. MAIN ZERO-SCROLL STUDIO ARENA: 2 Cột song hành trên Desktop / Laptop (1 Khung hình duy nhất) */}
       <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 items-stretch">
         {/* ==================== CỘT TRÁI: THẺ FLASHCARD & ĐIỀU HƯỚNG CHÍNH (7 CỘT) ==================== */}
@@ -192,26 +272,24 @@ export default function StudySection({
                       <span className="text-[11px] font-bold text-stone-700 dark:text-stone-200 bg-washi dark:bg-stone-800 px-2 py-0.5 rounded-lg border border-washi-border dark:border-stone-700">
                         {total > 0 ? `${currentIndex + 1} / ${total}` : '1'}
                       </span>
-                      {isAnalysisMode && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            playWaterDrop();
-                            setShowFurigana(!showFurigana);
-                          }}
-                          className={`px-2 py-0.5 rounded-lg text-xs font-bold border transition-all flex items-center gap-1 ${
-                            showFurigana
-                              ? 'bg-matcha/15 dark:bg-matcha/25 text-matcha dark:text-emerald-300 border-matcha/40 dark:border-emerald-500/40'
-                              : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 border-stone-200 dark:border-stone-700'
-                          }`}
-                          title="Bật/tắt Furigana âm Kunyomi [Phím F]"
-                        >
-                          <span className="font-kanji">あ</span>
-                          <span className="text-[10px] hidden sm:inline">
-                            Furigana {showFurigana ? 'ON' : 'OFF'}
-                          </span>
-                        </button>
-                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          playWaterDrop();
+                          setShowFurigana(!showFurigana);
+                        }}
+                        className={`px-2 py-0.5 rounded-lg text-xs font-bold border transition-all flex items-center gap-1 ${
+                          showFurigana
+                            ? 'bg-matcha/15 dark:bg-matcha/25 text-matcha dark:text-emerald-300 border-matcha/40 dark:border-emerald-500/40'
+                            : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 border-stone-200 dark:border-stone-700'
+                        }`}
+                        title="Bật/tắt Furigana âm Kunyomi [Phím F]"
+                      >
+                        <span className="font-kanji">あ</span>
+                        <span className="text-[10px] hidden sm:inline">
+                          Furigana {showFurigana ? 'ON' : 'OFF'}
+                        </span>
+                      </button>
                       {dueCount > 0 && (
                         <span className="px-2 py-0.5 rounded-full bg-amber-500/15 dark:bg-amber-400/20 text-amber-900 dark:text-amber-200 border border-amber-500/30 text-[10px] font-bold animate-pulse">
                           Cần ôn: {dueCount}
@@ -219,7 +297,7 @@ export default function StudySection({
                       )}
                     </div>
 
-                    {/* Right: Sound, Writing, More Tools Menu */}
+                    {/* Right: Sound & Quick Practice */}
                     <div className="flex items-center gap-1.5">
                       {/* Phát âm */}
                       <button
@@ -229,105 +307,29 @@ export default function StudySection({
                           playJapaneseSpeech(currentChar);
                         }}
                         className="p-1.5 sm:px-2.5 sm:py-1 rounded-xl bg-washi dark:bg-stone-800 hover:bg-torii dark:hover:bg-torii text-torii dark:text-torii-light hover:text-white dark:hover:text-white border border-torii/30 dark:border-stone-700 transition-all text-xs font-bold flex items-center gap-1.5 active:scale-95 shadow-2xs"
-                        title="Phát âm chữ này (Phím A)"
+                        title="Phát âm chữ này [Phím A]"
                       >
                         <VolumeIcon className="w-3.5 h-3.5" />
                         <span className="hidden sm:inline text-xs">Phát âm</span>
+                        <kbd className="hidden md:inline text-[9px] px-1 py-0.2 rounded bg-black/5 dark:bg-white/10 font-mono">A</kbd>
                       </button>
 
                       {/* Tập viết nét bút */}
-                      {isAnalysisMode && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            playWoodClapper();
-                            onOpenPracticeModal();
-                          }}
-                          className="p-1.5 sm:px-2.5 sm:py-1 rounded-xl bg-washi dark:bg-stone-800 hover:bg-torii dark:hover:bg-torii text-torii dark:text-torii-light hover:text-white dark:hover:text-white border border-torii/30 dark:border-stone-700 transition-all text-xs font-bold flex items-center gap-1.5 active:scale-95 shadow-2xs"
-                          title="Tập viết & Thứ tự nét bút (Phím W)"
-                        >
-                          <BrushIcon className="w-3.5 h-3.5" />
-                          <span className="hidden sm:inline text-xs">Tập viết</span>
-                        </button>
-                      )}
-
-                      {/* Nút menu công cụ bổ trợ (⋯) */}
-                      {isAnalysisMode && (
-                        <div className="relative">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setMenuOpen(!menuOpen);
-                          }}
-                          className="p-1.5 sm:px-2 rounded-xl bg-washi dark:bg-stone-800 hover:bg-torii/10 text-stone-700 dark:text-stone-300 border border-washi-border dark:border-stone-700 hover:border-torii/30 transition-all text-xs font-bold flex items-center justify-center active:scale-95"
-                          title="Công cụ bổ trợ (Sơ đồ, Bộ thủ, Luyện nói)"
-                        >
-                          <MoreHorizontalIcon className="w-4 h-4" />
-                        </button>
-
-                        {menuOpen && (
-                          <div
-                            onClick={(e) => e.stopPropagation()}
-                            className="absolute right-0 top-full mt-1.5 w-48 rounded-2xl bg-washi-light dark:bg-stone-800 border border-washi-border dark:border-stone-700 shadow-xl p-1.5 flex flex-col gap-1 z-50 text-xs font-bold animate-fadeIn"
-                          >
-                            {onOpenMindmapModal && (
-                              <button
-                                onClick={() => {
-                                  setMenuOpen(false);
-                                  playWoodClapper();
-                                  onOpenMindmapModal();
-                                }}
-                                className="w-full px-2.5 py-1.5 rounded-xl hover:bg-torii hover:text-white flex items-center gap-2 text-left transition-colors text-stone-800 dark:text-stone-100"
-                              >
-                                <MindmapIcon className="w-4 h-4 text-torii" />
-                                <span>Sơ đồ tư duy (M)</span>
-                              </button>
-                            )}
-                            {onOpenRadicalModal && (
-                              <button
-                                onClick={() => {
-                                  setMenuOpen(false);
-                                  playWoodClapper();
-                                  onOpenRadicalModal();
-                                }}
-                                className="w-full px-2.5 py-1.5 rounded-xl hover:bg-torii hover:text-white flex items-center gap-2 text-left transition-colors text-stone-800 dark:text-stone-100"
-                              >
-                                <RadicalIcon className="w-4 h-4 text-torii" />
-                                <span>Chiết tự bộ thủ (R)</span>
-                              </button>
-                            )}
-                            {onOpenVoiceShadowing && (
-                              <button
-                                onClick={() => {
-                                  setMenuOpen(false);
-                                  playWaterDrop();
-                                  onOpenVoiceShadowing();
-                                }}
-                                className="w-full px-2.5 py-1.5 rounded-xl hover:bg-torii hover:text-white flex items-center gap-2 text-left transition-colors text-stone-800 dark:text-stone-100"
-                              >
-                                <MicShadowingIcon className="w-4 h-4 text-torii" />
-                                <span>Luyện nói AI</span>
-                              </button>
-                            )}
-                            {onOpenWorksheetModal && (
-                              <button
-                                onClick={() => {
-                                  setMenuOpen(false);
-                                  playWaterDrop();
-                                  onOpenWorksheetModal();
-                                }}
-                                className="w-full px-2.5 py-1.5 rounded-xl hover:bg-torii hover:text-white flex items-center gap-2 text-left transition-colors text-stone-800 dark:text-stone-100"
-                              >
-                                <WorksheetIcon className="w-4 h-4 text-torii" />
-                                <span>In phiếu tập viết</span>
-                              </button>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          playWoodClapper();
+                          if (onOpenPracticeModal) onOpenPracticeModal();
+                        }}
+                        className="p-1.5 sm:px-2.5 sm:py-1 rounded-xl bg-washi dark:bg-stone-800 hover:bg-torii dark:hover:bg-torii text-torii dark:text-torii-light hover:text-white dark:hover:text-white border border-torii/30 dark:border-stone-700 transition-all text-xs font-bold flex items-center gap-1.5 active:scale-95 shadow-2xs"
+                        title="Tập viết & Thứ tự nét bút [Phím W]"
+                      >
+                        <BrushIcon className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline text-xs">Tập viết</span>
+                        <kbd className="hidden md:inline text-[9px] px-1 py-0.2 rounded bg-black/5 dark:bg-white/10 font-mono">W</kbd>
+                      </button>
+                    </div>
                   </div>
-                </div>
 
                   {/* Center: Hero Calligraphy Kanji & Han-Viet Dignified Typography */}
                   <div className="my-auto py-1 flex flex-col items-center justify-center text-center">
@@ -364,8 +366,8 @@ export default function StudySection({
                     <div className="bg-stone-100/80 dark:bg-stone-800/80 py-1.5 px-2.5 rounded-xl border border-stone-200/80 dark:border-stone-700/80">
                       <div className="flex items-center justify-center gap-1.5">
                         <span className="text-[10px] sm:text-[11px] uppercase font-bold text-stone-600 dark:text-stone-400 tracking-wider">Âm Kun (Kunyomi)</span>
-                        {isAnalysisMode && (
-                          <PitchAccentVisualizer word={currentChar} reading={cardInfo?.kun} />
+                        {cardInfo?.kun && (
+                          <PitchAccentVisualizer word={currentChar} reading={cardInfo.kun} />
                         )}
                       </div>
                       <span className="text-xs sm:text-sm font-bold text-torii dark:text-torii-light font-kanji mt-0.5 block truncate">
@@ -429,65 +431,17 @@ export default function StudySection({
                         <BrushIcon className="w-3.5 h-3.5" />
                         <span className="text-xs hidden sm:inline">Tập viết</span>
                       </button>
-
-                      {/* Back menu ⋯ */}
-                      <div className="relative">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setBackMenuOpen(!backMenuOpen);
-                          }}
-                          className="p-1.5 sm:px-2 rounded-xl bg-washi dark:bg-stone-800 hover:bg-torii/10 text-stone-700 dark:text-stone-300 border border-washi-border dark:border-stone-700 text-xs font-bold flex items-center justify-center active:scale-95"
-                        >
-                          <MoreHorizontalIcon className="w-4 h-4" />
-                        </button>
-                        {backMenuOpen && (
-                          <div
-                            onClick={(e) => e.stopPropagation()}
-                            className="absolute right-0 top-full mt-1.5 w-44 rounded-2xl bg-washi-light dark:bg-stone-800 border border-washi-border dark:border-stone-700 shadow-xl p-1.5 flex flex-col gap-1 z-50 text-xs font-bold animate-fadeIn"
-                          >
-                            {onOpenMindmapModal && (
-                              <button
-                                onClick={() => {
-                                  setBackMenuOpen(false);
-                                  playWoodClapper();
-                                  onOpenMindmapModal();
-                                }}
-                                className="w-full px-2.5 py-1.5 rounded-xl hover:bg-torii hover:text-white flex items-center gap-2 text-left transition-colors text-stone-800 dark:text-stone-100"
-                              >
-                                <MindmapIcon className="w-4 h-4 text-torii" />
-                                <span>Sơ đồ tư duy</span>
-                              </button>
-                            )}
-                            {onOpenRadicalModal && (
-                              <button
-                                onClick={() => {
-                                  setBackMenuOpen(false);
-                                  playWoodClapper();
-                                  onOpenRadicalModal();
-                                }}
-                                className="w-full px-2.5 py-1.5 rounded-xl hover:bg-torii hover:text-white flex items-center gap-2 text-left transition-colors text-stone-800 dark:text-stone-100"
-                              >
-                                <RadicalIcon className="w-4 h-4 text-torii" />
-                                <span>Chiết tự bộ thủ</span>
-                              </button>
-                            )}
-                          </div>
-                        )}
-                      </div>
                     </div>
                   </div>
 
-                  {/* Radical Breakdown Card Widget (Chỉ hiện khi phân tích) */}
-                  {isAnalysisMode && (
-                    <div className="my-1.5 shrink-0">
-                      <RadicalBreakdownCard
-                        currentChar={currentChar}
-                        cardInfo={cardInfo}
-                        onOpenRadicalModal={onOpenRadicalModal}
-                      />
-                    </div>
-                  )}
+                  {/* Radical Breakdown Card Widget */}
+                  <div className="my-1.5 shrink-0">
+                    <RadicalBreakdownCard
+                      currentChar={currentChar}
+                      cardInfo={cardInfo}
+                      onOpenRadicalModal={onOpenRadicalModal}
+                    />
+                  </div>
 
                   {/* Khung hình tượng & Mẹo ghi nhớ trực quan */}
                   <div className="my-1 shrink-0">
@@ -644,100 +598,11 @@ export default function StudySection({
         <div className="lg:col-span-5 flex flex-col gap-2">
           {/* Station Card: Chiều cao khớp hoàn hảo cột trái (~465px) */}
           <div className="w-full h-full min-h-[460px] karuta-card dark:bg-stone-900 dark:border-stone-700 p-3.5 sm:p-4 rounded-3xl border border-washi-border flex flex-col justify-between shadow-xs">
-            {!isAnalysisMode ? (
-              /* CHẾ ĐỘ TINH GIẢN (ZEN FOCUS): Cấu trúc chữ + Danh sách từ ghép cốt lõi thanh lịch */
-              <div className="w-full h-full flex flex-col justify-between flex-1 animate-fadeIn gap-2.5">
-                {/* Header Tinh Giản: Tiêu đề + Thông tin bộ thủ */}
-                <div className="w-full flex items-center justify-between pb-2 border-b border-washi-border/70 dark:border-stone-700/80">
-                  <div className="flex items-center gap-2">
-                    <BambooIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                    <span className="font-bold text-xs sm:text-sm text-stone-800 dark:text-stone-200">
-                      Từ ghép với 「{currentChar}」
-                    </span>
-                  </div>
-                  <div className="text-[11px] font-semibold text-stone-600 dark:text-stone-400 bg-washi dark:bg-stone-800 px-2 py-0.5 rounded-lg border border-washi-border dark:border-stone-700">
-                    Bộ: <strong className="text-torii dark:text-torii-light">{cardInfo?.radical || currentChar}</strong>
-                    {cardInfo?.strokeCount ? ` • ${cardInfo.strokeCount} nét` : ''}
-                  </div>
-                </div>
-
-                {/* Danh sách 4 từ ghép thiết kế dạng list items thanh lịch */}
-                <div className="flex-1 py-1 flex flex-col justify-between gap-2">
-                  {cardInfo?.vocab && cardInfo.vocab.length > 0 ? (
-                    cardInfo.vocab.slice(0, 4).map((v, i) => (
-                      <div
-                        key={i}
-                        onClick={() => {
-                          playWaterDrop();
-                          playJapaneseSpeech(v.word || v.reading || currentChar);
-                        }}
-                        className="p-2 sm:p-2.5 px-3 rounded-2xl border border-washi-border/80 dark:border-stone-700/80 bg-stone-50/80 dark:bg-stone-800/80 hover:border-torii/50 hover:bg-torii/5 transition-all flex items-center justify-between group cursor-pointer active:scale-99 shadow-2xs"
-                      >
-                        {/* Left: Index & Kanji & Reading */}
-                        <div className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0 pr-2">
-                          <span className="w-5 h-5 rounded-full bg-stone-200/80 dark:bg-stone-700 flex items-center justify-center text-[10px] font-bold text-stone-600 dark:text-stone-300 shrink-0">
-                            {i + 1}
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-baseline gap-2">
-                              <span className="font-kanji text-base sm:text-lg font-black text-stone-900 dark:text-stone-50 group-hover:text-torii dark:group-hover:text-torii-light transition-colors">
-                                {v.word}
-                              </span>
-                              <span className="text-xs font-bold text-torii dark:text-torii-light font-kanji">
-                                {v.reading}
-                              </span>
-                            </div>
-                            <div className="text-[11px] text-stone-600 dark:text-stone-300 font-ui truncate">
-                              {v.hanViet ? `[${v.hanViet}] • ` : ''}{v.meaning_vi || v.vn}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Right: Audio button */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            playWaterDrop();
-                            playJapaneseSpeech(v.word || v.reading || currentChar);
-                          }}
-                          className="p-1.5 sm:p-2 rounded-xl text-torii group-hover:bg-torii group-hover:text-white transition-all shadow-2xs bg-washi dark:bg-stone-700 border border-torii/20 shrink-0"
-                          title="Nghe phát âm"
-                        >
-                          <VolumeIcon className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="p-8 text-center text-xs text-stone-500">
-                      Chưa có từ ghép cho chữ Hán này.
-                    </div>
-                  )}
-                </div>
-
-                {/* Banner chuyển sang Chế độ Phân Tích */}
-                <div
-                  onClick={() => {
-                    playWaterDrop();
-                    onToggleAnalysisMode?.();
-                  }}
-                  className="w-full p-2.5 rounded-2xl bg-torii/5 hover:bg-torii/10 dark:bg-torii/15 border border-torii/25 text-center cursor-pointer transition-all flex items-center justify-between px-3 text-xs group"
-                >
-                  <div className="flex items-center gap-2 text-stone-700 dark:text-stone-200 font-semibold text-xs">
-                    <span className="text-base group-hover:scale-110 transition-transform">🔍</span>
-                    <span>Xem chiết tự bộ thủ, mẹo nhớ & câu ví dụ?</span>
-                  </div>
-                  <span className="px-2.5 py-1 rounded-xl bg-torii text-white font-bold text-[10px] shadow-2xs group-hover:bg-torii-light transition-colors flex items-center gap-1">
-                    <span>Bật Phân tích</span>
-                    <kbd className="px-1 py-0.2 bg-white/20 rounded font-mono text-[9px]">D</kbd>
-                  </span>
-                </div>
-              </div>
-            ) : (
-              /* CHẾ ĐỘ PHÂN TÍCH CHUYÊN SÂU (DEEP ANALYSIS MODE): Đầy đủ 4 tab, cao độ Tokyo, chiết tự */
-              <div className="w-full h-full flex flex-col justify-between flex-1 animate-fadeIn">
-                {/* Tab Selector Header (Chuyển đổi 4 trạm tri thức) */}
-                <div className="w-full flex items-center justify-between pb-2.5 border-b border-washi-border/70 dark:border-stone-700/80 gap-1">
-              <div className="flex items-center gap-1 p-1 rounded-xl bg-stone-100/80 dark:bg-stone-800/80 border border-stone-200/60 dark:border-stone-700/60 w-full text-xs font-bold">
+            {/* TRẠM TRI THỨC ĐA CHIỀU (MULTI-DIMENSIONAL KNOWLEDGE STATION): 4 Tab toàn diện, cao độ Tokyo, chiết tự, mẹo nhớ, ví dụ */}
+            <div className="w-full h-full flex flex-col justify-between flex-1 animate-fadeIn">
+              {/* Tab Selector Header (Chuyển đổi 4 trạm tri thức) */}
+              <div className="w-full flex items-center justify-between pb-2.5 border-b border-washi-border/70 dark:border-stone-700/80 gap-1">
+                <div className="flex items-center gap-1 p-1 rounded-xl bg-stone-100/80 dark:bg-stone-800/80 border border-stone-200/60 dark:border-stone-700/60 w-full text-xs font-bold">
                 <button
                   onClick={() => {
                     playWaterDrop();
@@ -973,18 +838,17 @@ export default function StudySection({
               </div>
             )}
 
-                {/* Bottom Station Quick Hint */}
-                <div className="pt-2 border-t border-washi-border/70 dark:border-stone-700/80 flex items-center justify-between text-[11px] text-stone-500 dark:text-stone-400">
-                  <span>Trạm tri thức chuyên sâu</span>
-                  <button
-                    onClick={onToggleAnalysisMode}
-                    className="font-mono font-bold text-torii dark:text-torii-light hover:underline cursor-pointer"
-                  >
-                    Về Tinh giản [D] ↻
-                  </button>
-                </div>
+              {/* Bottom Station Footer */}
+              <div className="pt-2 border-t border-washi-border/70 dark:border-stone-700/80 flex items-center justify-between text-[11px] text-stone-500 dark:text-stone-400">
+                <span className="flex items-center gap-1.5 font-medium">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span>Trạm tri thức đa chiều • JLPT {currentLevel}</span>
+                </span>
+                <span className="text-stone-600 dark:text-stone-400 font-mono text-[10px]">
+                  4 Chiều tri thức
+                </span>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>

@@ -86,8 +86,8 @@ export default function Home() {
   // Cherry blossom petals animation toggle
   const [petalsEnabled, setPetalsEnabled] = useState(true);
 
-  // Study Mode: false = Tinh Giản (Zen Focus - Mặc định), true = Phân Tích Chuyên Sâu
-  const [isAnalysisMode, setIsAnalysisMode] = useState(false);
+  // Study Mode: false = Tinh Giản (Zen Focus), true = Phân Tích Chuyên Sâu (Mặc định đầy đủ tính năng)
+  const [isAnalysisMode, setIsAnalysisMode] = useState(true);
 
   // Apply theme class to <html> element
   useEffect(() => {
@@ -469,6 +469,7 @@ export default function Home() {
             onOpenMindmapModal={() => setIsMindmapModalOpen(true)}
             onOpenVoiceShadowing={() => setIsVoiceShadowingOpen(true)}
             onOpenWorksheetModal={() => setIsWorksheetModalOpen(true)}
+            onOpenStatsModal={() => setIsStatsModalOpen(true)}
             onSrsReview={handleSrsReview}
             dueCount={dueKanjiList.length}
             isMastered={isMastered}
