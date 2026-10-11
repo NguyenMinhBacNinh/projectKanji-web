@@ -6,42 +6,42 @@
   --font-kanji: "Shippori Mincho", "Noto Serif JP", serif;
   --font-ui: "Plus Jakarta Sans", system-ui, sans-serif;
 
-  /* Theme: Washi Paper (Mặc định) - Tông Giấy Dâu Tằm Ấm Áp & Ánh Rạng Đông */
-  --bg-page: #f5eedf;
-  --bg-gradient: radial-gradient(ellipse at 50% -12%, rgba(220, 38, 38, 0.16) 0%, rgba(245, 238, 223, 0) 60%),
-                 radial-gradient(ellipse at 95% 15%, rgba(251, 113, 133, 0.12) 0%, transparent 45%),
-                 linear-gradient(180deg, #fdf8ee 0%, #f6ebd8 45%, #ece0c8 100%);
-  --bg-card: #fdfbf7;
-  --bg-subcard: #f2ece0;
-  --bg-wood: #ede4d3;
-  --border-subtle: #e2d7c5;
-  --border-strong: #c8baa2;
+  /* Theme: Washi Paper (Zen Luxury Studio) - Giấy Washi Thượng Hạng & Nắng Mai Kyoto */
+  --bg-page: #faf8f5;
+  --bg-gradient: radial-gradient(ellipse at 50% -8%, rgba(217, 119, 6, 0.08) 0%, rgba(250, 248, 245, 0) 55%),
+                 radial-gradient(ellipse at 90% 12%, rgba(244, 114, 182, 0.06) 0%, transparent 45%),
+                 linear-gradient(180deg, #fcfaf7 0%, #f8f5ee 50%, #f1ebe0 100%);
+  --bg-card: #ffffff;
+  --bg-subcard: #f9f6f0;
+  --bg-wood: #f4efe6;
+  --border-subtle: #e8e0d2;
+  --border-strong: #d6caba;
   --color-torii: #b91c1c;
   --color-torii-light: #dc2626;
   --color-gold: #b45309;
-  --color-sumi: #1f1d1a;
-  --color-muted: #786e64;
-  --card-shadow: 0 18px 42px -10px rgba(78, 54, 30, 0.16), 0 6px 16px -2px rgba(78, 54, 30, 0.08);
+  --color-sumi: #1c1917;
+  --color-muted: #57534e;
+  --card-shadow: 0 20px 50px -12px rgba(45, 30, 15, 0.09), 0 6px 18px -3px rgba(45, 30, 15, 0.05);
 }
 
-/* Theme: Yozakura - Đêm Kyoto & Hoa anh đào (Chế độ tối Dark Mode) */
+/* Theme: Yozakura - Đêm Trăng Kyoto Thượng Hạng (Chế độ tối Dark Mode) */
 .theme-yozakura,
 .dark {
-  --bg-page: #0b0f17;
-  --bg-gradient: radial-gradient(ellipse at 50% -12%, rgba(239, 68, 68, 0.22) 0%, rgba(11, 15, 23, 0) 65%),
-                 radial-gradient(ellipse at 85% 20%, rgba(236, 72, 153, 0.15) 0%, transparent 45%),
-                 linear-gradient(180deg, #141a24 0%, #0b0f17 50%, #070a10 100%);
-  --bg-card: #141a24;
-  --bg-subcard: #1c2433;
-  --bg-wood: #1e2637;
-  --border-subtle: #2d3748;
-  --border-strong: #4a5568;
+  --bg-page: #0c101a;
+  --bg-gradient: radial-gradient(ellipse at 50% -8%, rgba(239, 68, 68, 0.16) 0%, rgba(12, 16, 26, 0) 65%),
+                 radial-gradient(ellipse at 85% 15%, rgba(236, 72, 153, 0.14) 0%, transparent 50%),
+                 linear-gradient(180deg, #131a29 0%, #0c101a 50%, #080b12 100%);
+  --bg-card: #141c2b;
+  --bg-subcard: #1a2436;
+  --bg-wood: #1f2b40;
+  --border-subtle: #2a384f;
+  --border-strong: #3d4f6d;
   --color-torii: #f87171;
   --color-torii-light: #fca5a5;
   --color-gold: #fbbf24;
   --color-sumi: #f8fafc;
   --color-muted: #94a3b8;
-  --card-shadow: 0 18px 46px -10px rgba(0, 0, 0, 0.75), 0 0 24px -2px rgba(239, 68, 68, 0.18);
+  --card-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.75), 0 0 24px -2px rgba(239, 68, 68, 0.15);
 }
 
 body {
@@ -56,20 +56,20 @@ body {
   transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-/* Họa tiết sóng biển Seigaiha (青海波) dệt nền truyền thống - Tăng độ rõ nét và chiều sâu */
+/* Họa tiết sóng biển Seigaiha (青海波) dệt nền chỉ vàng kim mờ Kinpaku sang trọng */
 .wagara-pattern {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.09;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='35' viewBox='0 0 70 35'%3E%3Cg fill='none' stroke='%23000000' stroke-width='1.3'%3E%3Cpath d='M0 35c0-19.33 15.67-35 35-35s35 15.67 35 35'/%3E%3Cpath d='M7 35c0-15.46 12.54-28 28-28s28 12.54 28 28'/%3E%3Cpath d='M14 35c0-11.6 9.4-21 21-21s21 9.4 21 21'/%3E%3Cpath d='M21 35c0-7.73 6.27-14 14-14s14 6.27 14 14'/%3E%3Cpath d='M28 35c0-3.87 3.13-7 7-7s7 3.13 7 7'/%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='35' viewBox='0 0 70 35'%3E%3Cg fill='none' stroke='%23b45309' stroke-width='1.2'%3E%3Cpath d='M0 35c0-19.33 15.67-35 35-35s35 15.67 35 35'/%3E%3Cpath d='M7 35c0-15.46 12.54-28 28-28s28 12.54 28 28'/%3E%3Cpath d='M14 35c0-11.6 9.4-21 21-21s21 9.4 21 21'/%3E%3Cpath d='M21 35c0-7.73 6.27-14 14-14s14 6.27 14 14'/%3E%3Cpath d='M28 35c0-3.87 3.13-7 7-7s7 3.13 7 7'/%3E%3C/g%3E%3C/svg%3E");
   background-size: 70px 35px;
 }
 
 .theme-yozakura .wagara-pattern {
-  opacity: 0.13;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='35' viewBox='0 0 70 35'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1.3'%3E%3Cpath d='M0 35c0-19.33 15.67-35 35-35s35 15.67 35 35'/%3E%3Cpath d='M7 35c0-15.46 12.54-28 28-28s28 12.54 28 28'/%3E%3Cpath d='M14 35c0-11.6 9.4-21 21-21s21 9.4 21 21'/%3E%3Cpath d='M21 35c0-7.73 6.27-14 14-14s14 6.27 14 14'/%3E%3Cpath d='M28 35c0-3.87 3.13-7 7-7s7 3.13 7 7'/%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='35' viewBox='0 0 70 35'%3E%3Cg fill='none' stroke='%23fbbf24' stroke-width='1.2'%3E%3Cpath d='M0 35c0-19.33 15.67-35 35-35s35 15.67 35 35'/%3E%3Cpath d='M7 35c0-15.46 12.54-28 28-28s28 12.54 28 28'/%3E%3Cpath d='M14 35c0-11.6 9.4-21 21-21s21 9.4 21 21'/%3E%3Cpath d='M21 35c0-7.73 6.27-14 14-14s14 6.27 14 14'/%3E%3Cpath d='M28 35c0-3.87 3.13-7 7-7s7 3.13 7 7'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 /* Vân xơ giấy Washi (Fiber texture) */
@@ -161,13 +161,19 @@ body {
   transform: rotateY(180deg);
 }
 
-/* Thẻ bài Karuta / Tanzaku truyền thống */
+/* Thẻ bài Karuta / Tanzaku sơn mài thủ công nổi khối 3D */
 .karuta-card {
   background: var(--bg-card);
-  border: 1.5px solid var(--border-strong);
-  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--card-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.95);
   position: relative;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.theme-yozakura .karuta-card {
+  box-shadow: var(--card-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 /* Các mặt của thẻ Flashcard 3D BẮT BUỘC là position: absolute nằm đè lên nhau chính xác */
@@ -213,17 +219,19 @@ body {
   pointer-events: auto;
 }
 
-/* Khung viền chỉ vàng / đỏ kép truyền thống Nhật (二重枠) */
+/* Khung viền chỉ vàng / đỏ kép truyền thống Nhật (二重枠) - Kim tuyến thủ công */
 .karuta-inner-border {
   position: absolute;
-  inset: 7px;
-  border: 1px solid rgba(185, 28, 28, 0.18);
-  border-radius: 1.25rem;
+  inset: 6px;
+  border: 1px solid rgba(180, 83, 9, 0.16);
+  border-radius: 1.35rem;
   pointer-events: none;
+  box-shadow: inset 0 0 12px rgba(180, 83, 9, 0.03);
 }
 
 .theme-yozakura .karuta-inner-border {
-  border-color: rgba(234, 179, 8, 0.25);
+  border-color: rgba(251, 191, 36, 0.22);
+  box-shadow: inset 0 0 12px rgba(251, 191, 36, 0.05);
 }
 
 /* Chuẩn mực Furigana Ruby Typography Nhật Bản */

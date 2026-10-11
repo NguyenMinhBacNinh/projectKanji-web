@@ -526,53 +526,56 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="w-full max-w-4xl mt-12 py-6 border-t border-washi-border/50 text-center text-xs opacity-70 flex flex-col sm:flex-row items-center justify-between gap-2 z-20 font-ui">
-        <div className="flex items-center gap-2">
+      <footer className="w-full max-w-5xl mt-3 py-3 border-t border-washi-border/60 dark:border-stone-800/80 text-stone-600 dark:text-stone-400 text-xs flex flex-col sm:flex-row items-center justify-between gap-3 z-20 font-ui">
+        <div className="flex items-center gap-2 shrink-0">
           <ToriiGateIcon className="w-4 h-4 text-torii" />
-          <span>Sổ tay học Kanji tiếng Nhật • Luyện thi JLPT N5 - N1</span>
+          <span className="font-semibold text-stone-800 dark:text-stone-200">漢字学習帳 (Kanji Gakushūchō)</span>
+          <span className="text-stone-600 dark:text-stone-300">• Luyện thi JLPT N5 - N1</span>
         </div>
-        <div className="text-[11px]">
+        <div className="text-[11px] flex flex-wrap items-center justify-center sm:justify-end gap-1.5 leading-normal">
           {activeMode === 'quiz' ? (
             <>
-              Phím tắt Quiz:{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">1</kbd>{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">2</kbd>{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">3</kbd>{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">4</kbd>{' '}
-              chọn đáp án •{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">Space</kbd>{' '}
-              câu tiếp •{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">⌘K</kbd>{' '}
-              tìm kiếm
+              <span className="font-semibold text-stone-700 dark:text-stone-300">Phím tắt:</span>
+              <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">1-4</kbd> chọn</span>
+              <span>•</span>
+              <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">Space</kbd> tiếp</span>
+              <span>•</span>
+              <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">⌘K</kbd> tìm</span>
             </>
           ) : activeMode === 'listening' ? (
             <>
-              Luyện nghe Choukai:{' '}
-              Bấm <span className="font-bold text-torii">▶️ Nghe hội thoại</span> • Chọn phương án đúng • Bấm <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">⌘K</kbd> tìm kiếm
+              <span className="font-semibold text-stone-700 dark:text-stone-300">Luyện nghe Choukai:</span>
+              <span>Bấm <span className="font-bold text-torii">▶️ Nghe hội thoại</span></span>
+              <span>•</span>
+              <span>Chọn phương án</span>
+              <span>•</span>
+              <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">⌘K</kbd> tìm kiếm</span>
             </>
           ) : activeMode === 'vocab' ? (
             <>
-              Từ vựng JLPT:{' '}
-              <span className="font-bold">Lật thẻ 3D</span> • Phát âm chuẩn bản xứ • Bấm <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">⌘K</kbd> tìm kiếm
+              <span className="font-semibold text-stone-700 dark:text-stone-300">Từ vựng JLPT:</span>
+              <span className="font-bold text-stone-800 dark:text-stone-200">Lật thẻ 3D</span>
+              <span>•</span>
+              <span>Phát âm bản ngữ</span>
+              <span>•</span>
+              <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">⌘K</kbd> tìm kiếm</span>
             </>
           ) : (
             <>
-              Phím tắt:{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">⌘K</kbd>{' '}
-              tìm kiếm •{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">Space</kbd>{' '}
-              lật thẻ •{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">1-4</kbd>{' '}
-              lưu SRS •{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">W</kbd>{' '}
-              tập viết •{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">M</kbd>{' '}
-              sơ đồ •{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">R</kbd>{' '}
-              chiết tự •{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">←</kbd>{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">→</kbd>{' '}
-              chuyển thẻ
+              <span className="font-semibold text-stone-700 dark:text-stone-300">Phím tắt:</span>
+              <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">⌘K</kbd> tìm</span>
+              <span>•</span>
+              <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">Space</kbd> lật</span>
+              <span>•</span>
+              <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">1/2</kbd> SRS</span>
+              <span>•</span>
+              <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">W</kbd> viết</span>
+              <span>•</span>
+              <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">M</kbd> sơ đồ</span>
+              <span>•</span>
+              <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">R</kbd> bộ thủ</span>
+              <span>•</span>
+              <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">←/→</kbd> chuyển</span>
             </>
           )}
         </div>
