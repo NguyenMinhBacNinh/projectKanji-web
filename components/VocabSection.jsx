@@ -134,7 +134,7 @@ export default function VocabSection({ onSaveToNotebook }) {
         {/* Tầng 1: Chế độ hiển thị + Cấp độ JLPT + Ô Tìm kiếm */}
         <div className="w-full flex flex-col md:flex-row items-center justify-between gap-2">
           {/* Trái: Chế độ hiển thị (View Mode) */}
-          <div className="flex items-center gap-1 p-1 bg-washi dark:bg-stone-850 rounded-xl border border-washi-border dark:border-stone-700 text-xs font-bold w-full md:w-auto">
+          <div className="flex items-center gap-1 p-1 bg-washi dark:bg-stone-800 rounded-xl border border-washi-border dark:border-stone-700 text-xs font-bold w-full md:w-auto">
             <button
               onClick={() => {
                 playWoodClapper();

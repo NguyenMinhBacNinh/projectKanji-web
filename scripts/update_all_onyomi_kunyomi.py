@@ -185,12 +185,12 @@ def main():
     print(f"- Số chữ sửa chuẩn âm Hán Việt: {hv_fixed_count}")
 
     print("\n4. Đang ghi file kanji_full_database.json...")
-    with open(DB_JSON_ROOT, "w", encoding="utf-8") as f:
+    with open(DB_JSON_ROOT, "w", encoding="utf-8-sig") as f:
         json.dump(database, f, ensure_ascii=False, indent=2)
 
     print("5. Đang ghi file public/kanji_full_database.json...")
     os.makedirs(os.path.dirname(DB_JSON_PUBLIC), exist_ok=True)
-    with open(DB_JSON_PUBLIC, "w", encoding="utf-8") as f:
+    with open(DB_JSON_PUBLIC, "w", encoding="utf-8-sig") as f:
         json.dump(database, f, ensure_ascii=False, indent=2)
 
     print("6. Đang ghi file kanji_full_database.js...")
