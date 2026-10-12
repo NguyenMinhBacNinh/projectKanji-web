@@ -22,6 +22,7 @@ import KanjiMindmapModal from '../components/KanjiMindmapModal';
 import KanjiWorksheetModal from '../components/KanjiWorksheetModal';
 import StatsModal from '../components/StatsModal';
 import SpotlightSearchModal from '../components/SpotlightSearchModal';
+import AiSenseiWidget from '../components/AiSenseiWidget';
 import Toast from '../components/Toast';
 import { ToriiGateIcon } from '../components/ZenIcons';
 import { StudioAtmosphericWings } from '../components/JapaneseCulturalIcons';
@@ -683,6 +684,15 @@ export default function Home() {
         onSelectKanji={handleSelectKanjiFromSearch}
         fullDb={fullDb}
         levelsData={KANJI_DATA}
+      />
+
+      {/* Interactive AI Japanese Sensei Floating Tutor Widget */}
+      <AiSenseiWidget
+        currentChar={currentChar}
+        currentLevel={currentLevel}
+        cardInfo={cardInfo}
+        activeMode={activeMode}
+        fullDb={fullDb}
       />
 
       {/* Toast Notification */}
