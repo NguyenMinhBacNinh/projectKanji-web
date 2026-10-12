@@ -666,11 +666,14 @@ export default function Home() {
       <VoiceShadowingModal
         isOpen={isVoiceShadowingOpen}
         onClose={() => setIsVoiceShadowingOpen(false)}
+        currentLevel={currentLevel}
+        currentChar={currentChar}
+        cardInfo={cardInfo}
         initialPhrase={
           cardInfo?.exampleJp?.replace(/<[^>]+>/g, '') ||
-          (currentChar ? `「${currentChar}」の勉強` : 'こんにちは、よろしくお願いします。')
+          (currentChar ? `「${currentChar}」の勉強` : '')
         }
-        initialMeaning={cardInfo?.exampleVn || 'Xin chào, rất mong được giúp đỡ.'}
+        initialMeaning={cardInfo?.exampleVn || ''}
       />
 
       {/* Spotlight Command Palette Search Modal */}
