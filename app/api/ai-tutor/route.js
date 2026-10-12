@@ -126,6 +126,61 @@ ${context.cardInfo ? `- Âm Hán Việt: ${context.cardInfo.hanViet || ''}, Ngh�
       }
     }
 
+    // 2.5. Nếu chưa có API Key riêng, tự động kết nối dịch vụ Cloud Generative AI miễn phí
+    try {
+      const contextPrompt = `
+[NGỮ CẢNH HỌC TẬP HIỆN TẠI]:
+- Chữ Hán đang xem: 「${context.currentChar || 'Chưa chọn'}」
+- Cấp độ JLPT hiện tại: ${context.currentLevel || 'N5'}
+- Chế độ màn hình: ${context.activeMode || 'study'}
+${context.cardInfo ? `- Âm Hán Việt: ${context.cardInfo.hanViet || ''}, Nghĩa: ${context.cardInfo.meaning || ''}` : ''}
+`;
+
+      const aiMessages = [
+        { role: 'system', content: `${AI_SYSTEM_PROMPT}\n\n${contextPrompt}` },
+      ];
+
+      if (Array.isArray(history) && history.length > 0) {
+        history.slice(-4).forEach((item) => {
+          aiMessages.push({
+            role: item.sender === 'user' ? 'user' : 'assistant',
+            content: item.text,
+          });
+        });
+      }
+
+      aiMessages.push({ role: 'user', content: message });
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 9000); // 9s timeout
+
+      const cloudRes = await fetch('https://text.pollinations.ai/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: aiMessages,
+          model: 'openai',
+          seed: Math.floor(Math.random() * 1000000),
+        }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (cloudRes.ok) {
+        const text = await cloudRes.text();
+        if (text && text.trim().length > 10) {
+          return NextResponse.json({
+            success: true,
+            reply: text.trim(),
+            source: 'cloud_generative_ai',
+          });
+        }
+      }
+    } catch (cloudErr) {
+      console.warn('Cloud Generative AI call timed out or failed, using local engine:', cloudErr.message);
+    }
+
     // 3. Fallback sang Động cơ Tri thức Nội bộ (Local Knowledge Base) siêu tốc
     const activeDb = (fullDb && Object.keys(fullDb).length > 0) ? fullDb : getServerDb();
     const localReply = generateLocalSenseiResponse(message, context, activeDb);

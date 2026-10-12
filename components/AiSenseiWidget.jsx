@@ -14,6 +14,7 @@ export default function AiSenseiWidget({
   fullDb = null,
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +23,7 @@ export default function AiSenseiWidget({
   const [hasNewMessage, setHasNewMessage] = useState(false);
 
   const messagesEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
   const inputRef = useRef(null);
 
   // Load API Key from localStorage
@@ -39,17 +41,27 @@ export default function AiSenseiWidget({
         {
           id: 'welcome',
           sender: 'sensei',
-          text: `Konnichiwa! Thầy là **Kenji Sensei (賢治先生)** - Gia sư AI tiếng Nhật đồng hành cùng bạn.\n\nThầy có thể giải đáp chiết tự chữ Hán, phân tích ngữ pháp, đặt câu ví dụ và chia sẻ mẹo nhớ theo chuẩn JLPT N5 – N1.\n\nHôm nay bạn cần thầy hỗ trợ điều gì?`,
+          text: `Konnichiwa! Thầy là **Kenji Sensei (賢治先生)** - Gia sư AI tiếng Nhật luôn sẵn sàng hỗ trợ bạn.\n\nThầy có thể giải đáp chiết tự chữ Hán, phân tích ngữ pháp, đặt câu ví dụ giao tiếp và hướng dẫn mẹo nhớ độc đáo theo chuẩn JLPT N5 – N1.\n\nHôm nay bạn muốn thầy giúp gì về chữ Hán **「${currentChar || '一'}」**?`,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
       ]);
     }
-  }, [messages.length]);
+  }, [messages.length, currentChar]);
 
-  // Auto scroll to bottom
+  // Scroll to bottom smoothly
+  const scrollToLastExchange = () => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   useEffect(() => {
     if (isOpen) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      const timer = setTimeout(scrollToLastExchange, 150);
+      return () => clearTimeout(timer);
     }
   }, [messages, isOpen, isLoading]);
 
@@ -57,7 +69,7 @@ export default function AiSenseiWidget({
   useEffect(() => {
     if (isOpen) {
       setHasNewMessage(false);
-      setTimeout(() => inputRef.current?.focus(), 200);
+      setTimeout(() => inputRef.current?.focus(), 250);
     }
   }, [isOpen]);
 
@@ -151,9 +163,9 @@ export default function AiSenseiWidget({
     playWoodClapper();
     setMessages([
       {
-        id: 'welcome_reset',
+        id: `welcome_${Date.now()}`,
         sender: 'sensei',
-        text: `Chào bạn! Thầy đã dọn dẹp bảng trò chuyện. Bạn muốn hỏi về chữ Hán **「${currentChar || '一'}」** hay thắc mắc ngữ pháp nào tiếp theo?`,
+        text: `Chào bạn! Thầy đã làm mới bảng hội thoại. Bạn muốn đặt câu hỏi gì về chữ **「${currentChar || '一'}」** (${cardInfo?.hanViet || ''}) hay nội dung nào khác?`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ]);
@@ -174,7 +186,6 @@ export default function AiSenseiWidget({
   const renderFormattedText = (rawText) => {
     const lines = rawText.split('\n');
     return lines.map((line, lIdx) => {
-      // Headers
       if (line.startsWith('### ')) {
         return (
           <h4 key={lIdx} className="font-bold text-torii dark:text-torii-light text-sm mt-2 mb-1">
@@ -189,7 +200,6 @@ export default function AiSenseiWidget({
           </h3>
         );
       }
-      // Blockquote
       if (line.startsWith('> ')) {
         return (
           <blockquote
@@ -200,7 +210,6 @@ export default function AiSenseiWidget({
           </blockquote>
         );
       }
-      // List items
       if (line.startsWith('- ') || line.startsWith('* ')) {
         const itemText = line.substring(2);
         return (
@@ -210,11 +219,9 @@ export default function AiSenseiWidget({
           </div>
         );
       }
-      // Empty line
       if (!line.trim()) {
         return <div key={lIdx} className="h-1.5" />;
       }
-      // Regular line
       return (
         <p
           key={lIdx}
@@ -244,7 +251,7 @@ export default function AiSenseiWidget({
           className={`group flex items-center gap-2 p-2 sm:px-3.5 sm:py-2.5 rounded-full shadow-lg border-2 transition-all duration-300 cursor-pointer active:scale-95 ${
             isOpen
               ? 'bg-torii border-white/20 text-white shadow-torii/30 scale-95'
-              : 'bg-white/90 dark:bg-stone-900/90 hover:bg-torii dark:hover:bg-torii text-stone-900 dark:text-white hover:text-white border-torii/40 dark:border-stone-700/80 hover:border-torii shadow-xl backdrop-blur-md'
+              : 'bg-white/95 dark:bg-stone-900/95 hover:bg-torii dark:hover:bg-torii text-stone-900 dark:text-white hover:text-white border-torii/40 dark:border-stone-700/80 hover:border-torii shadow-xl backdrop-blur-md'
           }`}
           title="Trò chuyện với Kenji Sensei (Gia sư AI tiếng Nhật)"
         >
@@ -271,7 +278,13 @@ export default function AiSenseiWidget({
 
       {/* 2. CỬA SỔ CHAT SENSEI GLASSMORPHISM WIDGET */}
       {isOpen && (
-        <div className="fixed bottom-14 right-2 sm:bottom-20 sm:right-5 w-[94vw] sm:w-[410px] h-[540px] max-h-[82vh] z-50 rounded-3xl karuta-card border-2 border-border-strong shadow-2xl flex flex-col overflow-hidden backdrop-blur-2xl animate-fadeIn text-color-sumi">
+        <div
+          className={`fixed bottom-14 right-2 sm:bottom-20 sm:right-5 z-50 rounded-3xl karuta-card border-2 border-border-strong shadow-2xl flex flex-col overflow-hidden backdrop-blur-2xl animate-fadeIn text-color-sumi transition-all duration-300 ${
+            isExpanded
+              ? 'w-[96vw] sm:w-[580px] h-[660px] max-h-[90vh]'
+              : 'w-[94vw] sm:w-[430px] h-[550px] max-h-[82vh]'
+          }`}
+        >
           <div className="karuta-inner-border" />
 
           {/* Widget Header */}
@@ -289,11 +302,21 @@ export default function AiSenseiWidget({
                     AI Online
                   </span>
                 </div>
-                <div className="text-[10px] opacity-60">Gia sư 24/7 • N5 – N1</div>
+                <div className="text-[10px] opacity-60">Gia sư đàm thoại 24/7 • N5 – N1</div>
               </div>
             </div>
 
             <div className="flex items-center gap-1">
+              <button
+                onClick={() => {
+                  playWaterDrop();
+                  setIsExpanded((e) => !e);
+                }}
+                className="p-1.5 rounded-lg text-stone-500 hover:text-torii hover:bg-torii/10 transition-colors text-xs cursor-pointer"
+                title={isExpanded ? 'Thu nhỏ cửa sổ' : 'Phóng to cửa sổ'}
+              >
+                {isExpanded ? '🗗' : '⛶'}
+              </button>
               <button
                 onClick={() => {
                   playWaterDrop();
@@ -329,7 +352,7 @@ export default function AiSenseiWidget({
           {currentChar && (
             <div className="w-full px-3 py-1.5 bg-washi border-b border-washi-border text-[11px] flex items-center justify-between text-stone-600 dark:text-stone-300 relative z-10 shrink-0">
               <div className="flex items-center gap-1.5 truncate">
-                <span>Chữ đang học:</span>
+                <span>Đang học chữ:</span>
                 <span className="font-kanji font-bold text-sm text-torii">
                   {currentChar}
                 </span>
@@ -350,13 +373,13 @@ export default function AiSenseiWidget({
                 <span>🔑 Cài đặt Google Gemini API Key:</span>
                 <button
                   onClick={() => setShowSettings(false)}
-                  className="opacity-60 hover:opacity-100 text-[11px]"
+                  className="opacity-60 hover:opacity-100 text-[11px] cursor-pointer"
                 >
                   Đóng ✕
                 </button>
               </div>
               <p className="text-[10px] opacity-70">
-                Nếu bạn có API Key Gemini, hãy dán vào đây để nhận câu trả lời sinh động hơn. Nếu để trống, Sensei vẫn trả lời siêu tốc bằng Động cơ Tri thức Nội bộ!
+                Hệ thống tự động kích hoạt Cloud AI miễn phí. Nếu bạn có riêng Google Gemini API Key, hãy dán vào đây để tối ưu tốc độ và chất lượng câu trả lời.
               </p>
               <div className="flex items-center gap-1.5">
                 <input
@@ -377,7 +400,10 @@ export default function AiSenseiWidget({
           )}
 
           {/* Chat Messages Stream */}
-          <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 relative z-10 scrollbar-thin">
+          <div
+            ref={chatContainerRef}
+            className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3.5 relative z-10 scrollbar-thin"
+          >
             {messages.map((msg) => {
               const isUser = msg.sender === 'user';
               return (
@@ -385,52 +411,82 @@ export default function AiSenseiWidget({
                   key={msg.id}
                   className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} animate-fadeIn`}
                 >
-                  <div
-                    className={`max-w-[88%] rounded-2xl p-3 sm:p-3.5 shadow-2xs text-xs relative ${
-                      isUser
-                        ? 'bg-torii text-white rounded-br-xs'
-                        : 'bg-washi/95 border border-washi-border text-color-sumi rounded-bl-xs'
-                    }`}
-                  >
-                    {!isUser && (
-                      <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-washi-border/60">
-                        <span className="font-bold text-[10px] text-torii flex items-center gap-1">
-                          <span>⛩️</span> Kenji Sensei
-                        </span>
-                        <button
-                          onClick={() => handleSpeakJapanese(msg.text)}
-                          className="p-1 rounded-md hover:bg-torii/10 text-torii transition-colors cursor-pointer"
-                          title="Nghe phát âm tiếng Nhật trong câu này"
-                        >
-                          <VolumeIcon className="w-3 h-3" />
-                        </button>
+                  {isUser ? (
+                    /* Bong bóng người học */
+                    <div className="max-w-[85%] rounded-2xl rounded-br-xs p-3 bg-torii text-white shadow-xs text-xs space-y-1">
+                      <div className="flex items-center gap-1 text-[10px] font-bold text-white/80">
+                        <span>👤</span>
+                        <span>Bạn hỏi:</span>
                       </div>
-                    )}
-
-                    <div className="space-y-1">
-                      {isUser ? (
-                        <p className="leading-relaxed whitespace-pre-wrap">{msg.text}</p>
-                      ) : (
-                        renderFormattedText(msg.text)
-                      )}
+                      <p className="leading-relaxed whitespace-pre-wrap font-medium">{msg.text}</p>
+                      <div className="text-[9px] text-right text-white/60 pt-0.5">{msg.timestamp}</div>
                     </div>
+                  ) : (
+                    /* Bong bóng Kenji Sensei */
+                    <div className="flex items-start gap-2 max-w-[92%]">
+                      <div className="w-6 h-6 rounded-full bg-torii text-white text-[11px] font-bold flex items-center justify-center shrink-0 mt-1 shadow-2xs">
+                        賢
+                      </div>
+                      <div className="flex-1 rounded-2xl rounded-tl-xs p-3.5 bg-washi/95 border border-washi-border shadow-2xs text-color-sumi text-xs space-y-1.5">
+                        <div className="flex items-center justify-between pb-1.5 border-b border-washi-border/60">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-bold text-[11px] text-torii">
+                              Kenji Sensei (賢治先生)
+                            </span>
+                            {msg.source === 'cloud_generative_ai' || msg.source === 'gemini' ? (
+                              <span className="px-1.5 py-0.2 rounded-full text-[8px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                                ✨ Generative AI
+                              </span>
+                            ) : null}
+                          </div>
+                          <button
+                            onClick={() => handleSpeakJapanese(msg.text)}
+                            className="p-1 rounded-md hover:bg-torii/10 text-torii transition-colors cursor-pointer"
+                            title="Nghe phát âm tiếng Nhật trong câu trả lời"
+                          >
+                            <VolumeIcon className="w-3 h-3" />
+                          </button>
+                        </div>
 
-                    <div
-                      className={`text-[9px] mt-1 text-right ${
-                        isUser ? 'text-white/70' : 'opacity-40'
-                      }`}
-                    >
-                      {msg.timestamp}
+                        <div className="space-y-1">{renderFormattedText(msg.text)}</div>
+
+                        {/* Gợi ý đào sâu tiếp theo */}
+                        {msg.id !== 'welcome' && (
+                          <div className="pt-2 mt-2 border-t border-washi-border/60 flex flex-wrap items-center gap-1">
+                            <span className="text-[10px] opacity-60 mr-1">Hỏi tiếp:</span>
+                            <button
+                              onClick={() => handleSendMessage(`Đặt 2 câu ví dụ thực tế cho chữ 「${currentChar || 'này'}」`)}
+                              className="px-2 py-0.5 rounded-full text-[10px] bg-stone-100 dark:bg-stone-800 hover:bg-torii hover:text-white border border-washi-border transition-colors cursor-pointer"
+                            >
+                              ✍️ Đặt câu ví dụ
+                            </button>
+                            <button
+                              onClick={() => handleSendMessage(`Chữ 「${currentChar || 'này'}」 thường ghép với những từ vựng nào?`)}
+                              className="px-2 py-0.5 rounded-full text-[10px] bg-stone-100 dark:bg-stone-800 hover:bg-torii hover:text-white border border-washi-border transition-colors cursor-pointer"
+                            >
+                              📖 Từ vựng ghép
+                            </button>
+                            <button
+                              onClick={() => handleSendMessage(`Những chữ Hán nào dễ viết nhầm với chữ 「${currentChar || 'này'}」?`)}
+                              className="px-2 py-0.5 rounded-full text-[10px] bg-stone-100 dark:bg-stone-800 hover:bg-torii hover:text-white border border-washi-border transition-colors cursor-pointer"
+                            >
+                              ⚖️ Chữ dễ nhầm
+                            </button>
+                          </div>
+                        )}
+
+                        <div className="text-[9px] text-right opacity-40 pt-0.5">{msg.timestamp}</div>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               );
             })}
 
             {isLoading && (
               <div className="flex items-center gap-2 text-xs text-stone-500 italic p-2 animate-pulse">
-                <span className="text-sm">⛩️</span>
-                <span>Kenji Sensei đang tra cứu và suy nghĩ câu trả lời...</span>
+                <span className="text-base">⛩️</span>
+                <span>Kenji Sensei đang tra cứu và soạn thảo câu trả lời...</span>
               </div>
             )}
 
@@ -458,11 +514,11 @@ export default function AiSenseiWidget({
               </button>
             )}
             <button
-              onClick={() => handleSendMessage(`Đặt 2 câu ví dụ thực tế cho cấp độ JLPT ${currentLevel}`)}
+              onClick={() => handleSendMessage(`Đặt 2 câu ví dụ giao tiếp thực tế cho cấp độ JLPT ${currentLevel}`)}
               disabled={isLoading}
               className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-washi hover:bg-torii hover:text-white border border-washi-border transition-colors shrink-0 cursor-pointer"
             >
-              ✍️ Đặt câu ví dụ JLPT {currentLevel}
+              ✍️ Đặt câu JLPT {currentLevel}
             </button>
             <button
               onClick={() => handleSendMessage(`Những chữ Hán nào dễ nhầm lẫn nhất ở cấp độ ${currentLevel}?`)}
@@ -478,7 +534,7 @@ export default function AiSenseiWidget({
             <input
               ref={inputRef}
               type="text"
-              placeholder={`Hỏi Kenji Sensei về chữ 「${currentChar || 'Hán'}」, ngữ pháp...`}
+              placeholder={`Hỏi Kenji Sensei về chữ 「${currentChar || 'Hán'}」, ngữ pháp, mẹo nhớ...`}
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={(e) => {
