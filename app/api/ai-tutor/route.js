@@ -48,11 +48,14 @@ export async function POST(request) {
 
         // Chuẩn bị ngữ cảnh cho Gemini
         const contextPrompt = `
-[NGỮ CẢNH HỌC TẬP HIỆN TẠI]:
-- Chữ Hán đang xem: 「${context.currentChar || 'Chưa chọn'}」
-- Cấp độ JLPT hiện tại: ${context.currentLevel || 'N5'}
-- Chế độ màn hình: ${context.activeMode || 'study'}
+[NGỮ CẢNH HỌC TẬP]:
+- Chữ Hán đang xem trên thẻ: 「${context.currentChar || 'Chưa chọn'}」
+- Cấp độ JLPT: ${context.currentLevel || 'N5'}
 ${context.cardInfo ? `- Âm Hán Việt: ${context.cardInfo.hanViet || ''}, Nghĩa: ${context.cardInfo.meaning || ''}` : ''}
+
+[NGUYÊN TẮC SƯ PHẠM QUAN TRỌNG]:
+1. Nếu học viên hỏi về từ vựng, con vật, sự vật, chào hỏi, ngữ pháp chung (ví dụ: "con bò", "con mèo", "hoa anh đào", "xin chào"...), bạn PHẢI trả lời chính xác từ vựng đó kèm Kanji, Hiragana, âm Hán Việt và câu ví dụ minh họa. Tuyệt đối KHÔNG tự ý gán hay lạc đề sang chữ 「${context.currentChar || '一'}」!
+2. Chỉ phân tích chữ 「${context.currentChar || '一'}」 khi học viên nói "chữ này", "chữ đang học" hoặc nhắc đích danh chữ 「${context.currentChar || '一'}」.
 `;
 
         // Chuẩn bị danh sách tin nhắn theo cấu trúc Gemini contents
@@ -129,11 +132,14 @@ ${context.cardInfo ? `- Âm Hán Việt: ${context.cardInfo.hanViet || ''}, Ngh�
     // 2.5. Nếu chưa có API Key riêng, tự động kết nối dịch vụ Cloud Generative AI miễn phí
     try {
       const contextPrompt = `
-[NGỮ CẢNH HỌC TẬP HIỆN TẠI]:
-- Chữ Hán đang xem: 「${context.currentChar || 'Chưa chọn'}」
-- Cấp độ JLPT hiện tại: ${context.currentLevel || 'N5'}
-- Chế độ màn hình: ${context.activeMode || 'study'}
+[NGỮ CẢNH HỌC TẬP]:
+- Chữ Hán đang xem trên thẻ: 「${context.currentChar || 'Chưa chọn'}」
+- Cấp độ JLPT: ${context.currentLevel || 'N5'}
 ${context.cardInfo ? `- Âm Hán Việt: ${context.cardInfo.hanViet || ''}, Nghĩa: ${context.cardInfo.meaning || ''}` : ''}
+
+[NGUYÊN TẮC SƯ PHẠM QUAN TRỌNG]:
+1. Nếu học viên hỏi về từ vựng, con vật, sự vật, chào hỏi, ngữ pháp chung (ví dụ: "con bò", "con mèo", "hoa anh đào", "xin chào"...), bạn PHẢI trả lời chính xác từ vựng đó kèm Kanji, Hiragana, âm Hán Việt và câu ví dụ minh họa. Tuyệt đối KHÔNG tự ý gán hay lạc đề sang chữ 「${context.currentChar || '一'}」!
+2. Chỉ phân tích chữ 「${context.currentChar || '一'}」 khi học viên nói "chữ này", "chữ đang học" hoặc nhắc đích danh chữ 「${context.currentChar || '一'}」.
 `;
 
       const aiMessages = [
