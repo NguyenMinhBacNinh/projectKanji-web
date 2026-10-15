@@ -56,10 +56,9 @@ export default function JapaneseAtmosphericBackground({ theme = 'washi' }) {
       </div>
 
       {/* =========================================================================
-          2. TRỤ CẢNH BỜ TÂY (WEST FLANK - LINE-ART CỔNG TORII & RỪNG TRÚC THỦY MẶC)
-          Dành riêng cho màn hình rộng (xl & 2xl) - Thu gọn sát biên, thanh thoát
+          2. TRỤ CẢNH BỜ TÂY (Đã được nâng cấp thành Tranh Trục Treo Kakejiku)
           ========================================================================= */}
-      <div className="hidden xl:block absolute left-3 top-0 bottom-0 w-36 2xl:w-52 pointer-events-none z-0 opacity-20 2xl:opacity-30 transition-opacity duration-700">
+      <div className="hidden pointer-events-none z-0">
         <svg
           className="w-full h-full"
           viewBox="0 0 200 800"
@@ -117,10 +116,9 @@ export default function JapaneseAtmosphericBackground({ theme = 'washi' }) {
       </div>
 
       {/* =========================================================================
-          3. TRỤ CẢNH BỜ ĐÔNG (EAST FLANK - CÀNH ANH ĐÀO VÀ THÁP CHÙA MỘC BẢN)
-          Dành riêng cho màn hình rộng (xl & 2xl) - Nhẹ nhàng, thanh thoát
+          3. TRỤ CẢNH BỜ ĐÔNG (Đã được nâng cấp thành Tranh Trục Treo Kakejiku)
           ========================================================================= */}
-      <div className="hidden xl:block absolute right-3 top-0 bottom-0 w-36 2xl:w-52 pointer-events-none z-0 opacity-20 2xl:opacity-30 transition-opacity duration-700">
+      <div className="hidden pointer-events-none z-0">
         <svg
           className="w-full h-full"
           viewBox="0 0 200 800"

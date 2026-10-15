@@ -375,7 +375,7 @@ export default function VocabSection({ onSaveToNotebook }) {
                                 playWaterDrop();
                                 playJapaneseSpeech(currentWord.exampleJp);
                               }}
-                              className="p-1 rounded-md hover:bg-torii/10 text-torii transition-transform hover:scale-110"
+                              className="p-1 rounded-md hover:bg-torii/10 text-torii transition-colors"
                               title="Nghe câu ví dụ"
                             >
                               <VolumeIcon className="w-3.5 h-3.5" />
@@ -530,7 +530,7 @@ export default function VocabSection({ onSaveToNotebook }) {
                       playWaterDrop();
                       playJapaneseSpeech(quizQuestion.target.kanji);
                     }}
-                    className="p-1 rounded-lg hover:bg-torii/10 text-torii opacity-80 hover:opacity-100 hover:scale-110 transition-transform"
+                    className="p-1 rounded-lg hover:bg-torii/10 text-torii opacity-80 hover:opacity-100 transition-colors"
                     title="Nghe phát âm"
                   >
                     <VolumeIcon className="w-5 h-5" />

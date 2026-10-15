@@ -86,7 +86,7 @@ export default function KanjiMindmapModal({
               playWaterDrop();
               playJapaneseSpeech(currentChar);
             }}
-            className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-torii to-torii-dark text-white flex flex-col items-center justify-center shadow-xl cursor-pointer hover:scale-105 active:scale-95 transition-all relative group ring-4 ring-torii/20"
+            className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-torii to-torii-dark text-white flex flex-col items-center justify-center shadow-xl cursor-pointer active:scale-95 transition-all relative group ring-4 ring-torii/20"
           >
             <span className="text-4xl sm:text-5xl font-kanji font-black leading-none drop-shadow-sm">
               {currentChar}
@@ -125,7 +125,7 @@ export default function KanjiMindmapModal({
               </div>
 
               <div className="my-2">
-                <div className="text-xl sm:text-2xl font-kanji font-black text-torii group-hover:scale-105 origin-left transition-transform">
+                <div className="text-xl sm:text-2xl font-kanji font-black text-torii transition-colors">
                   {comp.word}
                 </div>
                 <div className="text-xs font-bold text-color-sumi/80 font-kanji mt-0.5">

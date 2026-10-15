@@ -648,7 +648,7 @@ export default function QuizSection({
                   const keyLetter = letters[optIdx];
                   const keyNum = optIdx + 1;
 
-                  let btnStyle = 'bg-washi border-washi-border hover:border-torii/60 hover:-translate-y-0.5';
+                  let btnStyle = 'bg-washi border-washi-border hover:border-torii/60 hover:bg-torii/5';
 
                   if (isAnswered && gameMode === 'zen') {
                     if (optIdx === displayItem.correctIndex) {

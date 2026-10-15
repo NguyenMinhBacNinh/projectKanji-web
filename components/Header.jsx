@@ -89,9 +89,9 @@ export default function Header({
   };
 
   return (
-    <header className="w-full max-w-6xl flex flex-col items-center gap-2.5 relative z-30 select-none">
-      {/* Unified Top Navigation Shell (Tích hợp 2 tầng, tránh phân mảnh) */}
-      <div className="w-full rounded-2xl bg-washi-light/95 dark:bg-stone-900/95 border border-washi-border dark:border-stone-700/80 shadow-xs backdrop-blur-md relative">
+    <header className="w-full max-w-6xl flex flex-col items-center gap-2 relative z-30 select-none">
+      {/* Unified Top Navigation Shell (Kyoto Zen Sanctuary Header) */}
+      <div className="w-full rounded-2xl bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 border border-[#D8CEBF] dark:border-stone-700/80 shadow-md shadow-stone-900/5 dark:shadow-black/30 backdrop-blur-md relative">
         {/* Tier 1: Main Top Navigation Bar */}
         <div className="w-full flex items-center justify-between py-2 px-3 sm:px-4 gap-2">
           {/* Left: Brand Identity */}
@@ -99,72 +99,72 @@ export default function Header({
             onClick={() => handleSelectPrimary('kanji')}
             className="flex items-center gap-2.5 cursor-pointer group shrink-0"
           >
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-br from-torii to-red-700 dark:from-torii-light dark:to-red-600 flex items-center justify-center text-white shadow-md text-base sm:text-lg transition-transform group-hover:scale-105 font-kanji font-black border-2 border-amber-400/50 relative">
-              <span className="relative z-10">漢</span>
-              <div className="absolute inset-0 rounded-2xl border border-white/25 pointer-events-none" />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#BC002D] text-white flex items-center justify-center border border-[#9B0024] shadow-xs text-base font-kanji font-black relative">
+              <span className="relative z-10 leading-none">漢</span>
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="text-base sm:text-lg font-black font-kanji tracking-tight text-sumi dark:text-stone-100 flex items-center gap-1.5">
+                <span className="text-base sm:text-lg font-black font-kanji tracking-tight text-stone-900 dark:text-white flex items-center gap-1.5">
                   <span>漢字学習帳</span>
                 </span>
-                <span className="text-[10px] opacity-60 font-ui border-l border-current pl-1.5 hidden md:inline text-sumi dark:text-stone-300">
-                  Kanji Gakushūchō
+                <span className="text-[10px] font-bold font-serif px-2 py-0.5 rounded-lg bg-amber-100/90 dark:bg-stone-800 text-amber-900 dark:text-amber-200 border border-amber-800/30 dark:border-amber-400/30 hidden md:inline-flex items-center gap-1 shadow-2xs">
+                  <span>侘寂</span>
+                  <span>WABI-SABI</span>
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Center: 4 Core Navigation Tabs with Authentic Japanese Icons */}
-          <nav className="flex items-center p-1 rounded-xl bg-[#f0ebe1] dark:bg-[#1a2332] border border-[#dfd5c3] dark:border-stone-700 font-ui text-xs font-bold gap-1">
+          {/* Center: 4 Core Navigation Tabs */}
+          <nav className="flex items-center p-1 rounded-xl bg-[#F5EFE6] dark:bg-[#1C2431] border border-[#E3DACB] dark:border-stone-700 shadow-2xs font-ui text-xs font-bold gap-1">
             {/* 1. Hán tự */}
             <button
               onClick={() => handleSelectPrimary('kanji')}
-              className={`px-3 sm:px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-2 ${primaryGroup === 'kanji'
-                  ? 'bg-torii dark:bg-torii-light text-white shadow-sm font-black'
-                  : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
+              className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${primaryGroup === 'kanji'
+                  ? 'bg-[#BC002D] text-white shadow-xs font-bold'
+                  : 'text-stone-700 dark:text-stone-200 hover:bg-[#EAE1D2] dark:hover:bg-stone-800 hover:text-stone-950'
                 }`}
             >
-              <ToriiShrineIcon className="w-4 h-4 text-amber-300 dark:text-amber-200" />
+              <ToriiShrineIcon className="w-3.5 h-3.5" />
               <span>Hán tự</span>
             </button>
 
-            {/* 2. Bài học (Kana, Từ vựng, Ngữ pháp, Đọc) */}
+            {/* 2. Bài học */}
             <button
               onClick={() => handleSelectPrimary('knowledge')}
-              className={`px-3 sm:px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-2 ${primaryGroup === 'knowledge'
-                  ? 'bg-torii dark:bg-torii-light text-white shadow-sm font-black'
-                  : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
+              className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${primaryGroup === 'knowledge'
+                  ? 'bg-[#BC002D] text-white shadow-xs font-bold'
+                  : 'text-stone-700 dark:text-stone-200 hover:bg-[#EAE1D2] dark:hover:bg-stone-800 hover:text-stone-950'
                 }`}
             >
-              <BambooIcon className="w-4 h-4 text-emerald-400 dark:text-emerald-300" />
+              <BambooIcon className="w-3.5 h-3.5" />
               <span>Bài học</span>
             </button>
 
-            {/* 3. Luyện tập (Quiz, Nghe hiểu, Karuta, Đấu trường) */}
+            {/* 3. Luyện tập */}
             <button
               onClick={() => handleSelectPrimary('practice')}
-              className={`px-3 sm:px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-2 ${primaryGroup === 'practice'
-                  ? 'bg-torii dark:bg-torii-light text-white shadow-sm font-black'
-                  : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
+              className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${primaryGroup === 'practice'
+                  ? 'bg-[#BC002D] text-white shadow-xs font-bold'
+                  : 'text-stone-700 dark:text-stone-200 hover:bg-[#EAE1D2] dark:hover:bg-stone-800 hover:text-stone-950'
                 }`}
             >
-              <SensuFanIcon className="w-4 h-4 text-amber-400 dark:text-amber-300" />
+              <SensuFanIcon className="w-3.5 h-3.5" />
               <span>Luyện tập</span>
             </button>
 
             {/* 4. Sổ tay */}
             <button
               onClick={() => handleSelectPrimary('notebook')}
-              className={`px-3 sm:px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-2 relative ${primaryGroup === 'notebook'
-                  ? 'bg-torii dark:bg-torii-light text-white shadow-sm font-black'
-                  : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
+              className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 relative ${primaryGroup === 'notebook'
+                  ? 'bg-[#BC002D] text-white shadow-xs font-bold'
+                  : 'text-stone-700 dark:text-stone-200 hover:bg-[#EAE1D2] dark:hover:bg-stone-800 hover:text-stone-950'
                 }`}
             >
-              <ScrollUnfurledIcon className="w-4 h-4 text-amber-300 dark:text-amber-200" />
+              <ScrollUnfurledIcon className="w-3.5 h-3.5" />
               <span>Sổ tay</span>
               {notebookCount > 0 && (
-                <span className="ml-0.5 px-1.5 py-0.2 text-[9px] bg-amber-500 text-white font-black rounded-full shadow-2xs">
+                <span className="ml-0.5 px-1.5 py-0.2 text-[9px] font-black rounded-full bg-[#BC002D] text-white">
                   {notebookCount}
                 </span>
               )}
@@ -172,7 +172,7 @@ export default function Header({
           </nav>
 
           {/* Right: Clean Unified Tool Icons */}
-          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
             {/* Quick Search Spotlight */}
             {onOpenSpotlight && (
               <button
@@ -180,7 +180,7 @@ export default function Header({
                   playWaterDrop();
                   onOpenSpotlight();
                 }}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-washi-border dark:border-stone-700 bg-washi dark:bg-stone-800 hover:border-torii/50 hover:bg-torii/10 text-torii dark:text-torii-light flex items-center justify-center transition-all text-xs font-bold active:scale-95 shadow-2xs"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-[#D8CEBF] dark:border-stone-700 bg-white/80 dark:bg-stone-800 hover:bg-[#F2ECE0] dark:hover:bg-stone-750 text-stone-800 dark:text-stone-200 flex items-center justify-center transition-all text-xs font-bold shadow-2xs cursor-pointer active:scale-95"
                 title="Tìm kiếm nhanh Hán tự [⌘K]"
               >
                 <SearchIcon className="w-4 h-4" />
@@ -193,8 +193,8 @@ export default function Header({
                 playWaterDrop();
                 onToggleTheme();
               }}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-washi-border dark:border-stone-700 bg-washi dark:bg-stone-800 hover:border-torii/50 hover:bg-torii/10 text-sumi dark:text-stone-200 flex items-center justify-center transition-all text-xs font-bold active:scale-95 shadow-2xs"
-              title={theme === 'yozakura' ? 'Chuyển sang chế độ Sáng (Washi)' : 'Chuyển sang chế độ Tối (Đêm Kyoto)'}
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-[#D8CEBF] dark:border-stone-700 bg-white/80 dark:bg-stone-800 hover:bg-[#F2ECE0] dark:hover:bg-stone-750 text-stone-800 dark:text-stone-200 flex items-center justify-center transition-all text-xs font-bold shadow-2xs cursor-pointer active:scale-95"
+              title={theme === 'yozakura' ? 'Chuyển sang chế độ Sáng' : 'Chuyển sang chế độ Tối'}
             >
               {theme === 'yozakura' ? (
                 <MoonIcon className="w-4 h-4 text-amber-300" />
@@ -203,7 +203,7 @@ export default function Header({
               )}
             </button>
 
-            {/* Tiện ích & Cài đặt Dropdown Popover (Chuyên biệt Tùy chỉnh & Môi trường) */}
+            {/* Tiện ích & Cài đặt Dropdown Popover */}
             <div className="relative" ref={settingsRef}>
               <button
                 onClick={() => {
@@ -212,8 +212,8 @@ export default function Header({
                 }}
                 className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl border flex items-center justify-center transition-all active:scale-95 shadow-2xs relative ${
                   isSettingsOpen
-                    ? 'border-torii bg-torii text-white shadow-sm ring-2 ring-torii/30'
-                    : 'border-washi-border dark:border-stone-700 bg-washi dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:border-torii/50 hover:bg-torii/10'
+                    ? 'border-[#BC002D] bg-[#BC002D] text-white shadow-xs'
+                    : 'border-[#D8CEBF] dark:border-stone-700 bg-white/80 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:border-[#BC002D]/50 hover:bg-[#BC002D]/10'
                 }`}
                 title="Cài đặt không gian & Âm thanh Zen"
               >

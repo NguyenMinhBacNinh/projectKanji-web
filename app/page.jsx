@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
 import SakuraPetals from '../components/SakuraPetals';
 import JapaneseAtmosphericBackground from '../components/JapaneseAtmosphericBackground';
+import JapaneseSideScrolls from '../components/JapaneseSideScrolls';
 import StudySection from '../components/StudySection';
 import QuizSection from '../components/QuizSection';
 import KarutaGameSection from '../components/KarutaGameSection';
@@ -18,14 +19,14 @@ import VoiceShadowingModal from '../components/VoiceShadowingModal';
 import KanjiGridModal from '../components/KanjiGridModal';
 import KanjiPracticeModal from '../components/KanjiPracticeModal';
 import RadicalModal from '../components/RadicalModal';
-import KanjiMindmapModal from '../components/KanjiMindmapModal';
+import KanjiVocabModal from '../components/KanjiVocabModal';
+import KanjiMnemonicModal from '../components/KanjiMnemonicModal';
+import KanjiExampleModal from '../components/KanjiExampleModal';
 import KanjiWorksheetModal from '../components/KanjiWorksheetModal';
 import StatsModal from '../components/StatsModal';
 import SpotlightSearchModal from '../components/SpotlightSearchModal';
-import AiSenseiWidget from '../components/AiSenseiWidget';
 import Toast from '../components/Toast';
 import { ToriiGateIcon } from '../components/ZenIcons';
-import { StudioAtmosphericWings } from '../components/JapaneseCulturalIcons';
 import { KANJI_DATA } from '../lib/kanjiData';
 
 import {
@@ -66,7 +67,9 @@ export default function Home() {
   const [isGridModalOpen, setIsGridModalOpen] = useState(false);
   const [isPracticeModalOpen, setIsPracticeModalOpen] = useState(false);
   const [isRadicalModalOpen, setIsRadicalModalOpen] = useState(false);
-  const [isMindmapModalOpen, setIsMindmapModalOpen] = useState(false);
+  const [isVocabModalOpen, setIsVocabModalOpen] = useState(false);
+  const [isMnemonicModalOpen, setIsMnemonicModalOpen] = useState(false);
+  const [isExampleModalOpen, setIsExampleModalOpen] = useState(false);
   const [isWorksheetModalOpen, setIsWorksheetModalOpen] = useState(false);
   const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
   const [isSpotlightOpen, setIsSpotlightOpen] = useState(false);
@@ -348,7 +351,9 @@ export default function Home() {
         isGridModalOpen ||
         isPracticeModalOpen ||
         isRadicalModalOpen ||
-        isMindmapModalOpen ||
+        isVocabModalOpen ||
+        isMnemonicModalOpen ||
+        isExampleModalOpen ||
         isWorksheetModalOpen ||
         isStatsModalOpen ||
         isSpotlightOpen ||
@@ -358,7 +363,9 @@ export default function Home() {
           setIsGridModalOpen(false);
           setIsPracticeModalOpen(false);
           setIsRadicalModalOpen(false);
-          setIsMindmapModalOpen(false);
+          setIsVocabModalOpen(false);
+          setIsMnemonicModalOpen(false);
+          setIsExampleModalOpen(false);
           setIsWorksheetModalOpen(false);
           setIsStatsModalOpen(false);
           setIsSpotlightOpen(false);
@@ -374,15 +381,24 @@ export default function Home() {
         } else if (e.key === 'w' || e.key === 'W') {
           e.preventDefault();
           setIsPracticeModalOpen(true);
-        } else if (e.key === 'd' || e.key === 'D') {
-          e.preventDefault();
-          handleToggleAnalysisMode();
         } else if (e.key === 'r' || e.key === 'R') {
           e.preventDefault();
           setIsRadicalModalOpen(true);
+        } else if (e.key === 'v' || e.key === 'V') {
+          e.preventDefault();
+          setIsVocabModalOpen(true);
         } else if (e.key === 'm' || e.key === 'M') {
           e.preventDefault();
-          setIsMindmapModalOpen(true);
+          setIsMnemonicModalOpen(true);
+        } else if (e.key === 'e' || e.key === 'E') {
+          e.preventDefault();
+          setIsExampleModalOpen(true);
+        } else if (e.key === 'g' || e.key === 'G') {
+          e.preventDefault();
+          setIsGridModalOpen(true);
+        } else if (e.key === 'd' || e.key === 'D') {
+          e.preventDefault();
+          handleToggleAnalysisMode();
         } else if (isFlipped && ['1', '2', '3', '4'].includes(e.key)) {
           e.preventDefault();
           handleSrsReview(parseInt(e.key, 10));
@@ -406,7 +422,9 @@ export default function Home() {
     isGridModalOpen,
     isPracticeModalOpen,
     isRadicalModalOpen,
-    isMindmapModalOpen,
+    isVocabModalOpen,
+    isMnemonicModalOpen,
+    isExampleModalOpen,
     isWorksheetModalOpen,
     isStatsModalOpen,
     isSpotlightOpen,
@@ -431,8 +449,9 @@ export default function Home() {
       {/* Hiệu ứng cánh hoa anh đào Sakura Fubuki rơi lãng mạn */}
       <SakuraPetals enabled={petalsEnabled} />
 
-      {/* Cụm huy hiệu văn hóa Nhật Bản lơ lửng 2 bên cánh Studio (Desktop Wings) */}
-      <StudioAtmosphericWings />
+      {/* Tranh Treo Nghệ Thuật Washi Shikishi (Torii & Núi Phú Sĩ) */}
+      <JapaneseSideScrolls theme={theme} />
+
 
       {/* Main Container */}
       <div className="w-full max-w-6xl flex flex-col items-center gap-1.5 sm:gap-2 flex-1 min-h-0 relative z-20">
@@ -473,7 +492,9 @@ export default function Home() {
             onOpenGridModal={() => setIsGridModalOpen(true)}
             onOpenPracticeModal={() => setIsPracticeModalOpen(true)}
             onOpenRadicalModal={() => setIsRadicalModalOpen(true)}
-            onOpenMindmapModal={() => setIsMindmapModalOpen(true)}
+            onOpenVocabModal={() => setIsVocabModalOpen(true)}
+            onOpenMnemonicModal={() => setIsMnemonicModalOpen(true)}
+            onOpenExampleModal={() => setIsExampleModalOpen(true)}
             onOpenVoiceShadowing={() => setIsVoiceShadowingOpen(true)}
             onOpenWorksheetModal={() => setIsWorksheetModalOpen(true)}
             onOpenStatsModal={() => setIsStatsModalOpen(true)}
@@ -482,6 +503,7 @@ export default function Home() {
             isMastered={isMastered}
             isAnalysisMode={isAnalysisMode}
             onToggleAnalysisMode={handleToggleAnalysisMode}
+            fullDb={fullDb}
           />
         )}
 
@@ -578,9 +600,13 @@ export default function Home() {
               <span>•</span>
               <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">W</kbd> viết</span>
               <span>•</span>
-              <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">M</kbd> sơ đồ</span>
-              <span>•</span>
               <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">R</kbd> bộ thủ</span>
+              <span>•</span>
+              <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">V</kbd> từ ghép</span>
+              <span>•</span>
+              <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">M</kbd> mẹo</span>
+              <span>•</span>
+              <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">E</kbd> ví dụ</span>
               <span>•</span>
               <span><kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded border border-washi-border font-mono font-bold">←/→</kbd> chuyển</span>
             </>
@@ -623,6 +649,7 @@ export default function Home() {
         currentLevel={currentLevel}
         cardInfo={cardInfo}
         allKanjiList={kanjiList}
+        fullDb={fullDb}
         onSelectKanji={(selectedChar) => {
           const foundIdx = kanjiList.indexOf(selectedChar);
           if (foundIdx !== -1) {
@@ -638,10 +665,28 @@ export default function Home() {
         }}
       />
 
-      {/* Kanji Compound Mindmap Modal */}
-      <KanjiMindmapModal
-        isOpen={isMindmapModalOpen}
-        onClose={() => setIsMindmapModalOpen(false)}
+      {/* Kanji JLPT Compound Vocabulary Modal */}
+      <KanjiVocabModal
+        isOpen={isVocabModalOpen}
+        onClose={() => setIsVocabModalOpen(false)}
+        currentChar={currentChar}
+        currentLevel={currentLevel}
+        cardInfo={cardInfo}
+      />
+
+      {/* Kanji Visual Mnemonic Modal */}
+      <KanjiMnemonicModal
+        isOpen={isMnemonicModalOpen}
+        onClose={() => setIsMnemonicModalOpen(false)}
+        currentChar={currentChar}
+        currentLevel={currentLevel}
+        cardInfo={cardInfo}
+      />
+
+      {/* Kanji Context Example Modal */}
+      <KanjiExampleModal
+        isOpen={isExampleModalOpen}
+        onClose={() => setIsExampleModalOpen(false)}
         currentChar={currentChar}
         currentLevel={currentLevel}
         cardInfo={cardInfo}
@@ -684,15 +729,6 @@ export default function Home() {
         onSelectKanji={handleSelectKanjiFromSearch}
         fullDb={fullDb}
         levelsData={KANJI_DATA}
-      />
-
-      {/* Interactive AI Japanese Sensei Floating Tutor Widget */}
-      <AiSenseiWidget
-        currentChar={currentChar}
-        currentLevel={currentLevel}
-        cardInfo={cardInfo}
-        activeMode={activeMode}
-        fullDb={fullDb}
       />
 
       {/* Toast Notification */}

@@ -466,38 +466,35 @@ export default function KanjiPracticeModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl max-h-[94vh] overflow-y-auto rounded-3xl karuta-card border-2 border-border-strong shadow-2xl p-5 md:p-6 flex flex-col gap-4 text-color-sumi relative z-10"
+        className="w-full max-w-xl max-h-[92vh] overflow-y-auto rounded-3xl border-[2.5px] border-stone-900 dark:border-white shadow-manga-xl p-5 md:p-6 flex flex-col gap-4 bg-white dark:bg-stone-900 text-stone-950 dark:text-white relative z-10"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Viền đôi phong cách Nhật */}
-        <div className="karuta-inner-border" />
-
         {/* Modal Header */}
-        <div className="w-full flex items-center justify-between pb-3 border-b border-washi-border relative z-10">
+        <div className="w-full flex items-center justify-between pb-3 border-b-2 border-stone-900 dark:border-white relative z-10">
           <div className="flex items-center gap-3">
-            <span className="text-3xl font-kanji font-black text-torii">{currentChar}</span>
+            <span className="text-3xl sm:text-4xl font-kanji font-black text-akira dark:text-red-400 leading-none">{currentChar}</span>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-extrabold text-base">{cardInfo?.hanViet || 'HÁN TỰ'}</span>
-                <span className="hanko-stamp text-[10px] py-0.5 px-2">JLPT {currentLevel}</span>
+                <span className="font-black text-base sm:text-lg">{cardInfo?.hanViet || 'HÁN TỰ'}</span>
+                <span className="px-2 py-0.5 rounded-lg border-2 border-stone-900 dark:border-white bg-manga-yellow text-stone-950 text-[10px] font-black shadow-2xs">JLPT {currentLevel}</span>
                 {totalStrokes > 0 && (
-                  <span className="px-2 py-0.5 rounded-full bg-torii/10 text-torii font-bold text-xs border border-torii/30">
+                  <span className="px-2 py-0.5 rounded-lg border-2 border-stone-900 dark:border-white bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white text-[10px] font-black font-mono shadow-2xs">
                     {totalStrokes} nét bút
                   </span>
                 )}
               </div>
-              <span className="text-xs opacity-70 block truncate max-w-xs">{cardInfo?.meaning}</span>
+              <span className="text-xs font-bold text-stone-600 dark:text-stone-300 block truncate max-w-xs mt-0.5">{cardInfo?.meaning}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             {onOpenRadicalModal && (
               <button
                 onClick={() => {
                   onClose();
                   onOpenRadicalModal();
                 }}
-                className="px-2.5 py-1 rounded-xl bg-washi hover:bg-torii hover:text-white border border-torii/30 text-torii font-bold text-xs transition-all flex items-center gap-1 active:scale-95"
+                className="px-2.5 py-1 rounded-xl bg-manga-yellow hover:bg-yellow-300 text-stone-950 border-2 border-stone-900 dark:border-white font-black text-xs transition-all flex items-center gap-1 shadow-2xs active:translate-x-0.5 active:translate-y-0.5 cursor-pointer"
                 title="Xem chiết tự bộ thủ cấu thành (Phím R)"
               >
                 <span>🧩</span>
@@ -507,7 +504,7 @@ export default function KanjiPracticeModal({
 
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-washi hover:bg-torii hover:text-white flex items-center justify-center font-bold text-sm transition-all border border-washi-border active:scale-95"
+              className="w-8 h-8 rounded-xl border-2 border-stone-900 dark:border-white bg-white dark:bg-stone-800 hover:bg-akira hover:text-white text-stone-900 dark:text-stone-100 font-black text-sm flex items-center justify-center transition-all cursor-pointer shadow-2xs active:translate-x-0.5 active:translate-y-0.5"
               title="Đóng (Phím Esc)"
             >
               ✕
@@ -516,7 +513,7 @@ export default function KanjiPracticeModal({
         </div>
 
         {/* Tab Switcher */}
-        <div className="w-full flex items-center justify-center p-1 rounded-2xl bg-washi border border-washi-border gap-1 relative z-10">
+        <div className="w-full flex items-center justify-center p-1 rounded-2xl bg-stone-100 dark:bg-stone-800 border-2 border-stone-900 dark:border-white gap-1 relative z-10 shadow-2xs">
           <button
             onClick={() => {
               playWaterDrop();
@@ -525,10 +522,10 @@ export default function KanjiPracticeModal({
               setAnimatingIndex(0);
               setAnimKey((k) => k + 1);
             }}
-            className={`flex-1 py-2 px-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-2 px-3 rounded-xl text-xs md:text-sm font-black transition-all flex items-center justify-center gap-1.5 border-2 ${
               activeTab === 'stroke'
-                ? 'bg-torii text-white shadow-sm'
-                : 'opacity-70 hover:opacity-100 hover:bg-torii/10'
+                ? 'bg-akira text-white border-stone-900 dark:border-white shadow-manga-sm -translate-y-0.5'
+                : 'border-transparent text-stone-800 dark:text-stone-200 hover:bg-manga-yellow hover:text-stone-950'
             }`}
           >
             <span>🖌️</span>
@@ -541,10 +538,10 @@ export default function KanjiPracticeModal({
               setActiveTab('draw');
               setIsPlaying(false);
             }}
-            className={`flex-1 py-2 px-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-2 px-3 rounded-xl text-xs md:text-sm font-black transition-all flex items-center justify-center gap-1.5 border-2 ${
               activeTab === 'draw'
-                ? 'bg-torii text-white shadow-sm'
-                : 'opacity-70 hover:opacity-100 hover:bg-torii/10'
+                ? 'bg-akira text-white border-stone-900 dark:border-white shadow-manga-sm -translate-y-0.5'
+                : 'border-transparent text-stone-800 dark:text-stone-200 hover:bg-manga-yellow hover:text-stone-950'
             }`}
           >
             <span>✍️</span>
@@ -556,7 +553,7 @@ export default function KanjiPracticeModal({
         {activeTab === 'stroke' && (
           <div className="flex flex-col items-center gap-3 relative z-10">
             {/* Khung hiển thị Vector nét bút KanjiVG với animation nét vẽ */}
-            <div className="relative w-64 h-64 md:w-72 md:h-72 rounded-2xl bg-washi-light border-2 border-washi-border shadow-inner flex items-center justify-center overflow-hidden">
+            <div className="relative w-64 h-64 md:w-72 md:h-72 rounded-2xl bg-white dark:bg-stone-850 border-2 border-stone-900 dark:border-white shadow-manga-sm flex items-center justify-center overflow-hidden">
               {/* Lưới ô mễ nền mờ (Mi Zi Ge) */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-30" viewBox="0 0 100 100">
                 <line x1="0" y1="50" x2="100" y2="50" stroke="#b45309" strokeDasharray="2,2" strokeWidth="0.8" />
@@ -679,12 +676,12 @@ export default function KanjiPracticeModal({
                     <button
                       key={`badge-${idx}`}
                       onClick={() => handleSelectStroke(idx)}
-                      className={`min-w-[28px] h-7 px-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center ${
+                      className={`min-w-[28px] h-7 px-1.5 rounded-lg text-xs font-black transition-all flex items-center justify-center cursor-pointer border-2 border-stone-900 dark:border-white ${
                         isCurrent
-                          ? 'bg-torii text-white shadow-md scale-110 ring-2 ring-torii/40 font-black'
+                          ? 'bg-akira text-white shadow-manga-sm -translate-y-0.5'
                           : isDone
-                          ? 'bg-torii/15 text-torii border border-torii/30 hover:bg-torii/25'
-                          : 'bg-washi border border-washi-border opacity-60 hover:opacity-100'
+                          ? 'bg-manga-yellow text-stone-950 shadow-2xs'
+                          : 'bg-white dark:bg-stone-800 text-stone-900 dark:text-white opacity-60 hover:opacity-100'
                       }`}
                       title={`Xem nét thứ ${idx + 1}`}
                     >
@@ -701,7 +698,7 @@ export default function KanjiPracticeModal({
                 <button
                   onClick={handlePlayAnimation}
                   disabled={loadingStrokes || strokes.length === 0}
-                  className="p-2 md:px-3 md:py-2 rounded-xl bg-washi hover:bg-torii/10 border border-washi-border font-bold text-xs active:scale-95 flex items-center gap-1 disabled:opacity-40"
+                  className="py-1.5 px-2.5 rounded-xl bg-white dark:bg-stone-800 hover:bg-manga-yellow hover:text-stone-950 text-stone-950 dark:text-white border-2 border-stone-900 dark:border-white font-black text-xs active:translate-x-0.5 active:translate-y-0.5 shadow-2xs flex items-center gap-1 disabled:opacity-40 cursor-pointer"
                   title="Vẽ lại từ nét đầu tiên"
                 >
                   <span>🔄</span>
@@ -711,7 +708,7 @@ export default function KanjiPracticeModal({
                 <button
                   onClick={handleStepBack}
                   disabled={loadingStrokes || strokes.length === 0}
-                  className="p-2 md:px-3 md:py-2 rounded-xl bg-washi hover:bg-torii/10 border border-washi-border font-bold text-xs active:scale-95 flex items-center gap-1 disabled:opacity-40"
+                  className="py-1.5 px-2.5 rounded-xl bg-white dark:bg-stone-800 hover:bg-manga-yellow hover:text-stone-950 text-stone-950 dark:text-white border-2 border-stone-900 dark:border-white font-black text-xs active:translate-x-0.5 active:translate-y-0.5 shadow-2xs flex items-center gap-1 disabled:opacity-40 cursor-pointer"
                   title="Nét trước"
                 >
                   <span>⏮️</span>
@@ -721,7 +718,7 @@ export default function KanjiPracticeModal({
                 <button
                   onClick={handleTogglePlayPause}
                   disabled={loadingStrokes || strokes.length === 0}
-                  className="py-2 px-4 md:px-5 rounded-xl font-bold text-xs md:text-sm text-white shadow-md flex items-center gap-1.5 bg-torii hover:bg-torii-light transition-all active:scale-95 disabled:opacity-40"
+                  className="py-2 px-4 md:px-5 rounded-xl font-black text-xs md:text-sm text-white shadow-manga-sm flex items-center gap-1.5 bg-akira hover:bg-red-600 border-2 border-stone-900 dark:border-white transition-all active:translate-x-0.5 active:translate-y-0.5 cursor-pointer disabled:opacity-40"
                 >
                   <span>{isPlaying ? '⏸️ Tạm dừng' : '▶️ Tự động vẽ'}</span>
                 </button>
@@ -729,7 +726,7 @@ export default function KanjiPracticeModal({
                 <button
                   onClick={handleStepForward}
                   disabled={loadingStrokes || strokes.length === 0}
-                  className="p-2 md:px-3 md:py-2 rounded-xl bg-washi hover:bg-torii/10 border border-washi-border font-bold text-xs active:scale-95 flex items-center gap-1 disabled:opacity-40"
+                  className="py-1.5 px-2.5 rounded-xl bg-white dark:bg-stone-800 hover:bg-manga-yellow hover:text-stone-950 text-stone-950 dark:text-white border-2 border-stone-900 dark:border-white font-black text-xs active:translate-x-0.5 active:translate-y-0.5 shadow-2xs flex items-center gap-1 disabled:opacity-40 cursor-pointer"
                   title="Nét sau"
                 >
                   <span className="hidden sm:inline">Nét sau</span>
@@ -739,7 +736,7 @@ export default function KanjiPracticeModal({
                 <button
                   onClick={handleReplayCurrent}
                   disabled={loadingStrokes || strokes.length === 0}
-                  className="p-2 md:px-3 md:py-2 rounded-xl bg-washi hover:bg-torii/10 border border-washi-border font-bold text-xs active:scale-95 flex items-center gap-1 disabled:opacity-40"
+                  className="py-1.5 px-2.5 rounded-xl bg-white dark:bg-stone-800 hover:bg-manga-yellow hover:text-stone-950 text-stone-950 dark:text-white border-2 border-stone-900 dark:border-white font-black text-xs active:translate-x-0.5 active:translate-y-0.5 shadow-2xs flex items-center gap-1 disabled:opacity-40 cursor-pointer"
                   title="Vẽ lại nét hiện tại"
                 >
                   <span>🖌️</span>
@@ -749,10 +746,10 @@ export default function KanjiPracticeModal({
                 <button
                   onClick={handleShowAllStrokes}
                   disabled={loadingStrokes || strokes.length === 0}
-                  className={`p-2 md:px-3 md:py-2 rounded-xl border font-bold text-xs active:scale-95 flex items-center gap-1 disabled:opacity-40 ${
+                  className={`py-1.5 px-2.5 rounded-xl border-2 border-stone-900 dark:border-white font-black text-xs active:translate-x-0.5 active:translate-y-0.5 shadow-2xs flex items-center gap-1 cursor-pointer disabled:opacity-40 ${
                     animatingIndex === -1
-                      ? 'bg-torii text-white border-torii'
-                      : 'bg-washi border-washi-border hover:bg-torii/10'
+                      ? 'bg-akira text-white'
+                      : 'bg-white dark:bg-stone-800 text-stone-950 dark:text-white hover:bg-manga-yellow hover:text-stone-950'
                   }`}
                   title="Hiện toàn bộ các nét cùng số thứ tự"
                 >

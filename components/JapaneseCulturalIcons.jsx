@@ -198,7 +198,7 @@ export function JapaneseCulturalSeal({
   return (
     <div
       title={title}
-      className={`relative inline-flex items-center justify-center rounded-2xl border-2 backdrop-blur-xs transition-transform duration-300 hover:scale-105 shadow-md ${sizeStyles[size] || sizeStyles.md} ${variantStyles[variant] || variantStyles.torii} ${className}`}
+      className={`relative inline-flex items-center justify-center rounded-2xl border-2 backdrop-blur-xs shadow-md ${sizeStyles[size] || sizeStyles.md} ${variantStyles[variant] || variantStyles.torii} ${className}`}
     >
       <div className="absolute inset-0.5 rounded-[13px] border border-current opacity-30 pointer-events-none" />
       <Icon className={`${iconSizes[size] || iconSizes.md} drop-shadow-xs`} />

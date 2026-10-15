@@ -146,7 +146,7 @@ export default function StatsModal({
                     return (
                       <div
                         key={dIdx}
-                        className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded transition-transform hover:scale-125 cursor-pointer ${cellBg}`}
+                        className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded transition-all hover:ring-2 hover:ring-akira cursor-pointer ${cellBg}`}
                         title={`${day.date}: ${day.count} lượt ôn tập`}
                       />
                     );

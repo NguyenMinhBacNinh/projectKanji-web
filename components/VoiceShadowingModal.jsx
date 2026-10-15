@@ -24,6 +24,7 @@ export default function VoiceShadowingModal({
   const [activeTab, setActiveTab] = useState(currentLevel || 'N5');
   const [targetPhrase, setTargetPhrase] = useState('');
   const [targetMeaning, setTargetMeaning] = useState('');
+  const [targetReading, setTargetReading] = useState('');
   const [speechRate, setSpeechRate] = useState(0.85); // 0.85x chậm rãi hoặc 1.0x chuẩn
   const [transcript, setTranscript] = useState('');
   const [isListening, setIsListening] = useState(false);
@@ -51,6 +52,7 @@ export default function VoiceShadowingModal({
       setActiveTab('kanji');
       setTargetPhrase(kanjiDrills[0].jp);
       setTargetMeaning(kanjiDrills[0].vn);
+      setTargetReading(kanjiDrills[0].reading || '');
     } else {
       const validLvl = ['N5', 'N4', 'N3', 'N2', 'N1'].includes(currentLevel) ? currentLevel : 'N5';
       setActiveTab(validLvl);
@@ -58,9 +60,11 @@ export default function VoiceShadowingModal({
       if (initialPhrase && initialPhrase.length > 2) {
         setTargetPhrase(initialPhrase.replace(/[①②③④⑤]/g, '').trim());
         setTargetMeaning(initialMeaning || '');
+        setTargetReading('');
       } else if (drills.length > 0) {
         setTargetPhrase(drills[0].jp);
         setTargetMeaning(drills[0].vn);
+        setTargetReading(drills[0].reading || '');
       }
     }
   }, [isOpen, currentChar, currentLevel, kanjiDrills, initialPhrase, initialMeaning]);
@@ -116,6 +120,7 @@ export default function VoiceShadowingModal({
   const evaluatePronunciation = (userSpeech) => {
     // Làm sạch câu chuẩn: xóa dấu câu, số thứ tự, khoảng trắng
     const cleanTarget = targetPhrase.replace(/[、。！？\s・「」…『』①②③④⑤0-9.]/g, '').toLowerCase();
+    const cleanReading = targetReading ? targetReading.replace(/[、。！？\s・「」…『』①②③④⑤0-9.]/g, '').toLowerCase() : '';
     const cleanUser = userSpeech.replace(/[、。！？\s・「」…『』①②③④⑤0-9.]/g, '').toLowerCase();
 
     if (!cleanUser) {
@@ -124,31 +129,29 @@ export default function VoiceShadowingModal({
       return;
     }
 
-    // Tính khoảng cách Levenshtein
-    const m = cleanTarget.length;
-    const n = cleanUser.length;
-    const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
-
-    for (let i = 0; i <= m; i++) dp[i][0] = i;
-    for (let j = 0; j <= n; j++) dp[0][j] = j;
-
-    for (let i = 1; i <= m; i++) {
-      for (let j = 1; j <= n; j++) {
-        if (cleanTarget[i - 1] === cleanUser[j - 1]) {
-          dp[i][j] = dp[i - 1][j - 1];
-        } else {
-          dp[i][j] = Math.min(
-            dp[i - 1][j] + 1,
-            dp[i][j - 1] + 1,
-            dp[i - 1][j - 1] + 1
-          );
+    const calcLev = (s1, s2) => {
+      const m = s1.length;
+      const n = s2.length;
+      if (!m) return n ? 0 : 100;
+      if (!n) return 0;
+      const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+      for (let i = 0; i <= m; i++) dp[i][0] = i;
+      for (let j = 0; j <= n; j++) dp[0][j] = j;
+      for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+          if (s1[i - 1] === s2[j - 1]) dp[i][j] = dp[i - 1][j - 1];
+          else dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + 1);
         }
       }
-    }
+      const dist = dp[m][n];
+      const maxLen = Math.max(m, n);
+      return Math.max(0, Math.round(((maxLen - dist) / maxLen) * 100));
+    };
 
-    const distance = dp[m][n];
-    const maxLength = Math.max(m, n);
-    const calculatedScore = Math.max(0, Math.round(((maxLength - distance) / maxLength) * 100));
+    // Chấm điểm đối chiếu với cả Chữ Hán gốc lẫn phiên âm Hiragana
+    const scoreKanji = calcLev(cleanTarget, cleanUser);
+    const scoreReading = cleanReading ? calcLev(cleanReading, cleanUser) : 0;
+    const calculatedScore = Math.max(scoreKanji, scoreReading);
 
     setScore(calculatedScore);
 
@@ -244,6 +247,7 @@ export default function VoiceShadowingModal({
                 if (kanjiDrills[0]) {
                   setTargetPhrase(kanjiDrills[0].jp);
                   setTargetMeaning(kanjiDrills[0].vn);
+                  setTargetReading(kanjiDrills[0].reading || '');
                 }
               }}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
@@ -272,6 +276,7 @@ export default function VoiceShadowingModal({
                   if (drills[0]) {
                     setTargetPhrase(drills[0].jp);
                     setTargetMeaning(drills[0].vn);
+                    setTargetReading(drills[0].reading || '');
                   }
                 }}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
@@ -343,7 +348,7 @@ export default function VoiceShadowingModal({
             className={`w-18 h-18 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-3xl shadow-lg transition-all duration-300 cursor-pointer ${
               isListening
                 ? 'bg-rose-500 text-white animate-pulse ring-8 ring-rose-500/30'
-                : 'bg-rose-500 hover:bg-rose-600 text-white hover:scale-105 active:scale-95 shadow-rose-500/30'
+                : 'bg-rose-500 hover:bg-rose-600 text-white active:scale-95 shadow-rose-500/30'
             }`}
             title="Bấm vào để bắt đầu thu âm và đọc"
           >
@@ -420,7 +425,7 @@ export default function VoiceShadowingModal({
             <span className="text-[10px] opacity-50">Nhấp vào để đổi câu</span>
           </div>
 
-          <div className="flex flex-col gap-1.5 max-h-40 overflow-y-auto pr-1">
+          <div className="flex flex-col gap-1.5 max-h-52 overflow-y-auto pr-1">
             {activeDrillList.map((drill, idx) => {
               const isSelected = targetPhrase === drill.jp;
 
@@ -431,6 +436,7 @@ export default function VoiceShadowingModal({
                     playWoodClapper();
                     setTargetPhrase(drill.jp);
                     setTargetMeaning(drill.vn);
+                    setTargetReading(drill.reading || '');
                     setTranscript('');
                     setScore(null);
                     setFeedback('');

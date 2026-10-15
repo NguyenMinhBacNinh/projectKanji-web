@@ -6,42 +6,38 @@
   --font-kanji: "Shippori Mincho", "Noto Serif JP", serif;
   --font-ui: "Plus Jakarta Sans", system-ui, sans-serif;
 
-  /* Theme: Washi Paper (Zen Luxury Studio) - Giấy Washi Thượng Hạng & Nắng Mai Kyoto */
-  --bg-page: #faf8f5;
-  --bg-gradient: radial-gradient(ellipse at 50% -8%, rgba(217, 119, 6, 0.08) 0%, rgba(250, 248, 245, 0) 55%),
-                 radial-gradient(ellipse at 90% 12%, rgba(244, 114, 182, 0.06) 0%, transparent 45%),
-                 linear-gradient(180deg, #fcfaf7 0%, #f8f5ee 50%, #f1ebe0 100%);
-  --bg-card: #ffffff;
-  --bg-subcard: #f9f6f0;
-  --bg-wood: #f4efe6;
-  --border-subtle: #e8e0d2;
-  --border-strong: #d6caba;
-  --color-torii: #b91c1c;
-  --color-torii-light: #dc2626;
-  --color-gold: #b45309;
-  --color-sumi: #1c1917;
-  --color-muted: #57534e;
-  --card-shadow: 0 20px 50px -12px rgba(45, 30, 15, 0.09), 0 6px 18px -3px rgba(45, 30, 15, 0.05);
+  /* Theme: Wabi-Sabi Zen Sanctuary - Giấy Dâu Tằm Torinoko & Mực Tàu Sumi */
+  --bg-page: #FAF8F5;
+  --bg-gradient: linear-gradient(180deg, #FAF8F5 0%, #F5EFE6 55%, #ECE4D6 100%);
+  --bg-card: #FFFFFF;
+  --bg-subcard: #F7F3EA;
+  --bg-wood: #F2ECE0;
+  --border-subtle: #D8CEBF;
+  --border-strong: #2D2721;
+  --color-torii: #BC002D;
+  --color-torii-light: #D93848;
+  --color-gold: #C27803;
+  --color-sumi: #1D1A17;
+  --color-muted: #665F56;
+  --card-shadow: 0 4px 18px -2px rgba(45, 38, 30, 0.08), 2px 2px 0px rgba(45, 38, 30, 0.45);
 }
 
-/* Theme: Yozakura - Đêm Trăng Kyoto Thượng Hạng (Chế độ tối Dark Mode) */
+/* Theme: Yozakura - Đêm Trăng Kyoto Tĩnh Lặng */
 .theme-yozakura,
 .dark {
-  --bg-page: #0c101a;
-  --bg-gradient: radial-gradient(ellipse at 50% -8%, rgba(239, 68, 68, 0.16) 0%, rgba(12, 16, 26, 0) 65%),
-                 radial-gradient(ellipse at 85% 15%, rgba(236, 72, 153, 0.14) 0%, transparent 50%),
-                 linear-gradient(180deg, #131a29 0%, #0c101a 50%, #080b12 100%);
-  --bg-card: #141c2b;
-  --bg-subcard: #1a2436;
-  --bg-wood: #1f2b40;
-  --border-subtle: #2a384f;
-  --border-strong: #3d4f6d;
-  --color-torii: #f87171;
-  --color-torii-light: #fca5a5;
-  --color-gold: #fbbf24;
-  --color-sumi: #f8fafc;
-  --color-muted: #94a3b8;
-  --card-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.75), 0 0 24px -2px rgba(239, 68, 68, 0.15);
+  --bg-page: #0D1117;
+  --bg-gradient: linear-gradient(180deg, #131822 0%, #0D1117 100%);
+  --bg-card: #161D27;
+  --bg-subcard: #1C2431;
+  --bg-wood: #222B3A;
+  --border-subtle: #2E3846;
+  --border-strong: #D1D8E0;
+  --color-torii: #D93848;
+  --color-torii-light: #F87171;
+  --color-gold: #F59E0B;
+  --color-sumi: #F5F3EF;
+  --color-muted: #9BA3AF;
+  --card-shadow: 0 4px 18px -2px rgba(0, 0, 0, 0.45), 2px 2px 0px rgba(255, 255, 255, 0.2);
 }
 
 html,
@@ -62,6 +58,22 @@ body {
   overflow-x: hidden;
   position: relative;
   transition: background-color 0.4s ease, color 0.4s ease;
+  caret-color: var(--color-torii);
+}
+
+::selection {
+  background-color: rgba(185, 28, 28, 0.2);
+  color: #1c1917;
+}
+
+.theme-yozakura ::selection {
+  background-color: rgba(248, 113, 113, 0.35);
+  color: #ffffff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-torii);
+  outline-offset: 2px;
 }
 
 /* Cross-OS scrollbar smoothing (Windows / Linux / macOS) */
@@ -103,32 +115,45 @@ body {
   background: rgba(251, 191, 36, 0.3);
 }
 
+/* Kanji Hero Calligraphy Typography - Đảm bảo nét chữ luôn sắc nét 100%, không bị clipping hay ẩn nét */
+.kanji-hero-text {
+  font-family: var(--font-kanji), "Shippori Mincho", "Noto Serif JP", serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow: visible;
+  line-height: 1.1;
+  user-select: none;
+  display: inline-block;
+  transform: translateZ(0);
+}
+
 /* Responsive height adaptivity for laptops across all OSs (Windows 125%/150% scaling, Linux, macOS) */
 @media (min-width: 1024px) and (max-height: 840px) {
   .karuta-card-responsive {
-    min-height: 270px !important;
-    height: 280px !important;
+    min-height: 240px !important;
+    height: 100% !important;
   }
   .station-card-responsive {
-    min-height: 330px !important;
+    min-height: 260px !important;
   }
   .kanji-hero-text {
-    font-size: 3.75rem !important; /* 60px */
-    line-height: 1 !important;
+    font-size: 5.25rem !important; /* 84px */
+    line-height: 1.1 !important;
   }
 }
 
 @media (min-width: 1024px) and (max-height: 740px) {
   .karuta-card-responsive {
-    min-height: 240px !important;
-    height: 250px !important;
+    min-height: 220px !important;
+    height: 100% !important;
   }
   .station-card-responsive {
-    min-height: 290px !important;
+    min-height: 240px !important;
   }
   .kanji-hero-text {
-    font-size: 3.25rem !important; /* 52px */
-    line-height: 1 !important;
+    font-size: 4.5rem !important; /* 72px */
+    line-height: 1.1 !important;
   }
 }
 
@@ -148,16 +173,15 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='35' viewBox='0 0 70 35'%3E%3Cg fill='none' stroke='%23fbbf24' stroke-width='1.2'%3E%3Cpath d='M0 35c0-19.33 15.67-35 35-35s35 15.67 35 35'/%3E%3Cpath d='M7 35c0-15.46 12.54-28 28-28s28 12.54 28 28'/%3E%3Cpath d='M14 35c0-11.6 9.4-21 21-21s21 9.4 21 21'/%3E%3Cpath d='M21 35c0-7.73 6.27-14 14-14s14 6.27 14 14'/%3E%3Cpath d='M28 35c0-3.87 3.13-7 7-7s7 3.13 7 7'/%3E%3C/g%3E%3C/svg%3E");
 }
 
-/* Vân xơ giấy Washi (Fiber texture) */
+/* Vân xơ giấy Washi thanh nhã (Delicate Washi texture) */
 .washi-grain {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.35;
-  background-image: radial-gradient(var(--border-subtle) 1px, transparent 1px), radial-gradient(var(--border-subtle) 1px, transparent 1px);
-  background-size: 32px 32px;
-  background-position: 0 0, 16px 16px;
+  opacity: 0.15;
+  background-image: radial-gradient(circle at 50% 50%, var(--border-subtle) 0.5px, transparent 1px);
+  background-size: 48px 48px;
 }
 
 /* Hiệu ứng cánh hoa anh đào Sakura */
@@ -227,7 +251,7 @@ body {
   height: 100%;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(0.34, 1.15, 0.64, 1);
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
   transform: rotateY(0deg);
   will-change: transform;
 }
@@ -237,19 +261,19 @@ body {
   transform: rotateY(180deg);
 }
 
-/* Thẻ bài Karuta / Tanzaku sơn mài thủ công nổi khối 3D */
+/* Thẻ bài Karuta / Tanzaku phong cách Neo-Brutalist Manga Pop */
 .karuta-card {
   background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--card-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  border: 2.5px solid #18181b;
+  box-shadow: 5px 5px 0px #18181b;
   position: relative;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.theme-yozakura .karuta-card {
-  box-shadow: var(--card-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+.theme-yozakura .karuta-card,
+.dark .karuta-card {
+  border: 2.5px solid #ffffff;
+  box-shadow: 5px 5px 0px #ffffff;
 }
 
 /* Các mặt của thẻ Flashcard 3D BẮT BUỘC là position: absolute nằm đè lên nhau chính xác */
@@ -319,7 +343,7 @@ ruby {
 /* Furigana cho chữ Kanji tiêu đề lớn ở mặt thẻ chính */
 .kanji-hero-ruby {
   display: inline-flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   align-items: center;
   line-height: 1;
 }
@@ -368,7 +392,7 @@ ruby {
 }
 
 .hanko-stamp:hover {
-  transform: rotate(0deg) scale(1.04);
+  transform: rotate(0deg);
 }
 
 .theme-yozakura .hanko-stamp {
@@ -387,7 +411,6 @@ ruby {
 
 .kifuda-tab:hover {
   border-color: var(--color-torii);
-  transform: translateY(-1px);
 }
 
 .kifuda-tab.active {
@@ -432,7 +455,7 @@ ruby {
 }
 
 .stamp-animated {
-  animation: stampDown 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  animation: stampDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Fade in animation */
@@ -517,7 +540,7 @@ ruby {
 }
 
 .stroke-badge-enter {
-  animation: strokeBadgePop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  animation: strokeBadgePop 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Con dấu triện đỏ Hanko đóng cộp */
@@ -540,7 +563,7 @@ ruby {
 }
 
 .animate-hankoStamp {
-  animation: hankoStamp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  animation: hankoStamp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Làn mây Nhật Bản Kasumi trôi nhẹ nhàng */
@@ -556,5 +579,27 @@ ruby {
 .animate-kasumiFloat {
   animation: kasumiFloat 22s ease-in-out infinite;
 }
+
+/* Thư pháp chữ dọc truyền thống Nhật Bản (Tanzaku 短冊) */
+.writing-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  letter-spacing: 0.25em;
+}
+
+/* Tranh & Họa Tiết Thiền Zen 2 bên sườn màn hình */
+.zen-kakejiku,
+.zen-flank-container {
+  display: none;
+}
+
+@media (min-width: 1360px) {
+  .zen-kakejiku,
+  .zen-flank-container {
+    display: flex !important;
+  }
+}
+
+
 
 
