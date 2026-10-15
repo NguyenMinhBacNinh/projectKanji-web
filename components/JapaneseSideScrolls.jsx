@@ -47,8 +47,7 @@ export default function JapaneseSideScrolls({ theme = 'washi' }) {
           ========================================================================= */}
       <aside
         aria-label="Khoảng không gian bờ Tây"
-        className="zen-flank-container fixed left-0 top-0 bottom-0 z-10 select-none hidden 2xl:flex items-center justify-center pointer-events-none"
-        style={{ width: 'calc((100vw - 1152px) / 2)' }}
+        className="zen-flank-left"
       >
         <div className="relative flex flex-col items-center pointer-events-auto">
           {/* Nút chuyển đổi phong cách nhỏ tao nhã ở góc trên */}
@@ -196,8 +195,7 @@ export default function JapaneseSideScrolls({ theme = 'washi' }) {
           ========================================================================= */}
       <aside
         aria-label="Khoảng không gian bờ Đông"
-        className="zen-flank-container fixed right-0 top-0 bottom-0 z-10 select-none hidden 2xl:flex items-center justify-center pointer-events-none"
-        style={{ width: 'calc((100vw - 1152px) / 2)' }}
+        className="zen-flank-right"
       >
         <div className="relative flex flex-col items-center pointer-events-auto">
           {/* Nút chuyển đổi phong cách nhỏ tao nhã ở góc trên */}

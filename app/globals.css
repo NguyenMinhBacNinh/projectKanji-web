@@ -587,18 +587,90 @@ ruby {
   letter-spacing: 0.25em;
 }
 
-/* Tranh & Họa Tiết Thiền Zen 2 bên sườn màn hình */
-.zen-kakejiku,
-.zen-flank-container {
-  display: none;
+/* Fluid Kanji Hero Character - Co giãn mượt mà theo chiều cao viewport */
+.kanji-hero-text {
+  font-size: clamp(4rem, 11.5vh, 8.5rem) !important;
+  line-height: 1.05 !important;
 }
 
-@media (min-width: 1360px) {
+/* Tranh & Họa Tiết Thiền Zen 2 bên sườn màn hình - Tự động hiển thị từ màn hình Laptop 1200px trở lên */
+.zen-kakejiku,
+.zen-flank-container,
+.zen-flank-left,
+.zen-flank-right {
+  display: none !important;
+}
+
+@media (min-width: 1200px) {
   .zen-kakejiku,
-  .zen-flank-container {
+  .zen-flank-container,
+  .zen-flank-left,
+  .zen-flank-right {
     display: flex !important;
   }
+
+  .zen-flank-left {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: calc((100vw - 1020px) / 2);
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .zen-flank-right {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: calc((100vw - 1020px) / 2);
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
+    user-select: none;
+  }
 }
+
+@media (min-width: 1536px) {
+  .zen-flank-left {
+    width: calc((100vw - 1152px) / 2);
+  }
+  .zen-flank-right {
+    width: calc((100vw - 1152px) / 2);
+  }
+}
+
+
+/* Tối ưu hóa Zero-Scroll cho các màn hình Laptop có chiều cao khiêm tốn (<= 760px) */
+@media (max-height: 760px) {
+  .kanji-hero-text {
+    font-size: clamp(3.5rem, 10vh, 6.5rem) !important;
+  }
+  .karuta-card-responsive {
+    min-height: 200px !important;
+  }
+  .station-card-responsive {
+    min-height: 210px !important;
+  }
+}
+
+@media (max-height: 660px) {
+  .kanji-hero-text {
+    font-size: clamp(3rem, 9vh, 5.2rem) !important;
+  }
+  .karuta-card-responsive {
+    min-height: 170px !important;
+  }
+  .station-card-responsive {
+    min-height: 180px !important;
+  }
+}
+
 
 
 

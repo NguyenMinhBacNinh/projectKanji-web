@@ -442,7 +442,7 @@ export default function Home() {
   const isMastered = masteredList.includes(currentChar);
 
   return (
-    <div className="min-h-screen lg:h-screen lg:max-h-[100dvh] flex flex-col items-center justify-between p-2 sm:p-3 lg:px-4 lg:py-2 xl:py-2.5 relative select-none overflow-x-hidden lg:overflow-hidden">
+    <div className="min-h-screen lg:h-screen lg:max-h-[100dvh] flex flex-col items-center justify-between p-1 sm:p-2 lg:px-3 lg:py-1 xl:py-1.5 relative select-none overflow-x-hidden lg:overflow-hidden">
       {/* Khung cảnh Mỹ học Nhật Bản bao bọc xung quanh (Núi Phú Sĩ, Torii, Rừng Trúc, Chùa Kyoto, Trăng & Mặt trời) */}
       <JapaneseAtmosphericBackground theme={theme} />
 
@@ -453,8 +453,8 @@ export default function Home() {
       <JapaneseSideScrolls theme={theme} />
 
 
-      {/* Main Container */}
-      <div className="w-full max-w-6xl flex flex-col items-center gap-1.5 sm:gap-2 flex-1 min-h-0 relative z-20">
+      {/* Main Container - Tối ưu 1020px trên màn hình Laptop để hiển thị tranh sườn, mở rộng 1152px trên 2xl */}
+      <div className="w-full max-w-[1020px] 2xl:max-w-6xl flex flex-col items-center gap-1 sm:gap-1.5 flex-1 min-h-0 relative z-20">
         <Header
           activeMode={activeMode}
           setActiveMode={setActiveMode}
@@ -555,8 +555,8 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="w-full max-w-6xl mt-1 py-1 sm:py-1.5 border-t border-washi-border/60 dark:border-stone-800/80 text-stone-600 dark:text-stone-400 text-xs flex flex-col sm:flex-row items-center justify-between gap-1.5 sm:gap-2 z-20 font-ui shrink-0">
-        <div className="flex items-center gap-2 shrink-0">
+      <footer className="w-full max-w-[1020px] 2xl:max-w-6xl mt-0.5 py-0.5 sm:py-1 border-t border-washi-border/60 dark:border-stone-800/80 text-stone-600 dark:text-stone-400 text-[10px] sm:text-xs flex flex-col sm:flex-row items-center justify-between gap-1 sm:gap-2 z-20 font-ui shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <ToriiGateIcon className="w-4 h-4 text-torii" />
           <span className="font-semibold text-stone-800 dark:text-stone-200">漢字学習帳 (Kanji Gakushūchō)</span>
           <span className="text-stone-600 dark:text-stone-300">• Luyện thi JLPT N5 - N1</span>

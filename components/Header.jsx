@@ -89,11 +89,11 @@ export default function Header({
   };
 
   return (
-    <header className="w-full max-w-6xl flex flex-col items-center gap-2 relative z-30 select-none">
+    <header className="w-full max-w-[1020px] 2xl:max-w-6xl flex flex-col items-center gap-1 sm:gap-1.5 relative z-30 select-none">
       {/* Unified Top Navigation Shell (Kyoto Zen Sanctuary Header) */}
       <div className="w-full rounded-2xl bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 border border-[#D8CEBF] dark:border-stone-700/80 shadow-md shadow-stone-900/5 dark:shadow-black/30 backdrop-blur-md relative">
         {/* Tier 1: Main Top Navigation Bar */}
-        <div className="w-full flex items-center justify-between py-2 px-3 sm:px-4 gap-2">
+        <div className="w-full flex items-center justify-between py-1.5 sm:py-2 px-2.5 sm:px-4 gap-2">
           {/* Left: Brand Identity */}
           <div
             onClick={() => handleSelectPrimary('kanji')}
