@@ -454,7 +454,7 @@ export default function Home() {
 
 
       {/* Main Container - Tối ưu 1020px trên màn hình Laptop để hiển thị tranh sườn, mở rộng 1152px trên 2xl */}
-      <div className="w-full max-w-[1020px] 2xl:max-w-6xl flex flex-col items-center gap-1 sm:gap-1.5 flex-1 min-h-0 relative z-20">
+      <div className="w-full max-w-[1020px] 2xl:max-w-6xl flex flex-col items-center gap-1 sm:gap-1.5 flex-1 min-h-0 relative z-20 overflow-hidden">
         <Header
           activeMode={activeMode}
           setActiveMode={setActiveMode}

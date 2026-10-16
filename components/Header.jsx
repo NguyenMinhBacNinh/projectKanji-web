@@ -368,14 +368,14 @@ export default function Header({
 
         {/* Tier 2: Integrated Sub-Navigation Ribbon (Chỉ hiện khi ở 'knowledge' hoặc 'practice') */}
         {primaryGroup === 'knowledge' && (
-          <div className="w-full border-t border-[#ebdccb] dark:border-stone-700/70 py-1.5 px-3 bg-[#f7f3ec] dark:bg-[#151d2a] flex items-center justify-center gap-1 sm:gap-1.5 text-xs font-bold animate-fadeIn flex-wrap">
+          <div className="w-full border-t border-[#ebdccb] dark:border-stone-700/70 py-1 px-2.5 bg-[#f7f3ec] dark:bg-[#151d2a] flex items-center justify-center gap-1 sm:gap-1.5 text-xs font-bold animate-fadeIn flex-wrap">
             <button
               onClick={() => {
                 playWoodClapper();
                 setActiveMode('kana');
               }}
-              className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${activeMode === 'kana'
-                  ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
+              className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${activeMode === 'kana'
+                  ? 'bg-torii dark:bg-torii-light text-white shadow-2xs font-black'
                   : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
                 }`}
             >
@@ -387,8 +387,8 @@ export default function Header({
                 playWoodClapper();
                 setActiveMode('vocab');
               }}
-              className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${activeMode === 'vocab'
-                  ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
+              className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${activeMode === 'vocab'
+                  ? 'bg-torii dark:bg-torii-light text-white shadow-2xs font-black'
                   : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
                 }`}
             >
@@ -400,8 +400,8 @@ export default function Header({
                 playWoodClapper();
                 setActiveMode('grammar');
               }}
-              className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${activeMode === 'grammar'
-                  ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
+              className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${activeMode === 'grammar'
+                  ? 'bg-torii dark:bg-torii-light text-white shadow-2xs font-black'
                   : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
                 }`}
             >
@@ -413,8 +413,8 @@ export default function Header({
                 playWoodClapper();
                 setActiveMode('reading');
               }}
-              className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${activeMode === 'reading'
-                  ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
+              className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${activeMode === 'reading'
+                  ? 'bg-torii dark:bg-torii-light text-white shadow-2xs font-black'
                   : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
                 }`}
             >
@@ -425,14 +425,14 @@ export default function Header({
         )}
 
         {primaryGroup === 'practice' && (
-          <div className="w-full border-t border-[#ebdccb] dark:border-stone-700/70 py-1.5 px-3 bg-[#f7f3ec] dark:bg-[#151d2a] flex items-center justify-center gap-1 sm:gap-1.5 text-xs font-bold animate-fadeIn flex-wrap">
+          <div className="w-full border-t border-[#ebdccb] dark:border-stone-700/70 py-1 px-2.5 bg-[#f7f3ec] dark:bg-[#151d2a] flex items-center justify-center gap-1 sm:gap-1.5 text-xs font-bold animate-fadeIn flex-wrap">
             <button
               onClick={() => {
                 playWoodClapper();
                 setActiveMode('quiz');
               }}
-              className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${activeMode === 'quiz'
-                  ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
+              className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${activeMode === 'quiz'
+                  ? 'bg-torii dark:bg-torii-light text-white shadow-2xs font-black'
                   : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
                 }`}
             >
@@ -444,8 +444,8 @@ export default function Header({
                 playWoodClapper();
                 setActiveMode('listening');
               }}
-              className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${activeMode === 'listening'
-                  ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
+              className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${activeMode === 'listening'
+                  ? 'bg-torii dark:bg-torii-light text-white shadow-2xs font-black'
                   : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
                 }`}
             >
@@ -457,8 +457,8 @@ export default function Header({
                 playWoodClapper();
                 setActiveMode('karuta');
               }}
-              className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${activeMode === 'karuta'
-                  ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
+              className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${activeMode === 'karuta'
+                  ? 'bg-torii dark:bg-torii-light text-white shadow-2xs font-black'
                   : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
                 }`}
             >
@@ -470,8 +470,8 @@ export default function Header({
                 playWoodClapper();
                 setActiveMode('speed');
               }}
-              className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${activeMode === 'speed'
-                  ? 'bg-torii dark:bg-torii-light text-white shadow-xs font-black'
+              className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${activeMode === 'speed'
+                  ? 'bg-torii dark:bg-torii-light text-white shadow-2xs font-black'
                   : 'text-sumi dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii dark:hover:text-torii-light'
                 }`}
             >

@@ -45,11 +45,11 @@ export default function ReadingSection() {
   };
 
   return (
-    <div className="w-full max-w-4xl flex flex-col items-center gap-6 animate-fadeIn">
-      {/* Top Bar: Selector & Reading Controls */}
-      <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 p-2 rounded-2xl karuta-card border border-washi-border shadow-xs">
+    <div className="w-full max-w-[1020px] 2xl:max-w-6xl h-full min-h-0 flex-1 flex flex-col items-center justify-start gap-1.5 sm:gap-2 animate-fadeIn select-none overflow-hidden">
+      {/* Top Bar: Selector & Reading Controls (Gọn gàng 1 dòng) */}
+      <div className="w-full flex items-center justify-between gap-2 p-1 sm:p-1.5 rounded-2xl bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 border border-[#D8CEBF] dark:border-stone-700/80 shadow-md backdrop-blur-md shrink-0">
         {/* Article Selector */}
-        <div className="flex items-center gap-1.5 flex-wrap">
+        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5">
           {READING_ARTICLES.map((art) => (
             <button
               key={art.id}
@@ -61,10 +61,10 @@ export default function ReadingSection() {
                 setSelectedQuizAnswer(null);
                 setQuizSubmitted(false);
               }}
-              className={`px-3 py-1.5 rounded-xl text-xs md:text-sm font-bold border transition-all flex items-center gap-1.5 ${
+              className={`px-2.5 py-1 rounded-xl text-xs font-bold border transition-all flex items-center gap-1 whitespace-nowrap cursor-pointer ${
                 selectedArticleId === art.id
-                  ? 'bg-torii text-white border-torii shadow-xs'
-                  : 'kifuda-tab'
+                  ? 'bg-torii text-white border-torii shadow-2xs'
+                  : 'kifuda-tab text-stone-700 dark:text-stone-300'
               }`}
             >
               <span>{art.coverIcon}</span>
@@ -75,57 +75,60 @@ export default function ReadingSection() {
         </div>
 
         {/* Reading Controls: Toggle Furigana & Read All */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 shrink-0">
           {/* Furigana Toggle */}
           <button
             onClick={() => {
               playWoodClapper();
               setShowFurigana(!showFurigana);
             }}
-            className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 ${
+            className={`px-2.5 py-1 rounded-xl border text-xs font-bold transition-all shadow-2xs flex items-center gap-1 cursor-pointer ${
               showFurigana
                 ? 'bg-amber-500/15 border-amber-500/40 text-amber-800 dark:text-amber-200'
-                : 'kifuda-tab opacity-70'
+                : 'kifuda-tab opacity-70 text-stone-700 dark:text-stone-300'
             }`}
             title="Bật hoặc tắt chữ Hiragana chú âm trên đầu chữ Hán"
           >
             <span>あ</span>
-            <span>{showFurigana ? 'Furigana: BẬT' : 'Furigana: TẮT'}</span>
+            <span>{showFurigana ? 'Furigana' : 'Ẩn'}</span>
           </button>
 
           {/* Read Audio */}
           <button
             onClick={handleReadEntirePassage}
-            className="px-3 py-1.5 rounded-xl bg-torii text-white text-xs font-bold shadow-xs hover:opacity-90 active:scale-95 transition-all flex items-center gap-1.5"
+            className="px-2.5 py-1 rounded-xl bg-torii text-white text-xs font-bold shadow-2xs hover:opacity-90 active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
             title="Đọc toàn bộ bài bằng giọng đọc bản xứ"
           >
-            <VolumeIcon className="w-4 h-4" />
+            <VolumeIcon className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Nghe bài</span>
           </button>
         </div>
       </div>
 
-      {/* Main Reading Scroll (Cuộn thư cổ Nhật Bản) */}
-      <div className="w-full p-6 sm:p-8 rounded-3xl karuta-card border-2 border-border-strong shadow-xl flex flex-col gap-6 relative">
+      {/* Main Reading Scroll (Zero-Scroll Studio Container) */}
+      <div className="w-full flex-1 min-h-0 p-4 sm:p-6 rounded-3xl karuta-card border-2 border-border-strong shadow-xl flex flex-col relative overflow-hidden">
         <div className="karuta-inner-border" />
 
-        {/* Article Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-washi-border gap-2 relative z-10">
+        {/* Article Header (Sticky inside card) */}
+        <div className="flex items-center justify-between pb-2.5 border-b border-washi-border gap-2 relative z-10 shrink-0">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="hanko-stamp text-xs px-2.5 py-0.5">JLPT {article.level}</span>
-              <span className="text-xs opacity-60 font-medium">Luyện đọc hiểu Dokkai</span>
+            <div className="flex items-center gap-2 mb-0.5">
+              <span className="hanko-stamp text-[10px] px-2 py-0.2">JLPT {article.level}</span>
+              <span className="text-[11px] opacity-60 font-medium">Luyện đọc hiểu Dokkai</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black font-kanji text-torii">
+            <h2 className="text-xl sm:text-2xl font-black font-kanji text-torii">
               {article.title}
             </h2>
-            <p className="text-xs opacity-70 mt-0.5">{article.subtitle}</p>
+            <p className="text-[11px] opacity-70 mt-0.5">{article.subtitle}</p>
           </div>
 
-          <div className="text-[11px] opacity-60 italic text-right hidden sm:block">
+          <div className="text-[10px] opacity-60 italic text-right hidden sm:block">
             * Nhấp vào từ để tra nghĩa & nghe đọc
           </div>
         </div>
+
+        {/* Scrollable Reading & Quiz Body */}
+        <div className="flex-1 min-h-0 overflow-y-auto thin-scrollbar pr-1 flex flex-col gap-4 mt-2">
 
         {/* Word Definition Popover Bar if clicked */}
         {selectedWord && (
@@ -281,6 +284,7 @@ export default function ReadingSection() {
             )}
           </div>
         )}
+        </div>
       </div>
     </div>
   );

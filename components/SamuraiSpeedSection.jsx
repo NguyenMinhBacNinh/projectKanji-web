@@ -141,31 +141,29 @@ export default function SamuraiSpeedSection({ kanjiList = [], fullDb, currentLev
   };
 
   return (
-    <div className="w-full max-w-2xl flex flex-col items-center gap-6 animate-fadeIn select-none">
+    <div className="w-full max-w-[1020px] 2xl:max-w-6xl h-full min-h-0 flex-1 flex flex-col items-center justify-between gap-1 sm:gap-1.5 z-20 animate-fadeIn select-none overflow-hidden">
       {/* Top Banner / Arena Status */}
-      <div className="w-full p-4 sm:p-5 rounded-3xl karuta-card border border-washi-border shadow-md flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-torii text-white flex items-center justify-center shadow-xs border border-amber-300/30">
-            <KatanaIcon className="w-6 h-6" />
+      <div className="w-full p-1.5 sm:p-2 rounded-2xl bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 border border-[#D8CEBF] dark:border-stone-700/80 shadow-md backdrop-blur-md flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-xl bg-torii text-white flex items-center justify-center shadow-xs border border-amber-300/30">
+            <KatanaIcon className="w-4 h-4" />
           </div>
           <div>
-            <h2 className="font-black text-lg font-ui text-torii">ĐẤU TRƯỜNG SAMURAI 60S</h2>
-            <p className="text-xs opacity-70">Thử thách phản xạ Hán tự tốc độ cao</p>
+            <h2 className="font-black text-xs sm:text-sm font-ui text-torii">ĐẤU TRƯỜNG SAMURAI 60S</h2>
+            <p className="text-[10px] opacity-70 hidden sm:block">Thử thách phản xạ Hán tự tốc độ cao</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 text-right">
-          <div>
-            <span className="text-[10px] opacity-60 block uppercase font-bold">Kỷ lục High Score</span>
-            <span className="font-mono text-base font-black text-amber-600 dark:text-amber-400">
-              🏆 {highScore}
-            </span>
-          </div>
+        <div className="flex items-center gap-2 text-right">
+          <span className="text-[10px] opacity-60 uppercase font-bold hidden sm:inline">Kỷ lục:</span>
+          <span className="font-mono text-xs sm:text-sm font-black text-amber-600 dark:text-amber-400">
+            🏆 {highScore}
+          </span>
         </div>
       </div>
 
       {/* Main Arena Box */}
-      <div className="w-full p-6 sm:p-8 rounded-3xl karuta-card border-2 border-border-strong shadow-2xl flex flex-col items-center gap-6 relative overflow-hidden">
+      <div className="w-full flex-1 min-h-0 p-3 sm:p-4 rounded-2xl sm:rounded-3xl karuta-card border border-[#D8CEBF] dark:border-stone-700/80 bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 shadow-md flex flex-col items-center justify-between relative overflow-hidden backdrop-blur-md">
         <div className="karuta-inner-border" />
 
         {/* Hiệu ứng chém kiếm Katana */}
@@ -177,13 +175,13 @@ export default function SamuraiSpeedSection({ kanjiList = [], fullDb, currentLev
 
         {!isPlaying && !isGameOver && (
           /* Ready Screen */
-          <div className="flex flex-col items-center gap-5 py-8 text-center relative z-10">
-            <div className="w-20 h-20 rounded-3xl bg-torii/10 dark:bg-torii/20 text-torii dark:text-torii-light flex items-center justify-center border border-torii/30 shadow-inner">
-              <SamuraiKabutoIcon className="w-14 h-14" />
+          <div className="my-auto flex flex-col items-center gap-3 py-4 text-center relative z-10">
+            <div className="w-16 h-16 rounded-2xl bg-torii/10 dark:bg-torii/20 text-torii dark:text-torii-light flex items-center justify-center border border-torii/30 shadow-inner">
+              <SamuraiKabutoIcon className="w-10 h-10" />
             </div>
             <div>
-              <h3 className="text-2xl font-black font-ui mb-2">SẴN SÀNG RA ĐẤU TRƯỜNG?</h3>
-              <p className="text-xs opacity-70 max-w-sm leading-relaxed">
+              <h3 className="text-xl font-black font-ui mb-1 text-stone-900 dark:text-white">SẴN SÀNG RA ĐẤU TRƯỜNG?</h3>
+              <p className="text-xs opacity-75 max-w-sm leading-relaxed">
                 Bạn có đúng <strong>60 giây</strong> để nhận diện càng nhiều chữ Hán càng tốt.
                 Combo càng cao, điểm thưởng nhân lên càng khủng!
               </p>
@@ -191,9 +189,9 @@ export default function SamuraiSpeedSection({ kanjiList = [], fullDb, currentLev
 
             <button
               onClick={handleStartGame}
-              className="px-8 py-3.5 rounded-2xl bg-torii text-white font-black text-sm shadow-lg hover:opacity-90 active:scale-95 transition-all flex items-center gap-2.5"
+              className="mt-1 px-6 py-2.5 rounded-xl bg-torii text-white font-black text-xs sm:text-sm shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
             >
-              <KatanaIcon className="w-5 h-5" />
+              <KatanaIcon className="w-4 h-4" />
               <span>BẮT ĐẦU ĐẤU TRƯỜNG 60S</span>
             </button>
           </div>
@@ -201,14 +199,14 @@ export default function SamuraiSpeedSection({ kanjiList = [], fullDb, currentLev
 
         {isPlaying && currentQuestion && (
           /* Active Playing Screen */
-          <div className="w-full flex flex-col items-center gap-6 relative z-10">
+          <div className="w-full flex-1 min-h-0 flex flex-col items-center justify-between py-1 relative z-10">
             {/* Header: Timer & Combo Bar */}
-            <div className="w-full flex items-center justify-between pb-3 border-b border-washi-border">
+            <div className="w-full flex items-center justify-between pb-1.5 border-b border-washi-border/60 shrink-0">
               {/* Time Counter */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold opacity-70">Thời gian:</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] font-bold opacity-70">Thời gian:</span>
                 <span
-                  className={`font-mono text-2xl font-black ${
+                  className={`font-mono text-lg sm:text-xl font-black ${
                     timeLeft <= 10 ? 'text-rose-600 animate-pulse' : 'text-torii'
                   }`}
                 >
@@ -218,7 +216,7 @@ export default function SamuraiSpeedSection({ kanjiList = [], fullDb, currentLev
 
               {/* Combo Counter */}
               {combo > 1 && (
-                <div className="px-3 py-1 rounded-full bg-amber-500 text-white font-extrabold text-xs tracking-wider shadow-sm animate-bounce">
+                <div className="px-2.5 py-0.5 rounded-full bg-amber-500 text-white font-extrabold text-[11px] tracking-wider shadow-2xs animate-bounce">
                   ⚡ COMBO x{combo}!
                 </div>
               )}
@@ -226,30 +224,30 @@ export default function SamuraiSpeedSection({ kanjiList = [], fullDb, currentLev
               {/* Current Score */}
               <div className="text-right">
                 <span className="text-[10px] opacity-60 block uppercase font-bold">Điểm số</span>
-                <span className="font-mono text-2xl font-black text-torii">{score}</span>
+                <span className="font-mono text-lg sm:text-xl font-black text-torii">{score}</span>
               </div>
             </div>
 
             {/* Target Kanji Character */}
-            <div className="flex flex-col items-center gap-2 my-2">
-              <span className="text-xs opacity-60 font-medium">Âm Hán Việt của chữ này là gì?</span>
-              <div className="w-36 h-36 rounded-3xl bg-washi border-2 border-torii flex items-center justify-center text-7xl font-kanji font-black text-torii shadow-lg">
+            <div className="flex flex-col items-center gap-1 my-auto">
+              <span className="text-[11px] opacity-60 font-medium">Âm Hán Việt của chữ này là gì?</span>
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-washi dark:bg-stone-850 border-2 border-torii flex items-center justify-center text-5xl sm:text-6xl font-kanji font-black text-torii shadow-md">
                 {currentQuestion.char}
               </div>
             </div>
 
             {/* 4 Speed Answer Choices */}
-            <div className="w-full grid grid-cols-2 gap-3.5">
+            <div className="w-full max-w-lg grid grid-cols-2 gap-2 shrink-0">
               {currentQuestion.options.map((opt, idx) => (
                 <button
                   key={idx}
                   onClick={() => handleSelectAnswer(opt.hanViet)}
-                  className="p-4 rounded-2xl bg-washi/95 border-2 border-washi-border hover:border-torii text-center transition-all duration-150 active:scale-95 group shadow-xs"
+                  className="p-2 sm:p-2.5 rounded-xl bg-[#FFFDF9] dark:bg-stone-800 border border-washi-border hover:border-torii text-center transition-all duration-150 active:scale-95 group shadow-2xs cursor-pointer"
                 >
-                  <div className="text-lg font-black font-ui group-hover:text-torii">
+                  <div className="text-sm sm:text-base font-black font-ui group-hover:text-torii">
                     {opt.hanViet}
                   </div>
-                  <div className="text-[11px] opacity-70 truncate mt-0.5">
+                  <div className="text-[10px] opacity-70 truncate mt-0.5">
                     {opt.meaning}
                   </div>
                 </button>
@@ -260,40 +258,40 @@ export default function SamuraiSpeedSection({ kanjiList = [], fullDb, currentLev
 
         {isGameOver && (
           /* Game Over / Results Screen */
-          <div className="w-full flex flex-col items-center gap-5 py-6 text-center relative z-10 animate-fadeIn">
-            <div className="hanko-seal text-center p-3 animate-bounce">
+          <div className="my-auto w-full flex flex-col items-center gap-3 py-4 text-center relative z-10 animate-fadeIn">
+            <div className="hanko-seal text-center p-2 text-xs animate-bounce">
               💮 {getSamuraiRank(score).title}
             </div>
 
             <div>
-              <h3 className="text-2xl font-black font-ui mb-1">KẾT THÚC THỬ THÁCH!</h3>
+              <h3 className="text-xl font-black font-ui mb-0.5 text-stone-900 dark:text-white">KẾT THÚC THỬ THÁCH!</h3>
               <p className="text-xs opacity-75">{getSamuraiRank(score).desc}</p>
             </div>
 
-            <div className="w-full max-w-sm grid grid-cols-2 gap-3 p-4 rounded-2xl bg-washi border border-washi-border text-center">
+            <div className="w-full max-w-sm grid grid-cols-2 gap-2 p-3 rounded-xl bg-[#F5EFE6] dark:bg-stone-800 border border-washi-border text-center">
               <div>
-                <span className="text-[11px] opacity-60 block">Điểm số đạt được</span>
-                <span className="font-mono text-2xl font-black text-torii">{score}</span>
+                <span className="text-[10px] opacity-60 block">Điểm số đạt được</span>
+                <span className="font-mono text-xl font-black text-torii">{score}</span>
               </div>
               <div>
-                <span className="text-[11px] opacity-60 block">Combo tối đa</span>
-                <span className="font-mono text-2xl font-black text-amber-600">
+                <span className="text-[10px] opacity-60 block">Combo tối đa</span>
+                <span className="font-mono text-xl font-black text-amber-600">
                   {maxCombo} liên tiếp
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 mt-3">
+            <div className="flex items-center gap-2.5 mt-2">
               <button
                 onClick={handleStartGame}
-                className="px-6 py-3 rounded-xl bg-torii text-white font-bold text-xs shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center gap-2"
+                className="px-5 py-2 rounded-xl bg-torii text-white font-bold text-xs shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
               >
-                <KatanaIcon className="w-4 h-4" />
+                <KatanaIcon className="w-3.5 h-3.5" />
                 <span>ĐẤU LẠI VÁN MỚI</span>
               </button>
               <button
                 onClick={() => setIsGameOver(false)}
-                className="px-5 py-3 rounded-xl bg-washi border border-washi-border font-bold text-xs hover:border-torii transition-all"
+                className="px-4 py-2 rounded-xl bg-[#FFFDF9] dark:bg-stone-800 border border-washi-border font-bold text-xs hover:border-torii transition-all cursor-pointer"
               >
                 Quay lại
               </button>

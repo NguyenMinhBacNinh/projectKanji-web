@@ -128,36 +128,36 @@ export default function VocabSection({ onSaveToNotebook }) {
   };
 
   return (
-    <div className="w-full max-w-5xl flex flex-col items-center gap-3.5 sm:gap-4 animate-fadeIn">
-      {/* Unified Vocab Studio Toolbar (2 Tầng Khoa học, không chồng chéo) */}
-      <div className="w-full p-2 sm:p-2.5 rounded-2xl karuta-card border border-washi-border shadow-xs flex flex-col gap-2">
+    <div className="w-full max-w-[1020px] 2xl:max-w-6xl h-full min-h-0 flex-1 flex flex-col items-center justify-between gap-1 sm:gap-1.5 z-20 animate-fadeIn select-none overflow-hidden">
+      {/* Unified Vocab Studio Toolbar (2 Tầng Khoa học, gọn gàng) */}
+      <div className="w-full p-1 sm:p-1.5 rounded-2xl bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 border border-[#D8CEBF] dark:border-stone-700/80 shadow-md backdrop-blur-md flex flex-col gap-1 shrink-0">
         {/* Tầng 1: Chế độ hiển thị + Cấp độ JLPT + Ô Tìm kiếm */}
-        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-2">
+        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-1.5">
           {/* Trái: Chế độ hiển thị (View Mode) */}
-          <div className="flex items-center gap-1 p-1 bg-washi dark:bg-stone-800 rounded-xl border border-washi-border dark:border-stone-700 text-xs font-bold w-full md:w-auto">
+          <div className="flex items-center gap-0.5 p-0.5 bg-[#F5EFE6] dark:bg-stone-800 rounded-xl border border-washi-border text-xs font-bold w-full md:w-auto">
             <button
               onClick={() => {
                 playWoodClapper();
                 setActiveView('flashcard');
               }}
-              className={`flex-1 md:flex-initial px-3 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+              className={`flex-1 md:flex-initial px-2.5 py-1 rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer ${
                 activeView === 'flashcard'
-                  ? 'bg-torii text-white shadow-xs font-black'
-                  : 'text-stone-700 dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii'
+                  ? 'bg-torii text-white shadow-2xs font-black'
+                  : 'text-stone-700 dark:text-stone-300 hover:text-torii'
               }`}
             >
               <SensuFanIcon className="w-3.5 h-3.5" />
-              <span>Thẻ Flashcard</span>
+              <span>Flashcard</span>
             </button>
             <button
               onClick={() => {
                 playWoodClapper();
                 setActiveView('list');
               }}
-              className={`flex-1 md:flex-initial px-3 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+              className={`flex-1 md:flex-initial px-2.5 py-1 rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer ${
                 activeView === 'list'
-                  ? 'bg-torii text-white shadow-xs font-black'
-                  : 'text-stone-700 dark:text-stone-300 opacity-75 hover:opacity-100 hover:text-torii'
+                  ? 'bg-torii text-white shadow-2xs font-black'
+                  : 'text-stone-700 dark:text-stone-300 hover:text-torii'
               }`}
             >
               <ScrollUnfurledIcon className="w-3.5 h-3.5" />
@@ -165,14 +165,14 @@ export default function VocabSection({ onSaveToNotebook }) {
             </button>
             <button
               onClick={startQuiz}
-              className={`flex-1 md:flex-initial px-3 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+              className={`flex-1 md:flex-initial px-2.5 py-1 rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer ${
                 activeView === 'quiz'
-                  ? 'bg-amber-600 text-white shadow-xs font-black'
-                  : 'text-amber-800 dark:text-amber-300 hover:text-amber-600 opacity-80 hover:opacity-100'
+                  ? 'bg-amber-600 text-white shadow-2xs font-black'
+                  : 'text-amber-800 dark:text-amber-300 hover:text-amber-600'
               }`}
             >
               <KatanaIcon className="w-3.5 h-3.5" />
-              <span>Phản xạ từ vựng</span>
+              <span>Phản xạ</span>
             </button>
           </div>
 
@@ -187,10 +187,10 @@ export default function VocabSection({ onSaveToNotebook }) {
                   setCardIndex(0);
                   setIsFlipped(false);
                 }}
-                className={`px-2.5 py-1 rounded-lg border transition-all ${
+                className={`px-2 py-0.5 rounded-lg border transition-all cursor-pointer ${
                   selectedLevel === lvl
-                    ? 'bg-torii text-white border-torii shadow-xs font-black'
-                    : 'kifuda-tab opacity-75 hover:opacity-100'
+                    ? 'bg-torii text-white border-torii shadow-2xs font-black'
+                    : 'bg-[#F5EFE6] dark:bg-stone-800 border-washi-border opacity-75 hover:opacity-100'
                 }`}
               >
                 {lvl === 'all' ? 'Tất cả' : lvl}
@@ -199,7 +199,7 @@ export default function VocabSection({ onSaveToNotebook }) {
           </div>
 
           {/* Phải: Ô Tìm kiếm */}
-          <div className="w-full md:w-56 relative shrink-0">
+          <div className="w-full md:w-52 relative shrink-0">
             <input
               type="text"
               value={searchTerm}
@@ -208,13 +208,13 @@ export default function VocabSection({ onSaveToNotebook }) {
                 setCardIndex(0);
               }}
               placeholder="Tìm từ vựng, Hán Việt..."
-              className="w-full pl-8 pr-7 py-1.5 rounded-xl bg-washi dark:bg-stone-800 border border-washi-border dark:border-stone-700 text-xs outline-none focus:border-torii transition-colors font-ui"
+              className="w-full pl-7 pr-6 py-1 rounded-lg bg-washi dark:bg-stone-800 border border-washi-border dark:border-stone-700 text-xs outline-none focus:border-torii transition-colors font-ui"
             />
-            <SearchIcon className="w-3.5 h-3.5 absolute left-2.5 top-2 text-stone-400" />
+            <SearchIcon className="w-3 h-3 absolute left-2 top-2 text-stone-400" />
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className="absolute right-2.5 top-1.5 text-xs text-stone-400 hover:text-stone-700 dark:hover:text-stone-200"
+                className="absolute right-2 top-1 text-xs text-stone-400 hover:text-stone-700 dark:hover:text-stone-200"
               >
                 ✕
               </button>
@@ -223,7 +223,7 @@ export default function VocabSection({ onSaveToNotebook }) {
         </div>
 
         {/* Tầng 2: Dải Chủ đề (Topic Ribbon) */}
-        <div className="w-full flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none text-xs font-medium pt-1 border-t border-washi-border/60 dark:border-stone-700/60">
+        <div className="w-full flex items-center gap-1 overflow-x-auto py-0.5 no-scrollbar text-xs font-medium border-t border-[#ebdccb]/60 dark:border-stone-700/60">
           {VOCAB_TOPICS.map((topic) => (
             <button
               key={topic.id}
@@ -233,10 +233,10 @@ export default function VocabSection({ onSaveToNotebook }) {
                 setCardIndex(0);
                 setIsFlipped(false);
               }}
-              className={`px-2.5 py-1 rounded-xl border whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 text-[11px] ${
+              className={`px-2 py-0.5 rounded-lg border whitespace-nowrap transition-all flex items-center gap-1 shrink-0 text-[10px] cursor-pointer ${
                 selectedTopic === topic.id
-                  ? 'bg-torii/15 border-torii text-torii font-bold shadow-xs'
-                  : 'bg-washi/70 dark:bg-stone-800/70 border-washi-border dark:border-stone-700 opacity-70 hover:opacity-100 text-stone-700 dark:text-stone-300'
+                  ? 'bg-torii/15 border-torii text-torii font-bold shadow-2xs'
+                  : 'bg-[#F5EFE6]/80 dark:bg-stone-800/80 border-washi-border opacity-75 hover:opacity-100 text-stone-700 dark:text-stone-300'
               }`}
             >
               <span>{topic.icon}</span>
@@ -248,7 +248,7 @@ export default function VocabSection({ onSaveToNotebook }) {
 
       {/* 1. FLASHCARD VIEW */}
       {activeView === 'flashcard' && (
-        <div className="w-full flex flex-col items-center gap-4">
+        <div className="w-full flex-1 min-h-0 flex flex-col items-center justify-between py-1 gap-1">
           {filteredList.length === 0 ? (
             <div className="p-12 text-center karuta-card rounded-3xl border border-washi-border w-full">
               <span className="text-3xl block mb-2">🌸</span>
@@ -269,7 +269,7 @@ export default function VocabSection({ onSaveToNotebook }) {
               {/* 3D Karuta Flashcard Container */}
               <div
                 className="w-full max-w-lg cursor-pointer perspective"
-                style={{ height: '360px', minHeight: '360px' }}
+                style={{ height: 'min(270px, 34vh)', minHeight: '210px' }}
                 onClick={() => {
                   playWoodClapper();
                   setIsFlipped(!isFlipped);
@@ -283,15 +283,15 @@ export default function VocabSection({ onSaveToNotebook }) {
                   style={{ height: '100%', width: '100%', position: 'relative' }}
                 >
                   {/* Mặt trước: Kanji & Chú âm */}
-                  <div className="card-face card-front absolute inset-0 w-full h-full rounded-3xl karuta-card p-6 flex flex-col justify-between select-none overflow-hidden">
+                  <div className="card-face card-front absolute inset-0 w-full h-full rounded-3xl karuta-card p-3.5 sm:p-5 flex flex-col justify-between select-none overflow-hidden">
                     <div className="karuta-inner-border" />
 
                     {/* Watermark Crest */}
                     <div className="absolute -bottom-8 -right-8 pointer-events-none opacity-[0.06] dark:opacity-[0.1] text-torii">
-                      <OrigamiCraneIcon className="w-48 h-48" />
+                      <OrigamiCraneIcon className="w-40 h-40" />
                     </div>
 
-                    <div className="w-full flex items-center justify-between relative z-10 border-b border-washi-border/60 pb-2">
+                    <div className="w-full flex items-center justify-between relative z-10 border-b border-washi-border/60 pb-1.5">
                       <span className="hanko-stamp text-[10px] py-0.5 px-2">
                         {currentWord?.level}
                       </span>
@@ -301,74 +301,74 @@ export default function VocabSection({ onSaveToNotebook }) {
                           playWaterDrop();
                           playJapaneseSpeech(currentWord?.kanji);
                         }}
-                        className="p-2 rounded-xl bg-washi hover:bg-torii hover:text-white text-torii transition-all active:scale-95 border border-washi-border shadow-2xs"
+                        className="p-1.5 rounded-xl bg-washi hover:bg-torii hover:text-white text-torii transition-all active:scale-95 border border-washi-border shadow-2xs"
                         title="Nghe phát âm"
                       >
-                        <VolumeIcon className="w-4 h-4" />
+                        <VolumeIcon className="w-3.5 h-3.5" />
                       </button>
                     </div>
 
                     <div className="text-center my-auto relative z-10 flex flex-col items-center">
                       {/* Huy hiệu minh họa chủ đề trực quan */}
-                      <div className="mb-2 px-3 py-1 rounded-xl bg-washi border border-washi-border flex items-center gap-1.5 shadow-2xs">
-                        <span className="text-base sm:text-lg">
+                      <div className="mb-1 px-2.5 py-0.5 rounded-xl bg-washi border border-washi-border flex items-center gap-1.5 shadow-2xs">
+                        <span className="text-sm sm:text-base">
                           {VOCAB_TOPICS.find((t) => t.id === currentWord?.topic)?.icon || '🌸'}
                         </span>
-                        <span className="text-[11px] font-bold text-torii font-ui">
+                        <span className="text-[10px] font-bold text-torii font-ui">
                           {VOCAB_TOPICS.find((t) => t.id === currentWord?.topic)?.name || 'Từ vựng'}
                         </span>
                       </div>
 
-                      <div className="text-xs font-mono opacity-60 uppercase tracking-widest mb-1">
+                      <div className="text-[10px] font-mono opacity-60 uppercase tracking-widest mb-0.5">
                         {currentWord?.romaji}
                       </div>
-                      <div className="text-4xl sm:text-5xl font-kanji font-black tracking-wide text-torii drop-shadow-xs">
+                      <div className="text-3xl sm:text-4xl font-kanji font-black tracking-wide text-torii drop-shadow-xs">
                         {currentWord?.kanji}
                       </div>
-                      <div className="text-lg font-kanji font-bold mt-2 opacity-80">
+                      <div className="text-base font-kanji font-bold mt-1 opacity-80">
                         {currentWord?.reading}
                       </div>
-                      <div className="text-xs font-bold text-amber-700 dark:text-amber-300 font-kanji mt-1">
+                      <div className="text-[11px] font-bold text-amber-700 dark:text-amber-300 font-kanji mt-0.5">
                         [{currentWord?.hanViet}]
                       </div>
                     </div>
 
-                    <div className="text-center text-[11px] opacity-60 relative z-10 pt-2 border-t border-washi-border/60">
+                    <div className="text-center text-[10px] opacity-60 relative z-10 pt-1.5 border-t border-washi-border/60">
                       Chạm để lật xem nghĩa & câu ví dụ ↻
                     </div>
                   </div>
 
                   {/* Mặt sau: Nghĩa & Câu ví dụ */}
-                  <div className="card-face card-back absolute inset-0 w-full h-full rounded-3xl karuta-card p-6 flex flex-col justify-between select-none overflow-hidden">
+                  <div className="card-face card-back absolute inset-0 w-full h-full rounded-3xl karuta-card p-3.5 sm:p-5 flex flex-col justify-between select-none overflow-hidden">
                     <div className="karuta-inner-border" />
 
                     {/* Watermark Crest */}
                     <div className="absolute -bottom-6 -right-6 pointer-events-none opacity-[0.06] dark:opacity-[0.1] text-bamboo">
-                      <SensuFanIcon className="w-44 h-44" />
+                      <SensuFanIcon className="w-36 h-36" />
                     </div>
 
-                    <div className="w-full flex items-center justify-between relative z-10 border-b border-washi-border/60 pb-2">
+                    <div className="w-full flex items-center justify-between relative z-10 border-b border-washi-border/60 pb-1.5">
                       <div className="flex items-center gap-2">
-                        <span className="font-kanji font-black text-torii text-xl">
+                        <span className="font-kanji font-black text-torii text-lg">
                           {currentWord?.kanji}
                         </span>
                         <span className="text-xs opacity-70 font-kanji">({currentWord?.reading})</span>
                       </div>
-                      <span className="text-xs font-bold opacity-60">{currentWord?.type}</span>
+                      <span className="text-[11px] font-bold opacity-60">{currentWord?.type}</span>
                     </div>
 
-                    <div className="my-auto relative z-10 flex flex-col gap-3">
+                    <div className="my-auto relative z-10 flex flex-col gap-2">
                       <div>
-                        <span className="text-[10px] uppercase font-bold opacity-60 block">Nghĩa tiếng Việt:</span>
-                        <div className="text-xl font-bold text-color-sumi mt-0.5">
+                        <span className="text-[9px] uppercase font-bold opacity-60 block">Nghĩa tiếng Việt:</span>
+                        <div className="text-lg sm:text-xl font-bold text-color-sumi mt-0.5">
                           {currentWord?.meaning}
                         </div>
                       </div>
 
                       {currentWord?.exampleJp && (
-                        <div className="p-3 bg-washi rounded-2xl border border-washi-border text-xs">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-[10px] font-bold text-torii">CÂU VÍ DỤ:</span>
+                        <div className="p-2 sm:p-2.5 bg-washi rounded-xl border border-washi-border text-xs">
+                          <div className="flex items-center justify-between mb-0.5">
+                            <span className="text-[9px] font-bold text-torii">CÂU VÍ DỤ:</span>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -378,20 +378,20 @@ export default function VocabSection({ onSaveToNotebook }) {
                               className="p-1 rounded-md hover:bg-torii/10 text-torii transition-colors"
                               title="Nghe câu ví dụ"
                             >
-                              <VolumeIcon className="w-3.5 h-3.5" />
+                              <VolumeIcon className="w-3 h-3" />
                             </button>
                           </div>
-                          <div className="font-kanji font-semibold text-sm leading-relaxed">
+                          <div className="font-kanji font-semibold text-xs sm:text-sm leading-snug">
                             {currentWord.exampleJp}
                           </div>
-                          <div className="text-[11px] opacity-75 mt-1 italic">
+                          <div className="text-[10px] opacity-75 mt-0.5 italic">
                             {currentWord.exampleVn}
                           </div>
                         </div>
                       )}
                     </div>
 
-                    <div className="text-center text-[11px] opacity-60 relative z-10 pt-2 border-t border-washi-border/60">
+                    <div className="text-center text-[10px] opacity-60 relative z-10 pt-1.5 border-t border-washi-border/60">
                       Chạm để quay lại mặt trước ↺
                     </div>
                   </div>
@@ -399,22 +399,22 @@ export default function VocabSection({ onSaveToNotebook }) {
               </div>
 
               {/* Navigation Controls */}
-              <div className="w-full max-w-xl flex items-center justify-between gap-2 px-1">
+              <div className="w-full max-w-xl flex items-center justify-between gap-1.5 px-1">
                 <button
                   onClick={handlePrevCard}
-                  className="py-2.5 px-4 karuta-card border border-washi-border rounded-2xl text-xs md:text-sm font-bold shadow-xs active:scale-95 transition-all flex items-center gap-1.5 text-stone-800 dark:text-stone-100"
+                  className="py-1.5 sm:py-2 px-3 sm:px-4 karuta-card border border-washi-border rounded-xl text-xs font-bold shadow-xs active:scale-95 transition-all flex items-center gap-1 text-stone-800 dark:text-stone-100"
                 >
-                  <ChevronLeftIcon className="w-4 h-4" />
+                  <ChevronLeftIcon className="w-3.5 h-3.5" />
                   <span>Trước</span>
                 </button>
 
-                <div className="flex items-center gap-1.5 sm:gap-2">
+                <div className="flex items-center gap-1 sm:gap-1.5">
                   <button
                     onClick={() => {
                       playWoodClapper();
                       setIsFlipped(!isFlipped);
                     }}
-                    className="py-2.5 px-3.5 karuta-card border border-washi-border rounded-2xl text-xs font-bold shadow-xs active:scale-95 transition-all flex items-center gap-1.5 text-stone-800 dark:text-stone-100"
+                    className="py-1.5 sm:py-2 px-3 karuta-card border border-washi-border rounded-xl text-xs font-bold shadow-xs active:scale-95 transition-all flex items-center gap-1 text-stone-800 dark:text-stone-100"
                     title="Lật thẻ xem nghĩa"
                   >
                     <span>{isFlipped ? 'Mặt trước' : 'Lật thẻ'}</span>
@@ -423,13 +423,13 @@ export default function VocabSection({ onSaveToNotebook }) {
 
                   <button
                     onClick={() => toggleMastered(currentWord?.id)}
-                    className={`py-2.5 px-3.5 rounded-2xl border text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs ${
+                    className={`py-1.5 sm:py-2 px-3 rounded-xl border text-xs font-bold transition-all flex items-center gap-1 shadow-xs ${
                       masteredWords.includes(currentWord?.id)
                         ? 'bg-emerald-600 text-white border-emerald-700'
                         : 'karuta-card opacity-80 hover:opacity-100 text-stone-800 dark:text-stone-100'
                     }`}
                   >
-                    <MasteredCheckIcon className="w-3.5 h-3.5" />
+                    <MasteredCheckIcon className="w-3 h-3" />
                     <span>{masteredWords.includes(currentWord?.id) ? 'Đã thuộc' : 'Thuộc từ này'}</span>
                   </button>
 
@@ -438,19 +438,19 @@ export default function VocabSection({ onSaveToNotebook }) {
                       playWaterDrop();
                       playJapaneseSpeech(currentWord?.kanji);
                     }}
-                    className="p-2.5 karuta-card rounded-2xl border border-washi-border text-xs font-bold shadow-xs active:scale-95 text-torii hover:bg-torii hover:text-white dark:hover:text-white"
+                    className="p-1.5 sm:p-2 karuta-card rounded-xl border border-washi-border text-xs font-bold shadow-xs active:scale-95 text-torii hover:bg-torii hover:text-white dark:hover:text-white"
                     title="Phát âm từ vựng"
                   >
-                    <VolumeIcon className="w-4 h-4" />
+                    <VolumeIcon className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
                 <button
                   onClick={handleNextCard}
-                  className="py-2.5 px-5 bg-torii hover:bg-torii-light text-white rounded-2xl text-xs md:text-sm font-bold shadow-md active:scale-95 transition-all flex items-center gap-1.5"
+                  className="py-1.5 sm:py-2 px-4 bg-torii hover:bg-torii-light text-white rounded-xl text-xs font-bold shadow-md active:scale-95 transition-all flex items-center gap-1"
                 >
                   <span>Tiếp</span>
-                  <ChevronRightIcon className="w-4 h-4" />
+                  <ChevronRightIcon className="w-3.5 h-3.5" />
                 </button>
               </div>
             </>
@@ -460,8 +460,8 @@ export default function VocabSection({ onSaveToNotebook }) {
 
       {/* 2. LIST VIEW */}
       {activeView === 'list' && (
-        <div className="w-full p-4 sm:p-6 rounded-3xl karuta-card border border-washi-border shadow-md">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="w-full flex-1 min-h-0 overflow-y-auto thin-scrollbar p-3 sm:p-4 rounded-3xl karuta-card border border-washi-border shadow-md">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
             {filteredList.map((item) => (
               <div
                 key={item.id}
@@ -507,7 +507,7 @@ export default function VocabSection({ onSaveToNotebook }) {
 
       {/* 3. MINI QUIZ VIEW */}
       {activeView === 'quiz' && (
-        <div className="w-full max-w-xl p-6 sm:p-8 rounded-3xl karuta-card border-2 border-border-strong shadow-xl flex flex-col items-center gap-5 relative">
+        <div className="w-full max-w-xl flex-1 min-h-0 overflow-y-auto thin-scrollbar p-4 sm:p-6 rounded-3xl karuta-card border-2 border-border-strong shadow-xl flex flex-col items-center justify-between gap-3 relative">
           <div className="karuta-inner-border" />
 
           <div className="w-full flex items-center justify-between pb-3 border-b border-washi-border relative z-10 text-xs">
