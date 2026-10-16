@@ -1,18 +1,29 @@
 'use client';
 
 import { useState } from 'react';
-import { playWaterDrop, playTempleBell } from '../lib/traditionalAudio';
+import { playWaterDrop, playTempleBell, playWoodClapper } from '../lib/traditionalAudio';
+import {
+  ToriiShrineIcon,
+  BambooIcon,
+  SensuFanIcon,
+  KatanaIcon,
+  PagodaIcon,
+  OrigamiCraneIcon,
+  SakuraFlowerIcon,
+} from './ZenIcons';
 
 /**
  * JapaneseSideScrolls - Không Gian Mỹ Học Sườn Màn Hình Chuẩn Zen Nhật Bản
- * Cung cấp 2 chế độ mỹ học thanh tao, được định vị chuẩn xác vào giữa khoảng trống 2 bên sườn:
- * 1. 'sumie' (Mặc định): Tranh Thủy Mặc Sumi-e & Thi Ca Haiku cổ điển hòa tan vào nền Washi (cực kỳ yên bình, không viền cứng, không che khuất).
- * 2. 'shikishi': Thẻ tranh Washi Shikishi truyền thống (Cổng Torii & Núi Phú Sĩ) viền vàng mỏng nhẹ, kích thước vừa vặn hoàn hảo.
- * 3. 'hidden': Ẩn hoàn toàn để giữ khoảng trống thuần khiết Wabi-Sabi.
+ * Cung cấp 3 chế độ mỹ học cao cấp, được định vị chuẩn xác vào giữa khoảng trống 2 bên sườn:
+ * 1. 'kakejiku' (Mặc định): Tranh Cuộn Thủy Mặc Shin-Hanga Đạt Giải (Vườn Thiền Kyoto bên trái & Linh Sơn Phú Sĩ bên phải).
+ * 2. 'shikishi': Thẻ tranh Washi Shikishi truyền thống (Cổng Torii Thần Đạo & Núi Phú Sĩ Mặt Trời Đỏ) viền vàng mỏng nhẹ.
+ * 3. 'zen_icons': Bộ Huy Hiệu & Biểu Tượng Văn Hóa Nhật Bản tinh xảo (Sakura, Torii, Sensu, Katana, Hạc trắng).
+ * 4. 'hidden': Ẩn hoàn toàn để giữ khoảng trống thuần khiết Wabi-Sabi.
  */
 export default function JapaneseSideScrolls({ theme = 'washi' }) {
   const isDark = theme === 'yozakura';
-  const [styleMode, setStyleMode] = useState('sumie'); // 'sumie' | 'shikishi' | 'hidden'
+  // Mặc định là 'kakejiku' (Tranh mộc bản nghệ thuật cao cấp)
+  const [styleMode, setStyleMode] = useState('kakejiku'); // 'kakejiku' | 'shikishi' | 'zen_icons' | 'hidden'
   const [leftRippling, setLeftRippling] = useState(false);
   const [rightRippling, setRightRippling] = useState(false);
 
@@ -31,11 +42,15 @@ export default function JapaneseSideScrolls({ theme = 'washi' }) {
   if (styleMode === 'hidden') {
     return (
       <button
-        onClick={() => setStyleMode('sumie')}
-        title="Hiện trang trí 2 bên sườn"
-        className="fixed bottom-3 left-3 z-30 px-2 py-1 rounded text-[11px] font-kanji bg-stone-200/60 dark:bg-stone-800/60 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-all border border-stone-300/40"
+        onClick={() => {
+          playWoodClapper();
+          setStyleMode('kakejiku');
+        }}
+        title="Hiện trang trí nghệ thuật 2 bên sườn"
+        className="fixed bottom-3 left-3 z-30 px-2.5 py-1 rounded-xl text-xs font-kanji font-bold bg-[#FFFDF9]/90 dark:bg-[#161D27]/90 text-stone-700 dark:text-stone-300 hover:text-torii transition-all border border-[#D8CEBF] dark:border-stone-700 shadow-md flex items-center gap-1.5 cursor-pointer"
       >
-        🎋 Hiện họa tiết Zen
+        <span>🖼️</span>
+        <span>Hiện tranh 2 bên</span>
       </button>
     );
   }
@@ -45,145 +60,231 @@ export default function JapaneseSideScrolls({ theme = 'washi' }) {
       {/* =========================================================================
           BỜ TÂY (WEST FLANK): CĂN CHÍNH GIỮA KHOẢNG TRỐNG BÊN TRÁI
           ========================================================================= */}
-      <aside
-        aria-label="Khoảng không gian bờ Tây"
-        className="zen-flank-left"
-      >
-        <div className="relative flex flex-col items-center pointer-events-auto">
-          {/* Nút chuyển đổi phong cách nhỏ tao nhã ở góc trên */}
-          <div className="absolute -top-12 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button
-              onClick={() => setStyleMode(styleMode === 'sumie' ? 'shikishi' : 'sumie')}
-              className="text-[10px] px-2 py-0.5 rounded-full bg-stone-100/80 dark:bg-stone-800/80 border border-stone-300/60 dark:border-stone-700/60 text-stone-500 hover:text-stone-800 transition-all shadow-xs"
-              title="Đổi phong cách trang trí 2 bên"
-            >
-              {styleMode === 'sumie' ? '🖼️ Thẻ tranh Shikishi' : '🎋 Thủy mặc Sumi-e'}
-            </button>
+      <aside aria-label="Khoảng không gian bờ Tây" className="zen-flank-left">
+        <div className="relative flex flex-col items-center pointer-events-auto group">
+          {/* Menu chuyển đổi phong cách tao nhã khi hover */}
+          <div className="absolute -top-9 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 z-30">
+            <div className="p-0.5 rounded-xl bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 border border-[#D8CEBF] dark:border-stone-700 shadow-md flex items-center gap-0.5 text-[10px] font-bold">
+              <button
+                onClick={() => {
+                  playWoodClapper();
+                  setStyleMode('kakejiku');
+                }}
+                className={`px-1.5 py-0.5 rounded-lg transition-colors cursor-pointer ${
+                  styleMode === 'kakejiku'
+                    ? 'bg-torii text-white'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                }`}
+                title="Tranh cuộn mộc bản Shin-Hanga"
+              >
+                🖼️ Cuộn
+              </button>
+              <button
+                onClick={() => {
+                  playWoodClapper();
+                  setStyleMode('shikishi');
+                }}
+                className={`px-1.5 py-0.5 rounded-lg transition-colors cursor-pointer ${
+                  styleMode === 'shikishi'
+                    ? 'bg-torii text-white'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                }`}
+                title="Thẻ tranh Washi vuông Torii"
+              >
+                🎴 Washi
+              </button>
+              <button
+                onClick={() => {
+                  playWoodClapper();
+                  setStyleMode('zen_icons');
+                }}
+                className={`px-1.5 py-0.5 rounded-lg transition-colors cursor-pointer ${
+                  styleMode === 'zen_icons'
+                    ? 'bg-torii text-white'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                }`}
+                title="Huy hiệu & Biểu tượng Zen"
+              >
+                ⛩️ Icon
+              </button>
+              <button
+                onClick={() => {
+                  playWoodClapper();
+                  setStyleMode('hidden');
+                }}
+                className="px-1.5 py-0.5 rounded-lg text-stone-400 hover:text-rose-500 transition-colors cursor-pointer"
+                title="Ẩn tranh 2 bên"
+              >
+                ✕
+              </button>
+            </div>
           </div>
 
-          {/* CHẾ ĐỘ 1: THỦY MẶC SUMI-E & THƠ HAIKU (SIÊU YÊN BÌNH, KHÔNG BỊ CẮT VỤN) */}
-          {styleMode === 'sumie' && (
+          {/* -------------------------------------------------------------
+              PHONG CÁCH 1: TRANH CUỘN KAKEJIKU VƯỜN THIỀN KYOTO & HOA ANH ĐÀO
+              ------------------------------------------------------------- */}
+          {styleMode === 'kakejiku' && (
             <div
               onClick={handleLeftClick}
-              title="Trúc Lâm Thủy Mặc • Chạm nhẹ để lắng nghe giọt nước Suikinkutsu"
-              className="group cursor-pointer flex flex-col items-center p-3 rounded-2xl transition-all duration-700 hover:bg-stone-500/5"
+              title="Vườn Thiền Kyoto & Hoa Anh Đào • Chạm nhẹ để lắng nghe giọt nước Suikinkutsu"
+              className="cursor-pointer flex flex-col items-center transition-all duration-500 hover:scale-105 select-none"
             >
-              {/* Nét vẽ Thủy mặc cành trúc thanh thoát (Pure Sumi-e Brush SVG) */}
-              <div className="w-24 h-44 relative flex items-center justify-center">
-                <svg
-                  viewBox="0 0 100 180"
-                  className="w-full h-full filter drop-shadow-xs transition-transform duration-700 group-hover:scale-105"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  {/* Thân tre mực tàu uyển chuyển */}
-                  <path
-                    d="M 50 180 C 48 140 52 110 47 70 C 45 40 48 20 46 0"
-                    stroke={isDark ? '#e2e8f0' : '#292524'}
-                    strokeWidth="3.5"
-                    strokeLinecap="round"
-                    strokeOpacity={isDark ? '0.35' : '0.22'}
-                  />
-                  {/* Mắt tre */}
-                  <ellipse cx="48.5" cy="112" rx="4" ry="1.5" fill={isDark ? '#e2e8f0' : '#292524'} fillOpacity={isDark ? '0.45' : '0.35'} />
-                  <ellipse cx="46.5" cy="68" rx="4" ry="1.5" fill={isDark ? '#e2e8f0' : '#292524'} fillOpacity={isDark ? '0.45' : '0.35'} />
-
-                  {/* Nhánh tre phụ */}
-                  <path
-                    d="M 47 70 C 58 60 70 58 82 52"
-                    stroke={isDark ? '#cbd5e1' : '#44403c'}
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeOpacity={isDark ? '0.35' : '0.25'}
-                  />
-                  <path
-                    d="M 48 112 C 35 102 24 100 12 94"
-                    stroke={isDark ? '#cbd5e1' : '#44403c'}
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeOpacity={isDark ? '0.35' : '0.25'}
-                  />
-
-                  {/* Lá tre thư pháp mềm mại rủ xuống */}
-                  {/* Nhóm lá phải */}
-                  <path d="M 82 52 C 92 50 99 58 96 66 C 92 60 84 56 82 52 Z" fill={isDark ? '#94a3b8' : '#1c1917'} fillOpacity={isDark ? '0.35' : '0.25'} />
-                  <path d="M 82 52 C 90 42 98 44 94 48 C 88 47 84 50 82 52 Z" fill={isDark ? '#94a3b8' : '#1c1917'} fillOpacity={isDark ? '0.3' : '0.22'} />
-                  <path d="M 72 56 C 80 62 84 72 80 78 C 76 70 72 64 72 56 Z" fill={isDark ? '#94a3b8' : '#1c1917'} fillOpacity={isDark ? '0.28' : '0.2'} />
-
-                  {/* Nhóm lá trái */}
-                  <path d="M 12 94 C 2 92 -4 100 2 108 C 5 101 10 97 12 94 Z" fill={isDark ? '#94a3b8' : '#1c1917'} fillOpacity={isDark ? '0.35' : '0.25'} />
-                  <path d="M 12 94 C 3 86 -2 88 4 92 C 8 91 11 93 12 94 Z" fill={isDark ? '#94a3b8' : '#1c1917'} fillOpacity={isDark ? '0.3' : '0.22'} />
-
-                  {/* Nhóm ngọn */}
-                  <path d="M 46 15 C 40 4 34 2 30 0 C 35 7 40 12 46 15 Z" fill={isDark ? '#94a3b8' : '#1c1917'} fillOpacity={isDark ? '0.4' : '0.3'} />
-                  <path d="M 46 15 C 54 4 60 2 64 0 C 58 7 52 12 46 15 Z" fill={isDark ? '#94a3b8' : '#1c1917'} fillOpacity={isDark ? '0.4' : '0.3'} />
-                </svg>
-
-                {/* Giọt nước gợn sóng khi click */}
-                {leftRippling && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <span className="w-16 h-16 rounded-full border border-emerald-500/70 animate-ping" />
-                  </div>
-                )}
+              {/* Dây treo lụa đỏ son thắt nút Mizuhiki */}
+              <div className="flex flex-col items-center mb-1">
+                <div className="w-2 h-2 rounded-full border border-amber-600/70 bg-amber-700/80 shadow-2xs" />
+                <div className="w-0.5 h-3 bg-gradient-to-b from-amber-700/80 to-[#BC002D]/80" />
+                {/* Trục treo trên (Hyōgu) */}
+                <div className="w-32 sm:w-36 h-1.5 rounded-full bg-gradient-to-r from-stone-800 via-amber-900 to-stone-800 shadow-xs border border-amber-950/40" />
               </div>
 
-              {/* Thơ Haiku Matsuo Basho khắc theo trục dọc (Thư pháp chân truyền) */}
-              <div className="mt-3 flex items-start gap-2.5">
-                {/* Cột 1: Câu thơ Haiku nổi tiếng */}
-                <div className="writing-vertical text-[13px] font-kanji text-stone-600 dark:text-stone-300 tracking-widest leading-none select-none opacity-80 group-hover:opacity-100 transition-opacity">
-                  古池や
-                </div>
-                <div className="writing-vertical text-[13px] font-kanji text-stone-600 dark:text-stone-300 tracking-widest leading-none select-none opacity-80 group-hover:opacity-100 transition-opacity">
-                  蛙飛びこむ
-                </div>
-                <div className="writing-vertical text-[13px] font-kanji text-stone-600 dark:text-stone-300 tracking-widest leading-none select-none opacity-80 group-hover:opacity-100 transition-opacity">
-                  水の音
+              {/* Khung tranh Kakejiku cuộn lụa */}
+              <div className="relative w-28 sm:w-32 lg:w-34 p-1.5 rounded-lg bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 border-2 border-[#D8CEBF] dark:border-stone-700/90 shadow-xl shadow-stone-900/10 dark:shadow-black/40 backdrop-blur-md overflow-hidden">
+                {/* Viền chỉ vàng dát mỏng Kinpaku */}
+                <div className="absolute inset-1 rounded-sm border border-amber-600/35 dark:border-amber-400/30 pointer-events-none z-10" />
+
+                {/* Bức họa Vườn Thiền Kyoto */}
+                <div className="relative w-full h-44 sm:h-52 overflow-hidden rounded-xs">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/images/zen_left_art.jpg"
+                    alt="Vườn Thiền Kyoto mùa hoa anh đào"
+                    className="w-full h-full object-cover rounded-xs transition-transform duration-700 hover:scale-108"
+                    loading="eager"
+                  />
+                  {/* Lớp phủ màng lụa mỏng giúp tranh hòa quyện */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/25 pointer-events-none" />
+
+                  {/* Vòng sóng gợn nước khi click */}
+                  {leftRippling && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <span className="w-20 h-20 rounded-full border-2 border-emerald-400/90 animate-ping" />
+                    </div>
+                  )}
                 </div>
 
-                {/* Con dấu triện son đỏ 『寂』 (Tịch - Tĩnh lặng Zen) */}
-                <div className="flex flex-col items-center mt-auto">
-                  <div className="w-4 h-6 rounded-xs bg-[#BC002D]/90 text-white text-[9px] font-kanji font-bold flex items-center justify-center shadow-2xs border border-red-900/30">
-                    寂
-                  </div>
+                {/* Dải chân tranh trục gỗ mun Jikugi */}
+                <div className="mt-1 pt-1 border-t border-amber-800/20 dark:border-stone-700 flex items-center justify-between text-[9px] px-1 font-kanji font-bold text-stone-700 dark:text-stone-300">
+                  <span>京都 • 禅庭</span>
+                  <span className="text-[#BC002D] dark:text-rose-400">桜花</span>
                 </div>
               </div>
 
-              <span className="text-[10px] text-stone-400 dark:text-stone-500 font-sans tracking-wider mt-2 opacity-70 group-hover:opacity-100 transition-opacity">
-                Ao xưa tiếng ếch xao
-              </span>
+              {/* Trục lăn dưới đáy tranh (Jikugi) */}
+              <div className="w-36 sm:w-40 h-2 rounded-full bg-gradient-to-r from-stone-900 via-amber-950 to-stone-900 shadow-md mt-1 border border-amber-900/50 flex items-center justify-between px-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500/80 shadow-2xs" />
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500/80 shadow-2xs" />
+              </div>
+
+              {/* Dải thẻ thơ Tanzaku treo dưới (Thư pháp dọc) */}
+              <div className="mt-2 flex items-center gap-1.5 bg-[#FFFDF9]/90 dark:bg-[#161D27]/90 px-2 py-1 rounded-xl border border-[#D8CEBF] dark:border-stone-700/80 shadow-xs">
+                <div className="w-3.5 h-5 rounded-xs bg-[#BC002D] text-white text-[8px] font-kanji font-bold flex items-center justify-center shadow-2xs">
+                  寂
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-[11px] font-kanji font-bold text-stone-800 dark:text-stone-200 tracking-wider">
+                    花鳥風月
+                  </span>
+                  <span className="text-[9px] text-stone-500 dark:text-stone-400 italic">
+                    Ao xưa cánh hoa rơi
+                  </span>
+                </div>
+              </div>
             </div>
           )}
 
-          {/* CHẾ ĐỘ 2: THẺ TRANH WASHI SHIKISHI CỔNG TORII (GỌN GÀNG, VIỀN VÀNG DÁT MỎNG) */}
+          {/* -------------------------------------------------------------
+              PHONG CÁCH 2: THẺ TRANH WASHI SHIKISHI CỔNG TORII
+              ------------------------------------------------------------- */}
           {styleMode === 'shikishi' && (
             <div
               onClick={handleLeftClick}
-              title="Cổng Torii & Hoa Anh Đào bên hồ • Chạm để lắng nghe giọt nước"
-              className="group cursor-pointer flex flex-col items-center transition-transform duration-500 hover:scale-105"
+              title="Cổng Torii Thần Đạo & Hoa Anh Đào • Chạm để lắng nghe giọt nước"
+              className="cursor-pointer flex flex-col items-center transition-all duration-500 hover:scale-105 select-none"
             >
-              {/* Dây treo lụa mỏng */}
-              <div className="w-1.5 h-1.5 rounded-full bg-amber-700/80 mb-1" />
-              <div className="w-0.5 h-4 bg-amber-700/50 mb-1" />
-
-              {/* Thẻ tranh Shikishi vuông vức tinh tế */}
-              <div className="relative w-28 h-28 p-1.5 rounded-sm bg-[#FFFDF9] dark:bg-[#161D27] shadow-md border border-stone-300/80 dark:border-stone-700/80">
-                <div className="absolute inset-1 rounded-2xs border border-amber-600/30 pointer-events-none" />
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/illustrations/torii.jpg"
-                  alt="Cổng Torii bên hồ nước"
-                  className="w-full h-full object-cover rounded-2xs"
-                />
+              <div className="flex flex-col items-center mb-1">
+                <div className="w-2 h-2 rounded-full bg-amber-700/80" />
+                <div className="w-0.5 h-3 bg-amber-700/60" />
               </div>
 
-              {/* Dải thơ Tanzaku treo dưới */}
-              <div className="mt-2 flex flex-col items-center">
-                <span className="text-[11px] font-kanji font-bold text-stone-800 dark:text-stone-200 tracking-widest">
-                  一期一会
-                </span>
-                <div className="w-3.5 h-3.5 rounded-xs bg-[#BC002D] text-white text-[7px] font-kanji font-bold flex items-center justify-center mt-1 shadow-2xs">
+              <div className="relative w-28 sm:w-32 lg:w-34 p-1.5 rounded-2xl bg-[#FFFDF9] dark:bg-[#161D27] border-2 border-[#D8CEBF] dark:border-stone-700 shadow-xl overflow-hidden">
+                <div className="absolute inset-1 rounded-xl border border-amber-600/30 pointer-events-none z-10" />
+                <div className="relative w-full aspect-square overflow-hidden rounded-xl">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/illustrations/torii.jpg"
+                    alt="Cổng Torii bên hồ nước và hoa anh đào"
+                    className="w-full h-full object-cover rounded-xl transition-transform duration-700 hover:scale-108"
+                    loading="eager"
+                  />
+                  {leftRippling && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <span className="w-16 h-16 rounded-full border-2 border-emerald-400/90 animate-ping" />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-2 flex items-center gap-1.5 bg-[#FFFDF9]/90 dark:bg-[#161D27]/90 px-2 py-1 rounded-xl border border-[#D8CEBF] dark:border-stone-700 shadow-xs">
+                <div className="w-3.5 h-4.5 rounded-xs bg-[#BC002D] text-white text-[8px] font-kanji font-bold flex items-center justify-center shadow-2xs">
                   和
                 </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-[11px] font-kanji font-bold text-stone-800 dark:text-stone-200 tracking-wider">
+                    鳥居神域
+                  </span>
+                  <span className="text-[9px] text-stone-500 dark:text-stone-400">
+                    Cổng đền thanh tịnh
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* -------------------------------------------------------------
+              PHONG CÁCH 3: BỘ HUY HIỆU & BIỂU TƯỢNG VĂN HÓA ZEN
+              ------------------------------------------------------------- */}
+          {styleMode === 'zen_icons' && (
+            <div
+              onClick={handleLeftClick}
+              title="Biểu tượng Văn hóa Thiền Zen • Chạm nhẹ để nghe giọt nước"
+              className="cursor-pointer flex flex-col items-center gap-2 p-2.5 rounded-2xl bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 border-2 border-[#D8CEBF] dark:border-stone-700 shadow-xl backdrop-blur-md select-none transition-all duration-300 hover:scale-105"
+            >
+              <div className="text-[10px] uppercase font-bold text-torii font-mono tracking-widest border-b border-[#D8CEBF] pb-1 w-full text-center">
+                KYOTO ZEN
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-2 hover:bg-amber-500/20 transition-colors">
+                  <ToriiShrineIcon className="w-5 h-5 text-torii" />
+                  <span className="text-xs font-kanji font-bold text-stone-800 dark:text-stone-200">
+                    鳥居 • Torii
+                  </span>
+                </div>
+
+                <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-2 hover:bg-emerald-500/20 transition-colors">
+                  <BambooIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                  <span className="text-xs font-kanji font-bold text-stone-800 dark:text-stone-200">
+                    竹林 • Trúc Lâm
+                  </span>
+                </div>
+
+                <div className="p-2 rounded-xl bg-pink-500/10 border border-pink-500/30 flex items-center gap-2 hover:bg-pink-500/20 transition-colors">
+                  <SakuraFlowerIcon className="w-5 h-5 text-pink-500" />
+                  <span className="text-xs font-kanji font-bold text-stone-800 dark:text-stone-200">
+                    桜花 • Sakura
+                  </span>
+                </div>
+
+                <div className="p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center gap-2 hover:bg-rose-500/20 transition-colors">
+                  <PagodaIcon className="w-5 h-5 text-[#BC002D] dark:text-rose-400" />
+                  <span className="text-xs font-kanji font-bold text-stone-800 dark:text-stone-200">
+                    五重塔 • Chùa Cổ
+                  </span>
+                </div>
+              </div>
+
+              <div className="text-[9px] text-stone-500 dark:text-stone-400 italic text-center pt-1 border-t border-[#D8CEBF]/60">
+                Tĩnh tại & An nhiên
               </div>
             </div>
           )}
@@ -193,160 +294,230 @@ export default function JapaneseSideScrolls({ theme = 'washi' }) {
       {/* =========================================================================
           BỜ ĐÔNG (EAST FLANK): CĂN CHÍNH GIỮA KHOẢNG TRỐNG BÊN PHẢI
           ========================================================================= */}
-      <aside
-        aria-label="Khoảng không gian bờ Đông"
-        className="zen-flank-right"
-      >
-        <div className="relative flex flex-col items-center pointer-events-auto">
-          {/* Nút chuyển đổi phong cách nhỏ tao nhã ở góc trên */}
-          <div className="absolute -top-12 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button
-              onClick={() => setStyleMode(styleMode === 'sumie' ? 'shikishi' : 'sumie')}
-              className="text-[10px] px-2 py-0.5 rounded-full bg-stone-100/80 dark:bg-stone-800/80 border border-stone-300/60 dark:border-stone-700/60 text-stone-500 hover:text-stone-800 transition-all shadow-xs"
-              title="Đổi phong cách trang trí 2 bên"
-            >
-              {styleMode === 'sumie' ? '🖼️ Thẻ tranh Shikishi' : '🏔️ Thủy mặc Sumi-e'}
-            </button>
+      <aside aria-label="Khoảng không gian bờ Đông" className="zen-flank-right">
+        <div className="relative flex flex-col items-center pointer-events-auto group">
+          {/* Menu chuyển đổi phong cách tao nhã khi hover */}
+          <div className="absolute -top-9 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 z-30">
+            <div className="p-0.5 rounded-xl bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 border border-[#D8CEBF] dark:border-stone-700 shadow-md flex items-center gap-0.5 text-[10px] font-bold">
+              <button
+                onClick={() => {
+                  playWoodClapper();
+                  setStyleMode('kakejiku');
+                }}
+                className={`px-1.5 py-0.5 rounded-lg transition-colors cursor-pointer ${
+                  styleMode === 'kakejiku'
+                    ? 'bg-torii text-white'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                }`}
+                title="Tranh cuộn mộc bản Shin-Hanga"
+              >
+                🖼️ Cuộn
+              </button>
+              <button
+                onClick={() => {
+                  playWoodClapper();
+                  setStyleMode('shikishi');
+                }}
+                className={`px-1.5 py-0.5 rounded-lg transition-colors cursor-pointer ${
+                  styleMode === 'shikishi'
+                    ? 'bg-torii text-white'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                }`}
+                title="Thẻ tranh Washi vuông Phú Sĩ"
+              >
+                🎴 Washi
+              </button>
+              <button
+                onClick={() => {
+                  playWoodClapper();
+                  setStyleMode('zen_icons');
+                }}
+                className={`px-1.5 py-0.5 rounded-lg transition-colors cursor-pointer ${
+                  styleMode === 'zen_icons'
+                    ? 'bg-torii text-white'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                }`}
+                title="Huy hiệu & Biểu tượng Zen"
+              >
+                ⛩️ Icon
+              </button>
+              <button
+                onClick={() => {
+                  playWoodClapper();
+                  setStyleMode('hidden');
+                }}
+                className="px-1.5 py-0.5 rounded-lg text-stone-400 hover:text-rose-500 transition-colors cursor-pointer"
+                title="Ẩn tranh 2 bên"
+              >
+                ✕
+              </button>
+            </div>
           </div>
 
-          {/* CHẾ ĐỘ 1: THỦY MẶC BẠCH HẠC & NÚI PHÚ SĨ (SIÊU YÊN BÌNH, KHÔNG BỊ CẮT VỤN) */}
-          {styleMode === 'sumie' && (
+          {/* -------------------------------------------------------------
+              PHONG CÁCH 1: TRANH CUỘN KAKEJIKU NÚI PHÚ SĨ & BẠCH HẠC HOÀNG HÔN
+              ------------------------------------------------------------- */}
+          {styleMode === 'kakejiku' && (
             <div
               onClick={handleRightClick}
-              title="Linh Sơn & Bạch Hạc • Chạm nhẹ để lắng nghe chuông chùa Bonshō"
-              className="group cursor-pointer flex flex-col items-center p-3 rounded-2xl transition-all duration-700 hover:bg-stone-500/5"
+              title="Linh Sơn Phú Sĩ & Bạch Hạc Hoàng Hôn • Chạm nhẹ để lắng nghe chuông chùa Bonshō"
+              className="cursor-pointer flex flex-col items-center transition-all duration-500 hover:scale-105 select-none"
             >
-              {/* Nét vẽ Thủy mặc Bạch hạc & Đỉnh núi tuyết (Pure Sumi-e Crane & Fuji SVG) */}
-              <div className="w-24 h-44 relative flex items-center justify-center">
-                <svg
-                  viewBox="0 0 100 180"
-                  className="w-full h-full filter drop-shadow-xs transition-transform duration-700 group-hover:scale-105"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  {/* Mặt trời đỏ Wabi-sabi mờ ảo phía xa */}
-                  <circle
-                    cx="50"
-                    cy="40"
-                    r="20"
-                    fill="#BC002D"
-                    fillOpacity={isDark ? '0.25' : '0.14'}
-                  />
-
-                  {/* Đôi Bạch Hạc sải cánh bay lượn (Tsuru Crane Silhouette) */}
-                  {/* Hạc 1 (Lớn) */}
-                  <g transform="translate(32, 28) scale(0.7)">
-                    <path
-                      d="M 20 20 C 35 10 50 12 60 5 C 48 18 40 25 38 32 C 34 26 26 22 20 20 Z"
-                      fill={isDark ? '#f8fafc' : '#1c1917'}
-                      fillOpacity={isDark ? '0.6' : '0.45'}
-                    />
-                    <path
-                      d="M 38 32 C 45 38 55 45 62 48 C 50 44 42 40 38 32 Z"
-                      fill={isDark ? '#f8fafc' : '#1c1917'}
-                      fillOpacity={isDark ? '0.5' : '0.35'}
-                    />
-                    {/* Đầu mỏ hạc */}
-                    <circle cx="62" cy="4" r="1.5" fill="#BC002D" fillOpacity="0.8" />
-                  </g>
-
-                  {/* Hạc 2 (Nhỏ xa xa) */}
-                  <g transform="translate(18, 55) scale(0.45)">
-                    <path
-                      d="M 20 20 C 35 10 50 12 60 5 C 48 18 40 25 38 32 C 34 26 26 22 20 20 Z"
-                      fill={isDark ? '#f8fafc' : '#1c1917'}
-                      fillOpacity={isDark ? '0.45' : '0.3'}
-                    />
-                  </g>
-
-                  {/* Đỉnh núi Phú Sĩ thủy mặc thanh thoát ở chân cảnh */}
-                  <path
-                    d="M 10 170 C 30 145 42 105 50 100 C 58 105 70 145 90 170 Z"
-                    stroke={isDark ? '#cbd5e1' : '#44403c'}
-                    strokeWidth="1.8"
-                    strokeOpacity={isDark ? '0.35' : '0.25'}
-                    fill="none"
-                  />
-                  {/* Tuyết phủ đỉnh */}
-                  <path
-                    d="M 44 115 C 48 112 52 112 56 115 C 53 105 50 102 47 105 Z"
-                    fill={isDark ? '#ffffff' : '#78716c'}
-                    fillOpacity={isDark ? '0.4' : '0.2'}
-                  />
-
-                  {/* Dải mây Kasumi ngang sườn núi */}
-                  <path
-                    d="M 5 140 C 25 135 45 145 65 138 C 85 132 95 142 105 138"
-                    stroke={isDark ? '#94a3b8' : '#a8a29e'}
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    strokeOpacity={isDark ? '0.2' : '0.15'}
-                    filter="blur(1px)"
-                  />
-                </svg>
-
-                {/* Chuông ngân sóng âm khi click */}
-                {rightRippling && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <span className="w-16 h-16 rounded-full border border-amber-400/80 animate-ping" />
-                  </div>
-                )}
+              {/* Dây treo lụa vàng hoàng gia */}
+              <div className="flex flex-col items-center mb-1">
+                <div className="w-2 h-2 rounded-full border border-amber-600/70 bg-amber-600 shadow-2xs" />
+                <div className="w-0.5 h-3 bg-gradient-to-b from-amber-600 to-amber-700" />
+                {/* Trục treo trên */}
+                <div className="w-32 sm:w-36 h-1.5 rounded-full bg-gradient-to-r from-stone-800 via-amber-900 to-stone-800 shadow-xs border border-amber-950/40" />
               </div>
 
-              {/* Thơ Haiku Thư Pháp Trục Dọc (Thiền Viện Thanh Sơn) */}
-              <div className="mt-3 flex items-start gap-2.5">
-                {/* Con dấu triện vàng 『雅』 (Nhã - Tao nhã Miyabi) */}
-                <div className="flex flex-col items-center mt-auto">
-                  <div className="w-4 h-6 rounded-xs bg-[#D97706]/90 text-white text-[9px] font-kanji font-bold flex items-center justify-center shadow-2xs border border-amber-800/30">
-                    雅
-                  </div>
+              {/* Khung tranh Kakejiku cuộn lụa */}
+              <div className="relative w-28 sm:w-32 lg:w-34 p-1.5 rounded-lg bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 border-2 border-[#D8CEBF] dark:border-stone-700/90 shadow-xl shadow-stone-900/10 dark:shadow-black/40 backdrop-blur-md overflow-hidden">
+                {/* Viền chỉ vàng dát mỏng Kinpaku */}
+                <div className="absolute inset-1 rounded-sm border border-amber-600/35 dark:border-amber-400/30 pointer-events-none z-10" />
+
+                {/* Bức họa Linh Sơn Phú Sĩ */}
+                <div className="relative w-full h-44 sm:h-52 overflow-hidden rounded-xs">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/images/zen_right_art.jpg"
+                    alt="Linh Sơn Phú Sĩ và đàn hạc bay hoàng hôn"
+                    className="w-full h-full object-cover rounded-xs transition-transform duration-700 hover:scale-108"
+                    loading="eager"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/25 pointer-events-none" />
+
+                  {/* Sóng âm chuông chùa khi click */}
+                  {rightRippling && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <span className="w-20 h-20 rounded-full border-2 border-amber-400/90 animate-ping" />
+                    </div>
+                  )}
                 </div>
 
-                {/* Cột chữ Hán tự tao nhã */}
-                <div className="writing-vertical text-[13px] font-kanji text-stone-600 dark:text-stone-300 tracking-widest leading-none select-none opacity-80 group-hover:opacity-100 transition-opacity">
-                  明鏡止水
-                </div>
-                <div className="writing-vertical text-[13px] font-kanji text-stone-600 dark:text-stone-300 tracking-widest leading-none select-none opacity-80 group-hover:opacity-100 transition-opacity">
-                  心清如水
+                {/* Dải chân tranh */}
+                <div className="mt-1 pt-1 border-t border-amber-800/20 dark:border-stone-700 flex items-center justify-between text-[9px] font-kanji font-bold text-stone-700 dark:text-stone-300">
+                  <span>靈峰 • 富士</span>
+                  <span className="text-amber-600 dark:text-amber-400">白鶴</span>
                 </div>
               </div>
 
-              <span className="text-[10px] text-stone-400 dark:text-stone-500 font-sans tracking-wider mt-2 opacity-70 group-hover:opacity-100 transition-opacity">
-                Lòng sáng như gương
-              </span>
+              {/* Trục lăn dưới đáy tranh (Jikugi) */}
+              <div className="w-36 sm:w-40 h-2 rounded-full bg-gradient-to-r from-stone-900 via-amber-950 to-stone-900 shadow-md mt-1 border border-amber-900/50 flex items-center justify-between px-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500/80 shadow-2xs" />
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500/80 shadow-2xs" />
+              </div>
+
+              {/* Dải thẻ thơ Tanzaku treo dưới (Thư pháp dọc) */}
+              <div className="mt-2 flex items-center gap-1.5 bg-[#FFFDF9]/90 dark:bg-[#161D27]/90 px-2 py-1 rounded-xl border border-[#D8CEBF] dark:border-stone-700/80 shadow-xs">
+                <div className="w-3.5 h-5 rounded-xs bg-[#D97706] text-white text-[8px] font-kanji font-bold flex items-center justify-center shadow-2xs">
+                  雅
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-[11px] font-kanji font-bold text-stone-800 dark:text-stone-200 tracking-wider">
+                    一期一会
+                  </span>
+                  <span className="text-[9px] text-stone-500 dark:text-stone-400 italic">
+                    Lòng sáng như mặt gương
+                  </span>
+                </div>
+              </div>
             </div>
           )}
 
-          {/* CHẾ ĐỘ 2: THẺ TRANH WASHI SHIKISHI PHÚ SĨ (GỌN GÀNG, VIỀN VÀNG DÁT MỎNG) */}
+          {/* -------------------------------------------------------------
+              PHONG CÁCH 2: THẺ TRANH WASHI SHIKISHI PHÚ SĨ MẶT TRỜI ĐỎ
+              ------------------------------------------------------------- */}
           {styleMode === 'shikishi' && (
             <div
               onClick={handleRightClick}
-              title="Linh Sơn Phú Sĩ & Mặt Trời Đỏ • Chạm để lắng nghe chuông chùa"
-              className="group cursor-pointer flex flex-col items-center transition-transform duration-500 hover:scale-105"
+              title="Linh Sơn Phú Sĩ & Mặt Trời Đỏ Thần Đạo • Chạm để lắng nghe chuông chùa"
+              className="cursor-pointer flex flex-col items-center transition-all duration-500 hover:scale-105 select-none"
             >
-              {/* Dây treo lụa mỏng */}
-              <div className="w-1.5 h-1.5 rounded-full bg-amber-700/80 mb-1" />
-              <div className="w-0.5 h-4 bg-amber-700/50 mb-1" />
-
-              {/* Thẻ tranh Shikishi vuông vức tinh tế */}
-              <div className="relative w-28 h-28 p-1.5 rounded-sm bg-[#FFFDF9] dark:bg-[#161D27] shadow-md border border-stone-300/80 dark:border-stone-700/80">
-                <div className="absolute inset-1 rounded-2xs border border-amber-600/30 pointer-events-none" />
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/illustrations/fuji.jpg"
-                  alt="Núi Phú Sĩ và mặt trời đỏ"
-                  className="w-full h-full object-cover rounded-2xs"
-                />
+              <div className="flex flex-col items-center mb-1">
+                <div className="w-2 h-2 rounded-full bg-amber-700/80" />
+                <div className="w-0.5 h-3 bg-amber-700/60" />
               </div>
 
-              {/* Dải thơ Tanzaku treo dưới */}
-              <div className="mt-2 flex flex-col items-center">
-                <span className="text-[11px] font-kanji font-bold text-stone-800 dark:text-stone-200 tracking-widest">
-                  明鏡止水
-                </span>
-                <div className="w-3.5 h-3.5 rounded-xs bg-[#D97706] text-white text-[7px] font-kanji font-bold flex items-center justify-center mt-1 shadow-2xs">
+              <div className="relative w-28 sm:w-32 lg:w-34 p-1.5 rounded-2xl bg-[#FFFDF9] dark:bg-[#161D27] border-2 border-[#D8CEBF] dark:border-stone-700 shadow-xl overflow-hidden">
+                <div className="absolute inset-1 rounded-xl border border-amber-600/30 pointer-events-none z-10" />
+                <div className="relative w-full aspect-square overflow-hidden rounded-xl">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/illustrations/fuji.jpg"
+                    alt="Núi Phú Sĩ và mặt trời đỏ"
+                    className="w-full h-full object-cover rounded-xl transition-transform duration-700 hover:scale-108"
+                    loading="eager"
+                  />
+                  {rightRippling && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <span className="w-16 h-16 rounded-full border-2 border-amber-400/90 animate-ping" />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-2 flex items-center gap-1.5 bg-[#FFFDF9]/90 dark:bg-[#161D27]/90 px-2 py-1 rounded-xl border border-[#D8CEBF] dark:border-stone-700 shadow-xs">
+                <div className="w-3.5 h-4.5 rounded-xs bg-[#D97706] text-white text-[8px] font-kanji font-bold flex items-center justify-center shadow-2xs">
                   雅
                 </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-[11px] font-kanji font-bold text-stone-800 dark:text-stone-200 tracking-wider">
+                    明鏡止水
+                  </span>
+                  <span className="text-[9px] text-stone-500 dark:text-stone-400">
+                    Tâm tịnh tựa mặt hồ
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* -------------------------------------------------------------
+              PHONG CÁCH 3: BỘ HUY HIỆU & BIỂU TƯỢNG VĂN HÓA ZEN
+              ------------------------------------------------------------- */}
+          {styleMode === 'zen_icons' && (
+            <div
+              onClick={handleRightClick}
+              title="Biểu tượng Võ Sĩ Đạo & Nghệ Thuật • Chạm nhẹ để nghe chuông chùa"
+              className="cursor-pointer flex flex-col items-center gap-2 p-2.5 rounded-2xl bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 border-2 border-[#D8CEBF] dark:border-stone-700 shadow-xl backdrop-blur-md select-none transition-all duration-300 hover:scale-105"
+            >
+              <div className="text-[10px] uppercase font-bold text-amber-600 font-mono tracking-widest border-b border-[#D8CEBF] pb-1 w-full text-center">
+                SAMURAI & FUJI
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-2 hover:bg-amber-500/20 transition-colors">
+                  <OrigamiCraneIcon className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                  <span className="text-xs font-kanji font-bold text-stone-800 dark:text-stone-200">
+                    白鶴 • Hạc Trắng
+                  </span>
+                </div>
+
+                <div className="p-2 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center gap-2 hover:bg-red-500/20 transition-colors">
+                  <KatanaIcon className="w-5 h-5 text-torii" />
+                  <span className="text-xs font-kanji font-bold text-stone-800 dark:text-stone-200">
+                    刀 • Katana
+                  </span>
+                </div>
+
+                <div className="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center gap-2 hover:bg-indigo-500/20 transition-colors">
+                  <SensuFanIcon className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                  <span className="text-xs font-kanji font-bold text-stone-800 dark:text-stone-200">
+                    扇子 • Quạt Sensu
+                  </span>
+                </div>
+
+                <div className="p-2 rounded-xl bg-teal-500/10 border border-teal-500/30 flex items-center gap-2 hover:bg-teal-500/20 transition-colors">
+                  <span className="text-base">🍵</span>
+                  <span className="text-xs font-kanji font-bold text-stone-800 dark:text-stone-200">
+                    茶道 • Trà Đạo
+                  </span>
+                </div>
+              </div>
+
+              <div className="text-[9px] text-stone-500 dark:text-stone-400 italic text-center pt-1 border-t border-[#D8CEBF]/60">
+                Nhất Kỳ Nhất Hội
               </div>
             </div>
           )}
