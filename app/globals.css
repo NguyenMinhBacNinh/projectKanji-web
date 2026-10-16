@@ -614,9 +614,8 @@ ruby {
     left: 0;
     top: 0;
     bottom: 0;
-    width: calc((100vw - 1020px) / 2);
-    align-items: center;
-    justify-content: center;
+    width: calc((100vw - 1020px) / 2 + 45px);
+    overflow: hidden;
     z-index: 10;
     pointer-events: none;
     user-select: none;
@@ -627,9 +626,8 @@ ruby {
     right: 0;
     top: 0;
     bottom: 0;
-    width: calc((100vw - 1020px) / 2);
-    align-items: center;
-    justify-content: center;
+    width: calc((100vw - 1020px) / 2 + 45px);
+    overflow: hidden;
     z-index: 10;
     pointer-events: none;
     user-select: none;
@@ -638,10 +636,10 @@ ruby {
 
 @media (min-width: 1536px) {
   .zen-flank-left {
-    width: calc((100vw - 1152px) / 2);
+    width: calc((100vw - 1152px) / 2 + 55px);
   }
   .zen-flank-right {
-    width: calc((100vw - 1152px) / 2);
+    width: calc((100vw - 1152px) / 2 + 55px);
   }
 }
 
