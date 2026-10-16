@@ -607,6 +607,7 @@ export default function StudySection({
               {/* Tab Selector Header (Chuyển đổi 4 trạm tri thức + Nút phóng to Popup) */}
               <div className="w-full flex items-center justify-between pb-1.5 border-b border-[#E3DACB] dark:border-stone-700/70 gap-1.5 shrink-0">
                 <div className="flex items-center gap-1 p-1 rounded-2xl bg-[#F5EFE6] dark:bg-[#1C2431] border border-[#E3DACB] dark:border-stone-700 shadow-2xs flex-1 text-xs font-bold">
+                  {/* Tab 1: Từ ghép [V] */}
                   <button
                     onClick={() => {
                       playWaterDrop();
@@ -617,13 +618,19 @@ export default function StudySection({
                         ? 'bg-[#BC002D] text-white shadow-xs'
                         : 'text-stone-700 dark:text-stone-300 hover:text-stone-950 dark:hover:text-white hover:bg-[#EAE1D2] dark:hover:bg-stone-800'
                     }`}
-                    title="Từ vựng JLPT ghép chữ này [Phím V]"
+                    title="Từ vựng JLPT ghép chữ này [V]"
                   >
                     <BambooIcon className={`w-3.5 h-3.5 ${studioTab === 'vocab' ? 'text-white' : 'text-stone-600 dark:text-stone-300'}`} />
                     <span className="text-[11px]">Từ ghép</span>
                     <span className="text-[10px] opacity-90">({vocabCount})</span>
+                    <kbd className={`text-[9px] font-mono font-bold px-1 py-0.2 rounded ${
+                      studioTab === 'vocab'
+                        ? 'bg-black/20 text-white'
+                        : 'bg-black/5 dark:bg-white/10 text-stone-600 dark:text-stone-400 border border-stone-300/60 dark:border-stone-700'
+                    }`}>V</kbd>
                   </button>
 
+                  {/* Tab 2: Bộ thủ [R] */}
                   <button
                     onClick={() => {
                       playWaterDrop();
@@ -634,12 +641,18 @@ export default function StudySection({
                         ? 'bg-[#BC002D] text-white shadow-xs'
                         : 'text-stone-700 dark:text-stone-300 hover:text-stone-950 dark:hover:text-white hover:bg-[#EAE1D2] dark:hover:bg-stone-800'
                     }`}
-                    title="Chiết tự bộ thủ cấu thành [Phím R]"
+                    title="Chiết tự bộ thủ cấu thành [R]"
                   >
                     <RadicalIcon className={`w-3.5 h-3.5 ${studioTab === 'radical' ? 'text-white' : 'text-stone-600 dark:text-stone-300'}`} />
                     <span className="text-[11px]">Bộ thủ</span>
+                    <kbd className={`text-[9px] font-mono font-bold px-1 py-0.2 rounded ${
+                      studioTab === 'radical'
+                        ? 'bg-black/20 text-white'
+                        : 'bg-black/5 dark:bg-white/10 text-stone-600 dark:text-stone-400 border border-stone-300/60 dark:border-stone-700'
+                    }`}>R</kbd>
                   </button>
 
+                  {/* Tab 3: Mẹo nhớ [M] */}
                   <button
                     onClick={() => {
                       playWaterDrop();
@@ -650,12 +663,18 @@ export default function StudySection({
                         ? 'bg-[#BC002D] text-white shadow-xs'
                         : 'text-stone-700 dark:text-stone-300 hover:text-stone-950 dark:hover:text-white hover:bg-[#EAE1D2] dark:hover:bg-stone-800'
                     }`}
-                    title="Mẹo ghi nhớ & Tranh tượng hình [Phím M]"
+                    title="Mẹo ghi nhớ & Tranh tượng hình [M]"
                   >
                     <MnemonicIcon className={`w-3.5 h-3.5 ${studioTab === 'mnemonic' ? 'text-white' : 'text-stone-600 dark:text-stone-300'}`} />
                     <span className="text-[11px]">Mẹo nhớ</span>
+                    <kbd className={`text-[9px] font-mono font-bold px-1 py-0.2 rounded ${
+                      studioTab === 'mnemonic'
+                        ? 'bg-black/20 text-white'
+                        : 'bg-black/5 dark:bg-white/10 text-stone-600 dark:text-stone-400 border border-stone-300/60 dark:border-stone-700'
+                    }`}>M</kbd>
                   </button>
 
+                  {/* Tab 4: Ví dụ [E] */}
                   <button
                     onClick={() => {
                       playWaterDrop();
@@ -666,10 +685,15 @@ export default function StudySection({
                         ? 'bg-[#BC002D] text-white shadow-xs'
                         : 'text-stone-700 dark:text-stone-300 hover:text-stone-950 dark:hover:text-white hover:bg-[#EAE1D2] dark:hover:bg-stone-800'
                     }`}
-                    title="Câu ví dụ thực tế [Phím E]"
+                    title="Câu ví dụ thực tế [E]"
                   >
                     <ScrollUnfurledIcon className={`w-3.5 h-3.5 ${studioTab === 'example' ? 'text-white' : 'text-stone-600 dark:text-stone-300'}`} />
                     <span className="text-[11px]">Ví dụ</span>
+                    <kbd className={`text-[9px] font-mono font-bold px-1 py-0.2 rounded ${
+                      studioTab === 'example'
+                        ? 'bg-black/20 text-white'
+                        : 'bg-black/5 dark:bg-white/10 text-stone-600 dark:text-stone-400 border border-stone-300/60 dark:border-stone-700'
+                    }`}>E</kbd>
                   </button>
                 </div>
 
@@ -744,7 +768,8 @@ export default function StudySection({
                     }}
                     className="w-full py-1.5 px-3 rounded-xl bg-white dark:bg-stone-800 hover:bg-[#F5EFE6] dark:hover:bg-stone-750 border border-[#D8CEBF] dark:border-stone-700 text-stone-800 dark:text-stone-200 text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95"
                   >
-                    <span>Xem tất cả {vocabCount} từ ghép trong Popup to rõ [V]</span>
+                    <span>Xem tất cả {vocabCount} từ ghép trong Popup</span>
+                    <kbd className="px-1.5 py-0.2 rounded text-[10px] font-mono bg-stone-100 dark:bg-stone-700 text-stone-700 dark:text-stone-300 border border-stone-300/60 dark:border-stone-600">V</kbd>
                     <span>➔</span>
                   </button>
                 </div>
@@ -877,7 +902,8 @@ export default function StudySection({
                     }}
                     className="w-full py-2 px-3 rounded-xl bg-[#8C6239] hover:bg-[#775330] text-white border border-[#775330] shadow-xs active:scale-95 font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer mt-2"
                   >
-                    <span>MỞ CÂU VÍ DỤ & LUYỆN NGHE [E]</span>
+                    <span>MỞ CÂU VÍ DỤ & LUYỆN NGHE</span>
+                    <kbd className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-black/25 text-white/90">E</kbd>
                     <span>➔</span>
                   </button>
                 </div>
@@ -889,15 +915,9 @@ export default function StudySection({
                   <span className="w-2 h-2 rounded-full bg-emerald-500" />
                   <span>Trạm tri thức • JLPT {currentLevel}</span>
                 </span>
-                <div className="flex items-center gap-1 text-[10px] text-stone-500 dark:text-stone-400">
-                  <span className="cursor-pointer hover:text-[#BC002D]" onClick={() => onOpenVocabModal && onOpenVocabModal()}>[V] Từ</span>
-                  <span>·</span>
-                  <span className="cursor-pointer hover:text-[#BC002D]" onClick={() => onOpenRadicalModal && onOpenRadicalModal()}>[R] Bộ</span>
-                  <span>·</span>
-                  <span className="cursor-pointer hover:text-[#BC002D]" onClick={() => onOpenMnemonicModal && onOpenMnemonicModal()}>[M] Mẹo</span>
-                  <span>·</span>
-                  <span className="cursor-pointer hover:text-[#BC002D]" onClick={() => onOpenExampleModal && onOpenExampleModal()}>[E] Ví dụ</span>
-                </div>
+                <span className="text-[10px] text-stone-400 dark:text-stone-500">
+                  Phân tích Hán tự chuyên sâu
+                </span>
               </div>
             </div>
           </div>

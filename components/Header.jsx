@@ -180,10 +180,11 @@ export default function Header({
                   playWaterDrop();
                   onOpenSpotlight();
                 }}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-[#D8CEBF] dark:border-stone-700 bg-white/80 dark:bg-stone-800 hover:bg-[#F2ECE0] dark:hover:bg-stone-750 text-stone-800 dark:text-stone-200 flex items-center justify-center transition-all text-xs font-bold shadow-2xs cursor-pointer active:scale-95"
+                className="h-8 sm:h-9 px-2 sm:px-2.5 rounded-xl border border-[#D8CEBF] dark:border-stone-700 bg-white/80 dark:bg-stone-800 hover:bg-[#F2ECE0] dark:hover:bg-stone-750 text-stone-800 dark:text-stone-200 flex items-center justify-center gap-1.5 transition-all text-xs font-bold shadow-2xs cursor-pointer active:scale-95"
                 title="Tìm kiếm nhanh Hán tự [⌘K]"
               >
                 <SearchIcon className="w-4 h-4" />
+                <kbd className="hidden sm:inline-block text-[9px] font-mono px-1 py-0.2 rounded bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-600">⌘K</kbd>
               </button>
             )}
 
