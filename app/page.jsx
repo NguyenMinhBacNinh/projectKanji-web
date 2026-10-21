@@ -26,7 +26,6 @@ import KanjiWorksheetModal from '../components/KanjiWorksheetModal';
 import StatsModal from '../components/StatsModal';
 import SpotlightSearchModal from '../components/SpotlightSearchModal';
 import Toast from '../components/Toast';
-import { ToriiGateIcon } from '../components/ZenIcons';
 import { KANJI_DATA } from '../lib/kanjiData';
 
 import {
@@ -557,7 +556,12 @@ export default function Home() {
       {/* Footer */}
       <footer className="w-full max-w-[1020px] 2xl:max-w-6xl mt-0.5 py-0.5 sm:py-1 border-t border-washi-border/60 dark:border-stone-800/80 text-stone-600 dark:text-stone-400 text-[10px] sm:text-xs flex flex-col sm:flex-row items-center justify-between gap-1 sm:gap-2 z-20 font-ui shrink-0">
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          <ToriiGateIcon className="w-4 h-4 text-torii" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={theme === 'yozakura' ? '/images/logo_emblem_dark.png' : '/images/logo_emblem.png'}
+            alt="Logo"
+            className="w-4 h-4 object-contain filter drop-shadow-2xs"
+          />
           <span className="font-semibold text-stone-800 dark:text-stone-200">漢字学習帳 (Kanji Gakushūchō)</span>
           <span className="text-stone-600 dark:text-stone-300">• Luyện thi JLPT N5 - N1</span>
         </div>

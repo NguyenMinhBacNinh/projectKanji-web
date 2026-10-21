@@ -94,13 +94,19 @@ export default function Header({
       <div className="w-full rounded-2xl bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 border border-[#D8CEBF] dark:border-stone-700/80 shadow-md shadow-stone-900/5 dark:shadow-black/30 backdrop-blur-md relative">
         {/* Tier 1: Main Top Navigation Bar */}
         <div className="w-full flex items-center justify-between py-1.5 sm:py-2 px-2.5 sm:px-4 gap-2">
-          {/* Left: Brand Identity */}
+          {/* Left: Brand Identity with New Official Logo */}
           <div
             onClick={() => handleSelectPrimary('kanji')}
-            className="flex items-center gap-2.5 cursor-pointer group shrink-0"
+            className="flex items-center gap-2 sm:gap-2.5 cursor-pointer group shrink-0 select-none"
+            title="Trang chủ • 漢字学習帳 (Kanji Gakushūchō)"
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#BC002D] text-white flex items-center justify-center border border-[#9B0024] shadow-xs text-base font-kanji font-black relative">
-              <span className="relative z-10 leading-none">漢</span>
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white dark:bg-[#1E2633] flex items-center justify-center border-2 border-stone-850 dark:border-amber-400/80 shadow-manga-sm p-0.5 transition-all duration-200 group-hover:scale-105 group-hover:border-torii overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={theme === 'yozakura' ? '/images/logo_emblem_dark.png' : '/images/logo_emblem.png'}
+                alt="Logo 漢字学習帳"
+                className="w-full h-full object-contain filter drop-shadow-2xs"
+              />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
