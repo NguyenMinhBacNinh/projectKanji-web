@@ -43,6 +43,8 @@ import {
   getAudioMuted,
   toggleZenMusic,
   getZenMusicPlaying,
+  BGM_TRACKS,
+  getSelectedMusicTrack,
 } from '../lib/traditionalAudio';
 import {
   getDueKanjiList,
@@ -159,14 +161,16 @@ export default function Home() {
     }, 2400);
   }, []);
 
-  // Zen Music toggle (Ngũ cung Hirajoshi & Tiếng đàn Koto)
+  // BGM toggle (Nhạc nền Nhật Bản bản quyền sạch)
   const handleToggleZenMusic = () => {
     const next = toggleZenMusic();
     setIsZenPlaying(next);
     if (next) {
-      showToast('Đang phát nhạc thiền Zen (Ngũ cung Hirajoshi & Đàn Koto)', '🎋');
+      const trackId = getSelectedMusicTrack();
+      const trackInfo = BGM_TRACKS.find((t) => t.id === trackId) || BGM_TRACKS[0];
+      showToast(`Đang phát nhạc nền: ${trackInfo.title}`, trackInfo.icon || '🎵');
     } else {
-      showToast('Đã dừng nhạc thiền Zen', '🔇');
+      showToast('Đã dừng phát nhạc nền', '🔇');
     }
   };
 

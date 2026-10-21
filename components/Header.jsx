@@ -1,7 +1,15 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { playWoodClapper, playWaterDrop } from '../lib/traditionalAudio';
+import {
+  playWoodClapper,
+  playWaterDrop,
+  BGM_TRACKS,
+  getSelectedMusicTrack,
+  setSelectedMusicTrack,
+  getMusicVolume,
+  setMusicVolume
+} from '../lib/traditionalAudio';
 import {
   SearchIcon,
   SunIcon,
@@ -45,6 +53,15 @@ export default function Header({
 }) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const settingsRef = useRef(null);
+  const [selectedBgmTrack, setSelectedBgmTrack] = useState('night_dancer_lofi');
+  const [bgmVol, setBgmVol] = useState(0.5);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setSelectedBgmTrack(getSelectedMusicTrack());
+      setBgmVol(getMusicVolume());
+    }
+  }, [isSettingsOpen]);
 
   // Close settings on outside click
   useEffect(() => {
@@ -237,7 +254,7 @@ export default function Header({
               {isSettingsOpen && (
                 <div
                   onClick={(e) => e.stopPropagation()}
-                  className="absolute right-0 top-full mt-2 w-72 rounded-2xl bg-[#fffdfa] dark:bg-[#141c2b] border-2 border-[#e6dece] dark:border-[#2d3a4f] shadow-[0_20px_50px_rgba(0,0,0,0.35)] p-3 flex flex-col gap-2 z-[100] text-xs animate-fadeIn backdrop-blur-none"
+                  className="absolute right-0 top-full mt-2 w-80 sm:w-88 max-w-[calc(100vw-24px)] max-h-[82vh] overflow-y-auto thin-scrollbar rounded-2xl bg-[#fffdfa] dark:bg-[#141c2b] border-2 border-[#e6dece] dark:border-[#2d3a4f] shadow-[0_20px_50px_rgba(0,0,0,0.35)] p-3 flex flex-col gap-2 z-[100] text-xs animate-fadeIn backdrop-blur-none"
                 >
                   {/* Header popup */}
                   <div className="px-1 py-1 border-b border-[#ebdccb] dark:border-stone-700/80 pb-2 mb-0.5 flex items-center justify-between">
@@ -319,30 +336,126 @@ export default function Header({
                     </button>
                   )}
 
-                  {/* Nhạc thiền Zen */}
+                  {/* Nhạc nền Nhật Bản Bản quyền sạch 100% (DOVA Style) */}
                   {onToggleZenMusic && (
-                    <button
-                      onClick={() => {
-                        onToggleZenMusic();
-                      }}
-                      className="w-full px-2.5 py-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800/80 text-left flex items-center justify-between transition-colors text-stone-800 dark:text-stone-100 font-medium border border-transparent hover:border-stone-200 dark:hover:border-stone-700 cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2">
-                        <LotusZenIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                        <div>
-                          <div className="font-bold text-xs">Nhạc thiền Zen Koto</div>
-                          <div className="text-[10px] text-stone-500 dark:text-stone-400 font-normal">Đàn tranh Kyoto tịnh tâm</div>
+                    <div className="w-full rounded-2xl border border-[#D8CEBF] dark:border-stone-700 bg-stone-50/80 dark:bg-stone-800/60 p-2.5 flex flex-col gap-2 shadow-2xs">
+                      {/* Tiêu đề & Nút Bật/Tắt */}
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div
+                            className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 shadow-2xs transition-all ${
+                              isZenMusicPlaying
+                                ? 'bg-torii text-white animate-pulse'
+                                : 'bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-300'
+                            }`}
+                          >
+                            <span className="text-xs">{isZenMusicPlaying ? '🎵' : '🔇'}</span>
+                          </div>
+                          <div className="min-w-0">
+                            <div className="font-bold text-xs flex items-center gap-1.5 flex-wrap">
+                              <span>Nhạc nền Nhật Bản</span>
+                              <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-300/40">
+                                100% Bản quyền sạch
+                              </span>
+                            </div>
+                            <div className="text-[10px] text-stone-500 dark:text-stone-400 truncate">
+                              {BGM_TRACKS.find((t) => t.id === selectedBgmTrack)?.title || 'Night Dancer Lofi Chill'}
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            playWaterDrop();
+                            onToggleZenMusic();
+                          }}
+                          className={`px-2.5 py-1 rounded-xl text-[10px] font-bold transition-all shrink-0 cursor-pointer shadow-2xs ${
+                            isZenMusicPlaying
+                              ? 'bg-torii text-white hover:opacity-90 active:scale-95'
+                              : 'bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-300'
+                          }`}
+                        >
+                          {isZenMusicPlaying ? 'Đang phát' : 'Bật phát'}
+                        </button>
+                      </div>
+
+                      {/* Danh sách 4 bản nhạc Nhật Bản */}
+                      <div className="flex flex-col gap-1 pt-1.5 border-t border-stone-200/80 dark:border-stone-700/80">
+                        <div className="text-[10px] font-bold text-stone-600 dark:text-stone-400 flex items-center justify-between">
+                          <span>Chọn giai điệu học tập:</span>
+                          <span className="text-[9px] text-torii font-semibold">DOVA & Zen</span>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-1">
+                          {BGM_TRACKS.map((track) => {
+                            const isSelected = track.id === selectedBgmTrack;
+                            return (
+                              <button
+                                key={track.id}
+                                onClick={() => {
+                                  playWoodClapper();
+                                  setSelectedBgmTrack(track.id);
+                                  setSelectedMusicTrack(track.id);
+                                  if (!isZenMusicPlaying && onToggleZenMusic) {
+                                    onToggleZenMusic();
+                                  }
+                                }}
+                                className={`w-full p-2 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
+                                  isSelected
+                                    ? 'border-torii bg-torii/10 dark:bg-torii/25 text-torii font-bold shadow-2xs'
+                                    : 'border-transparent hover:border-stone-200 dark:hover:border-stone-700 hover:bg-white dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300'
+                                }`}
+                              >
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <span className="text-sm shrink-0">{track.icon}</span>
+                                  <div className="min-w-0">
+                                    <div className="text-xs truncate font-bold">{track.title}</div>
+                                    <div className="text-[10px] opacity-75 truncate font-normal">
+                                      {track.subtitle}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <span
+                                  className={`text-[9px] px-1.5 py-0.5 rounded-md shrink-0 font-bold ${
+                                    isSelected
+                                      ? 'bg-torii text-white'
+                                      : 'bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-400'
+                                  }`}
+                                >
+                                  {track.badge}
+                                </span>
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${isZenMusicPlaying
-                            ? 'bg-emerald-600 text-white animate-pulse'
-                            : 'bg-stone-200 dark:bg-stone-700 text-stone-500'
-                          }`}
-                      >
-                        {isZenMusicPlaying ? 'Đang phát' : 'Tắt'}
-                      </span>
-                    </button>
+
+                      {/* Thanh chỉnh âm lượng (Volume Slider) */}
+                      <div className="pt-2 border-t border-stone-200/80 dark:border-stone-700/80 flex items-center justify-between gap-2">
+                        <span className="text-[10px] font-semibold text-stone-600 dark:text-stone-400 shrink-0">
+                          🔊 Âm lượng: {Math.round(bgmVol * 100)}%
+                        </span>
+                        <input
+                          type="range"
+                          min="0"
+                          max="1"
+                          step="0.05"
+                          value={bgmVol}
+                          onChange={(e) => {
+                            const newVol = parseFloat(e.target.value);
+                            setBgmVol(newVol);
+                            setMusicVolume(newVol);
+                          }}
+                          className="w-28 sm:w-32 h-1.5 bg-stone-200 dark:bg-stone-700 rounded-lg appearance-none cursor-pointer accent-[#BC002D]"
+                        />
+                      </div>
+
+                      {/* Ghi chú bản quyền an toàn */}
+                      <div className="text-[9.5px] text-stone-500 dark:text-stone-400 leading-relaxed bg-white/80 dark:bg-stone-900/70 p-2 rounded-xl border border-stone-200 dark:border-stone-700/60">
+                        🛡️ <strong>Bản quyền sạch 100%</strong>: Được tổng hợp trực tiếp bằng Web Audio API theo phong cách DOVA-SYNDROME & Koto Zen. An toàn tuyệt đối khi livestream, quay màn hình chia sẻ TikTok, Facebook hay YouTube Reels mà không lo dính gậy bản quyền.
+                      </div>
+                    </div>
                   )}
 
                   {/* Tự động phát âm thanh khi chuyển thẻ */}
