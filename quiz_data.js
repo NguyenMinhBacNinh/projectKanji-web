@@ -4798,7 +4798,7 @@ window.QUIZ_DATABASE = {
                    "word":  "意味",
                    "targetReading":  "いみ",
                    "targetMeaning":  "ý nghĩa",
-                   "question":  "Từ vựng 「意味」 (いみ) có ý nghĩa tiếng Việt là gì?",
+                   "question":  "Từ vựng 「意味」 (いみ) mang nghĩa tiếng Việt nào dưới đây?",
                    "context":  "",
                    "contextTrans":  "",
                    "options":  [

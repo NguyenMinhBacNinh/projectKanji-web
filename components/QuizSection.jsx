@@ -592,116 +592,161 @@ export default function QuizSection({
             )}
 
             {/* Scrollable Middle Content Area (Ensures Zero Page Overflow on any laptop) */}
-            <div className="w-full flex-1 min-h-0 overflow-y-auto thin-scrollbar flex flex-col justify-between py-1 sm:py-2 relative z-10">
-              <div className="w-full flex flex-col items-center text-center my-auto">
+            <div className="w-full flex-1 min-h-0 overflow-y-auto thin-scrollbar flex flex-col justify-start py-1 sm:py-2 relative z-10 gap-2 sm:gap-2.5">
+              
+              {/* KHỐI 1: KHỐI CÂU HỎI (Tách bạch riêng biệt, rõ ràng, không lộ đáp án) */}
+              <div className="w-full rounded-2xl border border-[#D8CEBF] dark:border-stone-700/80 bg-[#FBF8F2] dark:bg-[#18202C] p-3 sm:p-4 text-center shadow-xs flex flex-col items-center justify-center shrink-0 relative overflow-hidden transition-all">
+                {/* Header nhãn câu hỏi */}
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-torii" />
+                  <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-torii font-sans">
+                    CÂU HỎI {gameMode === 'speedrun' ? 'TỐC ĐỘ' : `${currentIndex + 1} / ${activeQuestions.length}`} • {displayItem.typeBadge || displayItem.typeName || 'Trắc nghiệm'}
+                  </span>
+                </div>
+
+                {/* Nội dung câu hỏi (đã lọc bỏ gợi ý Hán Việt trong câu hỏi để tránh suy đoán) */}
                 <h4 className="font-kanji font-bold text-xs sm:text-sm text-stone-900 dark:text-stone-100 leading-snug max-w-xl">
-                  {displayItem.question}
+                  {displayItem.question ? displayItem.question.replace(/\s*\(lấy từ chữ.*?\)/g, '') : ''}
                 </h4>
 
-                {/* Ngữ cảnh / Câu ví dụ (chỗ trống [ ? ]) */}
+                {/* Ngữ cảnh câu ví dụ (dành cho sentence_fill & sentence_reading) - KHÔNG HIỂN THỊ DỊCH CÂU TRƯỚC KHI TRẢ LỜI */}
                 {displayItem.context && displayItem.context.trim() && (
-                  <div className="w-full max-w-lg mt-1 p-2 bg-[#F5EFE6]/90 dark:bg-stone-850 rounded-xl border border-washi-border text-left shadow-2xs">
+                  <div className="w-full max-w-lg mt-2 p-2.5 bg-white dark:bg-stone-900/90 rounded-xl border border-stone-200 dark:border-stone-700/70 text-center shadow-2xs">
                     <div
-                      className="font-kanji text-xs sm:text-sm font-semibold leading-relaxed"
+                      className="font-kanji text-sm sm:text-base font-semibold leading-relaxed text-stone-900 dark:text-stone-100"
                       dangerouslySetInnerHTML={{
-                        __html: displayItem.context.replace(
-                          '[ ? ]',
-                          '<span class="px-2 py-0.2 bg-torii/15 text-torii rounded border border-torii/40 font-black inline-block mx-0.5 shadow-2xs">[ ? ]</span>'
-                        ),
+                        __html: displayItem.context
+                          .replace(
+                            '[ ? ]',
+                            '<span class="px-2.5 py-0.5 bg-torii/15 text-torii rounded-lg border border-torii/40 font-black inline-block mx-1 shadow-2xs">[ ? ]</span>'
+                          )
+                          .replace(
+                            /【(.*?)】/g,
+                            '<span class="px-2 py-0.5 bg-amber-500/15 text-amber-700 dark:text-amber-300 rounded-lg border border-amber-500/40 font-black inline-block mx-1 font-kanji text-base">【$1】</span>'
+                          ),
                       }}
                     />
-                    {displayItem.contextTrans && (
-                      <div className="text-[10px] sm:text-xs opacity-75 italic mt-0.5 font-medium">
-                        💬 {displayItem.contextTrans}
+                  </div>
+                )}
+
+                {/* Từ vựng / Hán tự mục tiêu */}
+                {/* ĐẶC BIỆT: KHÔNG hiển thị từ/Hán tự cho 'kanji_from_reading' và 'sentence_fill/reading' vì sẽ làm lộ đáp án */}
+                {displayItem.type !== 'sentence_fill' && displayItem.type !== 'sentence_reading' && (
+                  <div className="mt-2 flex flex-col items-center justify-center">
+                    {displayItem.type === 'kanji_from_reading' ? (
+                      <div className="flex items-center gap-2 px-3 py-1 bg-torii/10 dark:bg-torii/20 rounded-xl border border-torii/30">
+                        <span className="text-[11px] font-medium text-stone-600 dark:text-stone-300">Cách đọc cần tìm Hán tự:</span>
+                        <span className="text-xl sm:text-2xl font-kanji font-black text-torii drop-shadow-2xs">
+                          「{displayItem.targetReading}」
+                        </span>
                       </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Chữ Kanji / Từ vựng mục tiêu nổi bật (nếu có và không phải dạng điền câu) */}
-                {displayItem.type !== 'sentence_fill' && (displayItem.word || displayItem.kanji) && (
-                  <div className="my-1 flex items-center justify-center gap-2">
-                    <span className="text-2xl sm:text-3xl font-kanji font-black text-torii drop-shadow-2xs leading-none">
-                      {displayItem.word || displayItem.kanji}
-                    </span>
-                    <button
-                      onClick={() => {
-                        playWaterDrop();
-                        playJapaneseSpeech(displayItem.ttsText || displayItem.word || displayItem.kanji);
-                      }}
-                      className="p-1 rounded-lg bg-washi hover:bg-torii text-torii hover:text-white border border-torii/30 transition-all cursor-pointer flex items-center justify-center"
-                      title="Nghe phát âm"
-                    >
-                      <VolumeIcon className="w-3.5 h-3.5" />
-                    </button>
+                    ) : (displayItem.word || displayItem.kanji) ? (
+                      <div className="flex items-center justify-center">
+                        <span className="text-2xl sm:text-3xl font-kanji font-black text-torii drop-shadow-2xs leading-none">
+                          {displayItem.word || displayItem.kanji}
+                        </span>
+                      </div>
+                    ) : null}
                   </div>
                 )}
               </div>
 
-              {/* 4 Lựa chọn Multiple Choice A, B, C, D */}
-              <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 mt-1.5 shrink-0">
-                {displayItem.options &&
-                  displayItem.options.map((optText, optIdx) => {
-                    const letters = ['A', 'B', 'C', 'D'];
-                    const keyLetter = letters[optIdx];
-                    const keyNum = optIdx + 1;
+              {/* KHỐI 2: KHỐI CÂU TRẢ LỜI / LỰA CHỌN (Tách bạch hoàn toàn khỏi khối câu hỏi) */}
+              <div className="w-full flex flex-col gap-1.5 shrink-0">
+                <div className="flex items-center justify-between px-1">
+                  <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-stone-500 dark:text-stone-400 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-stone-400" />
+                    LỰA CHỌN ĐÁP ÁN
+                  </span>
+                  <span className="text-[10px] font-mono opacity-50">
+                    Phím tắt: [1] [2] [3] [4]
+                  </span>
+                </div>
 
-                    let btnStyle = 'bg-[#FFFDF9] dark:bg-stone-850 border-washi-border hover:border-torii/60 hover:bg-torii/5';
+                <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2">
+                  {displayItem.options &&
+                    displayItem.options.map((optText, optIdx) => {
+                      const letters = ['A', 'B', 'C', 'D'];
+                      const keyLetter = letters[optIdx];
+                      const keyNum = optIdx + 1;
 
-                    if (isAnswered && gameMode === 'zen') {
-                      if (optIdx === displayItem.correctIndex) {
-                        btnStyle = 'bg-emerald-500/20 border-emerald-500 text-emerald-950 dark:text-emerald-200 font-bold ring-2 ring-emerald-500/30';
-                      } else if (currentAnswer && currentAnswer.selectedIndex === optIdx && !currentAnswer.isCorrect) {
-                        btnStyle = 'bg-rose-500/20 border-rose-500 text-rose-950 dark:text-rose-200 font-bold ring-2 ring-rose-500/30';
-                      } else {
-                        btnStyle = 'bg-washi/50 border-washi-border opacity-50';
+                      // Mặc định khi chưa trả lời: Thẻ trung tính, tuyệt đối không có chỉ dấu đáp án
+                      let btnStyle = 'bg-white dark:bg-stone-850 border-stone-200 dark:border-stone-700/80 hover:border-torii/60 hover:bg-torii/5 text-stone-900 dark:text-stone-100 shadow-2xs';
+
+                      if (isAnswered && gameMode === 'zen') {
+                        if (currentAnswer.isCorrect) {
+                          // Nếu làm ĐÚNG: Chỉ làm nổi bật lựa chọn của người dùng, không cần lộ đáp án khác
+                          if (optIdx === currentAnswer.selectedIndex) {
+                            btnStyle = 'bg-emerald-500/15 border-emerald-500 text-emerald-950 dark:text-emerald-200 font-bold ring-2 ring-emerald-500/30';
+                          } else {
+                            btnStyle = 'bg-stone-100/40 dark:bg-stone-900/30 border-stone-200/40 dark:border-stone-800/40 opacity-35 text-stone-400';
+                          }
+                        } else {
+                          // Nếu làm SAI: Lúc này MỚI TIẾT LỘ đáp án đúng!
+                          if (optIdx === currentAnswer.selectedIndex) {
+                            // Câu người dùng đã chọn sai -> Đỏ
+                            btnStyle = 'bg-rose-500/15 border-rose-500 text-rose-950 dark:text-rose-200 font-bold ring-2 ring-rose-500/30';
+                          } else if (optIdx === displayItem.correctIndex) {
+                            // Đáp án chính xác được hiển thị -> Xanh lá
+                            btnStyle = 'bg-emerald-500/20 border-emerald-500 text-emerald-950 dark:text-emerald-200 font-bold ring-2 ring-emerald-500/30';
+                          } else {
+                            btnStyle = 'bg-stone-100/40 dark:bg-stone-900/30 border-stone-200/40 dark:border-stone-800/40 opacity-35 text-stone-400';
+                          }
+                        }
                       }
-                    }
 
-                    return (
-                      <button
-                        key={optIdx}
-                        disabled={isAnswered && gameMode === 'zen'}
-                        onClick={() => handleSelectOption(optIdx)}
-                        className={`py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-xl border text-left flex items-center justify-between transition-all duration-150 select-none cursor-pointer ${btnStyle}`}
-                      >
-                        <div className="flex items-center gap-2 overflow-hidden">
-                          <span className="w-5 h-5 rounded-md bg-black/5 dark:bg-white/10 text-[10px] font-black flex items-center justify-center font-mono shrink-0">
-                            {keyLetter}
-                          </span>
-                          <span className="font-kanji font-bold text-xs sm:text-sm leading-snug truncate">
-                            {optText}
-                          </span>
-                        </div>
+                      return (
+                        <button
+                          key={optIdx}
+                          disabled={isAnswered && gameMode === 'zen'}
+                          onClick={() => handleSelectOption(optIdx)}
+                          className={`py-2 px-3 rounded-xl border text-left flex items-center justify-between transition-all duration-150 select-none cursor-pointer ${btnStyle}`}
+                        >
+                          <div className="flex items-center gap-2 overflow-hidden">
+                            <span className="w-5 h-5 rounded-md bg-black/5 dark:bg-white/10 text-[10px] font-black flex items-center justify-center font-mono shrink-0">
+                              {keyLetter}
+                            </span>
+                            <span className="font-kanji font-bold text-xs sm:text-sm leading-snug truncate">
+                              {optText}
+                            </span>
+                          </div>
 
-                        <div className="shrink-0 flex items-center gap-1 ml-1.5">
-                          {isAnswered && gameMode === 'zen' && (
-                            <>
-                              {optIdx === displayItem.correctIndex && (
-                                <span className="px-1.5 py-0.2 rounded bg-emerald-600 text-white text-[9px] font-black">
-                                  ✓ ĐÚNG
-                                </span>
-                              )}
-                              {currentAnswer && currentAnswer.selectedIndex === optIdx && !currentAnswer.isCorrect && (
-                                <span className="px-1.5 py-0.2 rounded bg-rose-600 text-white text-[9px] font-black">
-                                  ✕ BẠN CHỌN
-                                </span>
-                              )}
-                            </>
-                          )}
-                          {!isAnswered && (
-                            <span className="text-[10px] opacity-40 font-mono">[{keyNum}]</span>
-                          )}
-                        </div>
-                      </button>
-                    );
-                  })}
+                          <div className="shrink-0 flex items-center gap-1 ml-1.5">
+                            {isAnswered && gameMode === 'zen' && (
+                              <>
+                                {currentAnswer.isCorrect && optIdx === currentAnswer.selectedIndex && (
+                                  <span className="px-1.5 py-0.5 rounded bg-emerald-600 text-white text-[9px] font-black">
+                                    ✓ BẠN CHỌN ĐÚNG
+                                  </span>
+                                )}
+                                {!currentAnswer.isCorrect && optIdx === currentAnswer.selectedIndex && (
+                                  <span className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[9px] font-black">
+                                    ✕ BẠN CHỌN SAI
+                                  </span>
+                                )}
+                                {!currentAnswer.isCorrect && optIdx === displayItem.correctIndex && (
+                                  <span className="px-1.5 py-0.5 rounded bg-emerald-600 text-white text-[9px] font-black animate-pulse">
+                                    ✓ ĐÁP ÁN ĐÚNG
+                                  </span>
+                                )}
+                              </>
+                            )}
+                            {!isAnswered && (
+                              <span className="text-[10px] opacity-40 font-mono px-1 py-0.5 rounded bg-black/5 dark:bg-white/5">
+                                [{keyNum}]
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                </div>
               </div>
 
-              {/* Feedback & Detailed Explanation Box (Zen Mode) */}
+              {/* KHỐI 3: HỘP GIẢI THÍCH & PHẢN HỒI (Chỉ xuất hiện sau khi đã trả lời) */}
               {isAnswered && gameMode === 'zen' && currentAnswer && (
                 <div
-                  className={`w-full mt-1.5 p-2 rounded-xl border text-xs leading-relaxed animate-fadeIn shrink-0 text-left ${
+                  className={`w-full p-2.5 rounded-xl border text-xs leading-relaxed animate-fadeIn shrink-0 text-left ${
                     currentAnswer.isCorrect
                       ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-950 dark:text-emerald-200'
                       : 'bg-rose-500/10 border-rose-500/30 text-rose-950 dark:text-rose-200'
@@ -709,28 +754,45 @@ export default function QuizSection({
                 >
                   <div className="font-bold flex items-center justify-between mb-1">
                     <div className="flex items-center gap-1.5">
-                      <span>{currentAnswer.isCorrect ? '🎉 Tuyệt vời! Bạn đã chọn chính xác!' : '😢 Chưa chính xác!'}</span>
-                      {!currentAnswer.isCorrect && (
-                        <span className="text-[10px] font-normal text-torii">
-                          (Đã lưu vào Sổ tay để ôn lại)
+                      {currentAnswer.isCorrect ? (
+                        <span className="text-emerald-700 dark:text-emerald-300 font-extrabold flex items-center gap-1">
+                          🎉 Xuất sắc! Bạn đã chọn chính xác!
                         </span>
+                      ) : (
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-rose-700 dark:text-rose-300 font-extrabold flex items-center gap-1">
+                            ✕ Chưa chính xác! Đáp án đúng: <span className="underline decoration-2 font-black text-emerald-600 dark:text-emerald-400 ml-1">{displayItem.options[displayItem.correctIndex]}</span>
+                          </span>
+                          <span className="text-[10px] font-normal text-stone-500 dark:text-stone-400">
+                            (Đã tự động lưu vào Sổ tay để ôn tập lại)
+                          </span>
+                        </div>
                       )}
                     </div>
+
                     {displayItem.ttsText && (
                       <button
                         onClick={() => {
                           playWaterDrop();
                           playJapaneseSpeech(displayItem.ttsText);
                         }}
-                        className="text-[11px] font-bold underline flex items-center gap-1 opacity-80 hover:opacity-100"
+                        className="text-[11px] font-bold underline flex items-center gap-1 opacity-80 hover:opacity-100 cursor-pointer ml-auto shrink-0 bg-white/40 dark:bg-black/20 px-2 py-0.5 rounded-lg border border-current"
+                        title="Nghe phát âm tiếng Nhật"
                       >
                         <VolumeIcon className="w-3 h-3" /> Nghe đọc
                       </button>
                     )}
                   </div>
 
+                  {/* Dịch câu ví dụ (CHỈ HIỂN THỊ TẠI ĐÂY SAU KHI ĐÃ TRẢ LỜI) */}
+                  {displayItem.contextTrans && (
+                    <div className="pt-1 mt-1 border-t border-current/20 text-[11px] font-medium opacity-90">
+                      💬 {displayItem.contextTrans}
+                    </div>
+                  )}
+
                   {displayItem.explanation && (
-                    <div className="pt-1 border-t border-washi-border/40 text-[11px] opacity-90 leading-normal">
+                    <div className="pt-1 mt-1 border-t border-current/20 text-[11px] opacity-90 leading-normal">
                       <span dangerouslySetInnerHTML={{ __html: displayItem.explanation.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
                     </div>
                   )}
