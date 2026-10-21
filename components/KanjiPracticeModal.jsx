@@ -302,23 +302,28 @@ export default function KanjiPracticeModal({
       ctx.restore();
     }
 
-    // Vẽ lại lịch sử các nét đã vẽ
+    // Vẽ lại lịch sử các nét đã vẽ (bảo tồn nguyên vẹn từng nét)
     strokeHistory.forEach((stroke) => {
-      if (stroke.points.length < 2) return;
+      if (!stroke.points || stroke.points.length === 0) return;
       ctx.save();
       ctx.strokeStyle = stroke.color;
       ctx.lineWidth = stroke.width;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      ctx.beginPath();
-      ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
 
-      for (let i = 1; i < stroke.points.length; i++) {
-        const xc = (stroke.points[i - 1].x + stroke.points[i].x) / 2;
-        const yc = (stroke.points[i - 1].y + stroke.points[i].y) / 2;
-        ctx.quadraticCurveTo(stroke.points[i - 1].x, stroke.points[i - 1].y, xc, yc);
+      if (stroke.points.length === 1) {
+        ctx.fillStyle = stroke.color;
+        ctx.beginPath();
+        ctx.arc(stroke.points[0].x, stroke.points[0].y, stroke.width / 2, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
+        for (let i = 1; i < stroke.points.length; i++) {
+          ctx.lineTo(stroke.points[i].x, stroke.points[i].y);
+        }
+        ctx.stroke();
       }
-      ctx.stroke();
       ctx.restore();
     });
   }, [showGhost, currentChar, ghostOpacity, strokeHistory]);
@@ -328,6 +333,12 @@ export default function KanjiPracticeModal({
       redrawCanvas();
     }
   }, [redrawCanvas, activeTab]);
+
+  // Reset nét vẽ khi đổi sang Hán tự khác
+  useEffect(() => {
+    setStrokeHistory([]);
+    setScoreResult(null);
+  }, [currentChar]);
 
   const getCanvasCoords = (e) => {
     const canvas = canvasRef.current;
@@ -345,9 +356,24 @@ export default function KanjiPracticeModal({
 
   const handlePointerDown = (e) => {
     e.preventDefault();
+    try {
+      e.target.setPointerCapture(e.pointerId);
+    } catch (_) {}
     setIsDrawing(true);
     const pos = getCanvasCoords(e);
     currentPathRef.current = [pos];
+
+    // Vẽ ngay điểm chấm ban đầu trên canvas
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      ctx.save();
+      ctx.fillStyle = brushColor;
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, brushWidth / 2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
   };
 
   const handlePointerMove = (e) => {
@@ -376,19 +402,34 @@ export default function KanjiPracticeModal({
     }
   };
 
-  const handlePointerUp = () => {
+  const handlePointerUp = (e) => {
     if (!isDrawing) return;
+    try {
+      if (e?.pointerId && e?.target?.hasPointerCapture?.(e.pointerId)) {
+        e.target.releasePointerCapture(e.pointerId);
+      }
+    } catch (_) {}
     setIsDrawing(false);
-    if (currentPathRef.current.length > 0) {
+
+    // BẢO VỆ DỮ LIỆU: Tạo bản sao mảng điểm trước khi dọn ref
+    const pointsToSave = [...currentPathRef.current];
+    currentPathRef.current = [];
+
+    if (pointsToSave.length > 0) {
       setStrokeHistory((prev) => [
         ...prev,
         {
-          points: currentPathRef.current,
+          points: pointsToSave,
           color: brushColor,
           width: brushWidth,
         },
       ]);
-      currentPathRef.current = [];
+    }
+  };
+
+  const handlePointerLeave = (e) => {
+    if (isDrawing && (!e?.target?.hasPointerCapture || !e.target.hasPointerCapture(e.pointerId))) {
+      handlePointerUp(e);
     }
   };
 
@@ -839,7 +880,7 @@ export default function KanjiPracticeModal({
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
-                onPointerLeave={handlePointerUp}
+                onPointerLeave={handlePointerLeave}
               />
             </div>
 
