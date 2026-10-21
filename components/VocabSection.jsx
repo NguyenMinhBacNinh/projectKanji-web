@@ -283,7 +283,7 @@ export default function VocabSection({ onSaveToNotebook }) {
                   style={{ height: '100%', width: '100%', position: 'relative' }}
                 >
                   {/* Mặt trước: Kanji & Chú âm */}
-                  <div className="card-face card-front absolute inset-0 w-full h-full rounded-3xl karuta-card p-3.5 sm:p-5 flex flex-col justify-between select-none overflow-hidden">
+                  <div className="card-face card-front absolute inset-0 w-full h-full rounded-3xl karuta-card p-3.5 sm:p-5 flex flex-col justify-between select-none">
                     <div className="karuta-inner-border" />
 
                     {/* Watermark Crest */}
@@ -339,7 +339,7 @@ export default function VocabSection({ onSaveToNotebook }) {
                   </div>
 
                   {/* Mặt sau: Nghĩa & Câu ví dụ */}
-                  <div className="card-face card-back absolute inset-0 w-full h-full rounded-3xl karuta-card p-3.5 sm:p-5 flex flex-col justify-between select-none overflow-hidden">
+                  <div className="card-face card-back absolute inset-0 w-full h-full rounded-3xl karuta-card p-3.5 sm:p-5 flex flex-col justify-between select-none">
                     <div className="karuta-inner-border" />
 
                     {/* Watermark Crest */}

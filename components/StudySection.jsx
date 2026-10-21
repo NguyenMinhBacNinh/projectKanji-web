@@ -281,9 +281,9 @@ export default function StudySection({
               style={{ height: '100%', width: '100%', position: 'relative' }}
             >
               {/* Card Front */}
-              <div className="card-face card-front absolute inset-0 w-full h-full rounded-3xl karuta-card select-none dark:bg-stone-900 overflow-hidden border border-[#D8CEBF] dark:border-stone-700/80 shadow-md shadow-stone-900/5 dark:shadow-black/30">
+              <div className="card-face card-front absolute inset-0 w-full h-full rounded-3xl karuta-card select-none dark:bg-stone-900 border border-[#D8CEBF] dark:border-stone-700/80 shadow-md shadow-stone-900/5 dark:shadow-black/30">
                 {/* Front Content */}
-                <div className="w-full h-full p-2.5 sm:p-3.5 xl:p-4 flex flex-col justify-between relative z-10 bg-[#FFFDF9]/95 dark:bg-[#161D27]/95">
+                <div className="w-full h-full p-2.5 sm:p-3.5 xl:p-4 flex flex-col justify-between relative z-10 bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 rounded-3xl overflow-hidden">
                   {/* Front Header */}
                   <div className="w-full flex items-center justify-between pb-2 border-b border-[#E3DACB] dark:border-stone-700/70">
                     {/* Left: Level and Counter */}
@@ -385,9 +385,9 @@ export default function StudySection({
               </div>
 
               {/* Card Back */}
-              <div className="card-face card-back absolute inset-0 w-full h-full rounded-3xl karuta-card select-none dark:bg-stone-900 overflow-hidden border border-[#D8CEBF] dark:border-stone-700/80 shadow-md shadow-stone-900/5 dark:shadow-black/30">
+              <div className="card-face card-back absolute inset-0 w-full h-full rounded-3xl karuta-card select-none dark:bg-stone-900 border border-[#D8CEBF] dark:border-stone-700/80 shadow-md shadow-stone-900/5 dark:shadow-black/30">
                 {/* Back Content */}
-                <div className="w-full h-full p-4 sm:p-5 flex flex-col justify-between overflow-y-auto relative z-10 bg-[#FFFDF9]/95 dark:bg-[#161D27]/95">
+                <div className="w-full h-full p-4 sm:p-5 flex flex-col justify-between overflow-y-auto relative z-10 bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 rounded-3xl">
                   {/* Back Header */}
                   <div className="w-full flex items-center justify-between pb-2 border-b border-[#E3DACB] dark:border-stone-700/70 shrink-0">
                     <div className="flex items-center gap-2.5">

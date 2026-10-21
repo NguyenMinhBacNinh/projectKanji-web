@@ -240,6 +240,8 @@ body {
 .perspective {
   perspective: 1200px;
   -webkit-perspective: 1200px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
 }
 
 .transform-style-3d {
@@ -253,14 +255,16 @@ body {
   height: 100%;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
-  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.5s cubic-bezier(0.2, 0.85, 0.25, 1);
   transform: rotateY(0deg);
+  -webkit-transform: rotateY(0deg);
   will-change: transform;
 }
 
 .card-flip-inner.is-flipped,
 .card-flip-inner.rotate-y-180 {
   transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
 }
 
 /* Thẻ bài Karuta / Tanzaku phong cách Neo-Brutalist Manga Pop */
@@ -269,7 +273,6 @@ body {
   border: 2px solid #231F1B;
   box-shadow: 4px 4px 0px #231F1B;
   position: relative;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .theme-yozakura .karuta-card,
@@ -278,7 +281,7 @@ body {
   box-shadow: 4px 4px 0px rgba(255, 255, 255, 0.28);
 }
 
-/* Các mặt của thẻ Flashcard 3D BẮT BUỘC là position: absolute nằm đè lên nhau chính xác */
+/* Các mặt của thẻ Flashcard 3D: Sử dụng chuẩn 3D Hardware Z-depth, loại bỏ z-index swap và transition đè để chống giật nháy */
 .card-face,
 .card-face.karuta-card {
   position: absolute !important;
@@ -290,34 +293,35 @@ body {
   width: 100% !important;
   height: 100% !important;
   margin: 0 !important;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform-style: preserve-3d;
-  -webkit-transform-style: preserve-3d;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease !important;
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+  transform-style: flat !important;
+  -webkit-transform-style: flat !important;
+  transition: none !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .card-face.card-front {
   transform: rotateY(0deg) translateZ(1px);
-  z-index: 2;
+  -webkit-transform: rotateY(0deg) translateZ(1px);
   pointer-events: auto;
 }
 
 .card-face.card-back {
   transform: rotateY(180deg) translateZ(1px);
-  z-index: 1;
+  -webkit-transform: rotateY(180deg) translateZ(1px);
   pointer-events: none;
 }
 
+/* Chỉ đổi pointer-events, TUYỆT ĐỐI KHÔNG đổi z-index giữa chừng để tránh render giật nháy */
 .card-flip-inner.is-flipped .card-face.card-front,
 .card-flip-inner.rotate-y-180 .card-face.card-front {
-  z-index: 1;
   pointer-events: none;
 }
 
 .card-flip-inner.is-flipped .card-face.card-back,
 .card-flip-inner.rotate-y-180 .card-face.card-back {
-  z-index: 2;
   pointer-events: auto;
 }
 
