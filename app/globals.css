@@ -12,14 +12,15 @@
   --bg-card: #FFFFFF;
   --bg-subcard: #F7F3EA;
   --bg-wood: #F2ECE0;
-  --border-subtle: #D8CEBF;
-  --border-strong: #2D2721;
+  --border-subtle: #C0B29F;
+  --border-card: #B0A08B;
+  --border-strong: #231F1B;
   --color-torii: #BC002D;
   --color-torii-light: #D93848;
   --color-gold: #C27803;
   --color-sumi: #1D1A17;
-  --color-muted: #665F56;
-  --card-shadow: 0 4px 18px -2px rgba(45, 38, 30, 0.08), 2px 2px 0px rgba(45, 38, 30, 0.45);
+  --color-muted: #574F44;
+  --card-shadow: 0 4px 18px -2px rgba(45, 38, 30, 0.12), 2px 2px 0px rgba(45, 38, 30, 0.55);
 }
 
 /* Theme: Yozakura - Đêm Trăng Kyoto Tĩnh Lặng */
@@ -30,14 +31,15 @@
   --bg-card: #161D27;
   --bg-subcard: #1C2431;
   --bg-wood: #222B3A;
-  --border-subtle: #2E3846;
-  --border-strong: #D1D8E0;
+  --border-subtle: #3D4A5E;
+  --border-card: #52637D;
+  --border-strong: #E2E8F0;
   --color-torii: #D93848;
   --color-torii-light: #F87171;
   --color-gold: #F59E0B;
   --color-sumi: #F5F3EF;
   --color-muted: #9BA3AF;
-  --card-shadow: 0 4px 18px -2px rgba(0, 0, 0, 0.45), 2px 2px 0px rgba(255, 255, 255, 0.2);
+  --card-shadow: 0 4px 18px -2px rgba(0, 0, 0, 0.55), 2px 2px 0px rgba(255, 255, 255, 0.35);
 }
 
 html,
@@ -264,16 +266,16 @@ body {
 /* Thẻ bài Karuta / Tanzaku phong cách Neo-Brutalist Manga Pop */
 .karuta-card {
   background: var(--bg-card);
-  border: 2.5px solid #18181b;
-  box-shadow: 5px 5px 0px #18181b;
+  border: 2px solid #231F1B;
+  box-shadow: 4px 4px 0px #231F1B;
   position: relative;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .theme-yozakura .karuta-card,
 .dark .karuta-card {
-  border: 2.5px solid #ffffff;
-  box-shadow: 5px 5px 0px #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.88);
+  box-shadow: 4px 4px 0px rgba(255, 255, 255, 0.28);
 }
 
 /* Các mặt của thẻ Flashcard 3D BẮT BUỘC là position: absolute nằm đè lên nhau chính xác */
@@ -323,15 +325,15 @@ body {
 .karuta-inner-border {
   position: absolute;
   inset: 6px;
-  border: 1px solid rgba(180, 83, 9, 0.16);
+  border: 1.5px solid rgba(180, 83, 9, 0.35);
   border-radius: 1.35rem;
   pointer-events: none;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.6), inset 0 0 12px rgba(180, 83, 9, 0.03);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.75), inset 0 0 12px rgba(180, 83, 9, 0.06);
 }
 
 .theme-yozakura .karuta-inner-border {
-  border-color: rgba(251, 191, 36, 0.22);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12), inset 0 0 12px rgba(251, 191, 36, 0.05);
+  border-color: rgba(251, 191, 36, 0.48);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25), inset 0 0 12px rgba(251, 191, 36, 0.1);
 }
 
 /* Chuẩn mực Furigana Ruby Typography Nhật Bản */
@@ -668,6 +670,106 @@ ruby {
     min-height: 180px !important;
   }
 }
+
+/* ==========================================================================
+   CROSS-OS & CROSS-DEVICE HIGH-CLARITY FRAME & BORDER ENHANCEMENTS
+   Đảm bảo mọi khung viền (header, flashcard, station, modal, lưới ô mễ)
+   đều hiển thị sắc nét 100% trên Windows (ClearType/TN/IPS), macOS (Retina),
+   iOS (Safari/Dynamic Island/OLED), Android (AMOLED/LCD) & Linux.
+   ========================================================================== */
+
+/* 1. Sắc nét khung viền bo chuẩn mực - Khắc phục mờ nhạt do chênh lệch gamma hay dải màu sRGB */
+/* Chuẩn hóa độ dày viền nguyên (integer pixels) loại bỏ hiện tượng mờ khử răng cưa (sub-pixel anti-aliasing blur) trên Windows DPI 125%/150% và Android */
+.border-\[2\.5px\] {
+  border-width: 2px !important;
+}
+
+.border-\[\#D8CEBF\] {
+  border-color: #BBAFA0 !important;
+}
+
+.dark .border-\[\#D8CEBF\],
+.theme-yozakura .border-\[\#D8CEBF\] {
+  border-color: #3E4D63 !important;
+}
+
+.border-\[\#E3DACB\] {
+  border-color: #C8BCAC !important;
+}
+
+.dark .border-\[\#E3DACB\],
+.theme-yozakura .border-\[\#E3DACB\] {
+  border-color: #3B4A5E !important;
+}
+
+.border-\[\#ebdccb\]\/60 {
+  border-color: rgba(184, 169, 150, 0.75) !important;
+}
+
+.dark .border-\[\#ebdccb\]\/60,
+.theme-yozakura .border-\[\#ebdccb\]\/60 {
+  border-color: rgba(62, 77, 99, 0.8) !important;
+}
+
+.dark .border-stone-700\/80,
+.theme-yozakura .border-stone-700\/80 {
+  border-color: rgba(75, 95, 122, 0.9) !important;
+}
+
+.border-washi-border {
+  border-color: #C2B6A6 !important;
+}
+
+.dark .border-washi-border,
+.theme-yozakura .border-washi-border {
+  border-color: #425268 !important;
+}
+
+/* 2. Khử răng cưa và tối ưu hóa kết xuất font chữ / vector trên mọi hệ điều hành */
+html, body, button, input, select, textarea {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  -webkit-tap-highlight-color: transparent;
+}
+
+svg, img {
+  shape-rendering: geometricPrecision;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* 3. Tương thích vùng an toàn (Safe Area Insets) cho iPhone Notch / Dynamic Island & Android Gesture Bar */
+@supports (padding-top: env(safe-area-inset-top)) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* 4. Khung viền chống mờ cho các ô lưới (Grid Box) và cửa sổ Modal */
+.zen-crisp-frame {
+  box-shadow: 0 0 0 1px var(--border-subtle), 0 4px 16px -2px rgba(45, 38, 30, 0.08);
+}
+
+.dark .zen-crisp-frame,
+.theme-yozakura .zen-crisp-frame {
+  box-shadow: 0 0 0 1px var(--border-subtle), 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+}
+
+/* 5. Tối ưu hóa viền và độ sâu khi hover trên desktop & cảm ứng trên mobile */
+@media (hover: hover) and (pointer: fine) {
+  .karuta-card:hover {
+    box-shadow: 5px 5px 0px #231F1B;
+    transform: translateY(-1px);
+  }
+  .dark .karuta-card:hover,
+  .theme-yozakura .karuta-card:hover {
+    box-shadow: 5px 5px 0px rgba(255, 255, 255, 0.35);
+  }
+}
+
 
 
 

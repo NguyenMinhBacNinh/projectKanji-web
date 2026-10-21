@@ -442,7 +442,7 @@ export default function Home() {
   const isMastered = masteredList.includes(currentChar);
 
   return (
-    <div className="min-h-screen lg:h-screen lg:max-h-[100dvh] flex flex-col items-center justify-between p-1 sm:p-2 lg:px-3 lg:py-1 xl:py-1.5 relative select-none overflow-x-hidden lg:overflow-hidden">
+    <div className="min-h-[100dvh] lg:h-[100dvh] lg:max-h-[100dvh] flex flex-col items-center justify-between p-1 sm:p-2 lg:px-3 lg:py-1 xl:py-1.5 relative select-none overflow-x-hidden lg:overflow-hidden">
       {/* Khung cảnh Mỹ học Nhật Bản bao bọc xung quanh (Núi Phú Sĩ, Torii, Rừng Trúc, Chùa Kyoto, Trăng & Mặt trời) */}
       <JapaneseAtmosphericBackground theme={theme} />
 

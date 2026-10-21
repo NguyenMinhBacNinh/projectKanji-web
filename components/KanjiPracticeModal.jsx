@@ -260,33 +260,47 @@ export default function KanjiPracticeModal({
     setAnimKey((k) => k + 1);
   };
 
-  // Canvas Drawing Logic (Tab 2)
+  // Canvas Drawing Logic (Tab 2) - Hỗ trợ hiển thị sắc nét Retina High-DPI (2x, 3x) trên mọi OS/thiết bị
   const redrawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    const dpr = typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
     const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
+
+    // Đảm bảo kích thước buffer của canvas khớp chuẩn tỉ lệ pixel phần cứng của màn hình
+    const logicalSize = 320;
+    if (canvas.width !== Math.round(logicalSize * dpr)) {
+      canvas.width = Math.round(logicalSize * dpr);
+      canvas.height = Math.round(logicalSize * dpr);
+      canvas.style.width = `${logicalSize}px`;
+      canvas.style.height = `${logicalSize}px`;
+    }
+
+    ctx.save();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const width = logicalSize;
+    const height = logicalSize;
 
     // 1. Phủ màu nền giấy Washi truyền thống (không để trong suốt)
     const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
     ctx.fillStyle = isDark ? '#161e2e' : '#fcfbf7';
     ctx.fillRect(0, 0, width, height);
 
-    // 2. Viền ngoài trang giấy thư pháp tinh tế
+    // 2. Viền ngoài trang giấy thư pháp sắc nét rõ ràng
     ctx.save();
-    ctx.strokeStyle = isDark ? 'rgba(217, 119, 6, 0.4)' : '#e5dac8';
+    ctx.strokeStyle = isDark ? 'rgba(245, 158, 11, 0.75)' : '#B8A082';
     ctx.lineWidth = 2;
     ctx.strokeRect(3, 3, width - 6, height - 6);
 
     // Viền trong đôi mỏng phong cách Nhật Bản
-    ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.08)' : '#f0e8dc';
+    ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.22)' : 'rgba(180, 83, 9, 0.25)';
     ctx.lineWidth = 1;
     ctx.strokeRect(7, 7, width - 14, height - 14);
 
-    // 3. Vẽ lưới ô mễ truyền thống (米字格 - Mi Zi Ge)
+    // 3. Vẽ lưới ô mễ truyền thống (米字格 - Mi Zi Ge) sắc nét
     ctx.setLineDash([5, 5]);
-    ctx.strokeStyle = isDark ? 'rgba(217, 119, 6, 0.35)' : '#d5c4aa';
+    ctx.strokeStyle = isDark ? 'rgba(245, 158, 11, 0.65)' : '#A89274';
     ctx.lineWidth = 1;
 
     // Trục chữ thập chính (Cross)
@@ -298,7 +312,7 @@ export default function KanjiPracticeModal({
     ctx.stroke();
 
     // Hai đường chéo phụ (Diagonal)
-    ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.08)' : '#e9dfcf';
+    ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(168, 146, 116, 0.45)';
     ctx.setLineDash([3, 5]);
     ctx.beginPath();
     ctx.moveTo(12, 12);
@@ -311,7 +325,7 @@ export default function KanjiPracticeModal({
     // Con dấu chữ nhỏ góc trên: 和紙 • 練習帳 (Sổ luyện viết giấy Washi)
     ctx.save();
     ctx.font = '700 10px serif';
-    ctx.fillStyle = isDark ? 'rgba(217, 119, 6, 0.3)' : 'rgba(185, 28, 28, 0.25)';
+    ctx.fillStyle = isDark ? 'rgba(245, 158, 11, 0.5)' : 'rgba(185, 28, 28, 0.45)';
     ctx.textAlign = 'right';
     ctx.fillText('和紙 • 練習帳', width - 12, 20);
     ctx.restore();
@@ -323,8 +337,8 @@ export default function KanjiPracticeModal({
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = isDark
-        ? `rgba(239, 68, 68, ${ghostOpacity})`
-        : `rgba(185, 28, 28, ${ghostOpacity})`;
+        ? `rgba(239, 68, 68, ${Math.max(ghostOpacity, 0.28)})`
+        : `rgba(185, 28, 28, ${Math.max(ghostOpacity, 0.25)})`;
       ctx.fillText(currentChar, width / 2, height / 2 + 8);
       ctx.restore();
     }
@@ -353,6 +367,8 @@ export default function KanjiPracticeModal({
       }
       ctx.restore();
     });
+
+    ctx.restore();
   }, [showGhost, currentChar, ghostOpacity, strokeHistory]);
 
   useEffect(() => {
@@ -371,13 +387,11 @@ export default function KanjiPracticeModal({
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
     const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY,
+      x: Math.max(0, Math.min(320, ((clientX - rect.left) / rect.width) * 320)),
+      y: Math.max(0, Math.min(320, ((clientY - rect.top) / rect.height) * 320)),
     };
   };
 
@@ -393,8 +407,10 @@ export default function KanjiPracticeModal({
     // Vẽ ngay điểm chấm ban đầu trên canvas
     const canvas = canvasRef.current;
     if (canvas) {
+      const dpr = typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
       const ctx = canvas.getContext('2d');
       ctx.save();
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.fillStyle = brushColor;
       ctx.beginPath();
       ctx.arc(pos.x, pos.y, brushWidth / 2, 0, Math.PI * 2);
@@ -411,10 +427,12 @@ export default function KanjiPracticeModal({
 
     const canvas = canvasRef.current;
     if (!canvas) return;
+    const dpr = typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
     const ctx = canvas.getContext('2d');
     const points = currentPathRef.current;
     if (points.length >= 2) {
       ctx.save();
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.strokeStyle = brushColor;
       ctx.lineWidth = brushWidth;
       ctx.lineCap = 'round';
@@ -769,13 +787,14 @@ export default function KanjiPracticeModal({
         {activeTab === 'stroke' && (
           <div className="flex flex-col items-center gap-3 relative z-10">
             {/* Khung hiển thị Vector nét bút KanjiVG với animation nét vẽ */}
-            <div className="relative w-64 h-64 md:w-72 md:h-72 rounded-2xl bg-white dark:bg-stone-850 border-2 border-stone-900 dark:border-white shadow-manga-sm flex items-center justify-center overflow-hidden">
-              {/* Lưới ô mễ nền mờ (Mi Zi Ge) */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-30" viewBox="0 0 100 100">
-                <line x1="0" y1="50" x2="100" y2="50" stroke="#b45309" strokeDasharray="2,2" strokeWidth="0.8" />
-                <line x1="50" y1="0" x2="50" y2="100" stroke="#b45309" strokeDasharray="2,2" strokeWidth="0.8" />
-                <line x1="0" y1="0" x2="100" y2="100" stroke="#b45309" strokeDasharray="2,2" strokeWidth="0.5" />
-                <line x1="100" y1="0" x2="0" y2="100" stroke="#b45309" strokeDasharray="2,2" strokeWidth="0.5" />
+            <div className="relative w-64 h-64 md:w-72 md:h-72 rounded-2xl bg-[#FFFDF9] dark:bg-stone-850 border-2 border-stone-900 dark:border-white shadow-manga-sm flex items-center justify-center overflow-hidden">
+              {/* Lưới ô mễ nền mờ (Mi Zi Ge) sắc nét đa thiết bị */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40 dark:opacity-60" viewBox="0 0 100 100">
+                <rect x="2" y="2" width="96" height="96" fill="none" stroke="#b45309" strokeDasharray="3,3" strokeWidth="0.8" />
+                <line x1="0" y1="50" x2="100" y2="50" stroke="#b45309" strokeDasharray="2,2" strokeWidth="0.9" />
+                <line x1="50" y1="0" x2="50" y2="100" stroke="#b45309" strokeDasharray="2,2" strokeWidth="0.9" />
+                <line x1="0" y1="0" x2="100" y2="100" stroke="#b45309" strokeDasharray="2,2" strokeWidth="0.6" />
+                <line x1="100" y1="0" x2="0" y2="100" stroke="#b45309" strokeDasharray="2,2" strokeWidth="0.6" />
               </svg>
 
               {loadingStrokes ? (
@@ -804,14 +823,14 @@ export default function KanjiPracticeModal({
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   {/* Lớp 1: Khung nét mờ hướng dẫn toàn bộ chữ */}
-                  <g stroke="rgba(180, 83, 9, 0.18)" strokeWidth="3.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                  <g className="stroke-amber-900/35 dark:stroke-amber-300/45" strokeWidth="3.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
                     {strokes.map((s, idx) => (
                       <path key={`ghost-${idx}`} d={s.d} />
                     ))}
                   </g>
 
-                  {/* Lớp 2: Các nét đã vẽ xong (Completed Strokes) */}
-                  <g stroke="#1f1d1a" strokeWidth="4.2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                  {/* Lớp 2: Các nét đã vẽ xong (Completed Strokes) - Tương thích tương phản Dark / Light */}
+                  <g className="stroke-stone-900 dark:stroke-stone-100" strokeWidth="4.2" fill="none" strokeLinecap="round" strokeLinejoin="round">
                     {strokes.map((s, idx) => {
                       const isCompleted = animatingIndex === -1 || idx < animatingIndex;
                       if (!isCompleted) return null;
@@ -1075,12 +1094,13 @@ export default function KanjiPracticeModal({
               </span>
             </div>
 
-            {/* Khung vẽ Canvas ô mễ - Giấy Washi chuẩn mực */}
-            <div className="relative rounded-2xl overflow-hidden shadow-xl border-2 border-[#c5a880]/60 dark:border-torii/40 touch-none bg-[#fcfbf7] dark:bg-[#161e2e]">
+            {/* Khung vẽ Canvas ô mễ - Giấy Washi chuẩn mực sắc nét đa thiết bị */}
+            <div className="relative rounded-2xl overflow-hidden shadow-manga-sm border-2 border-stone-850 dark:border-amber-400/80 touch-none bg-[#FCFBF7] dark:bg-[#161E2E]">
               <canvas
                 ref={canvasRef}
                 width={320}
                 height={320}
+                style={{ width: 320, height: 320 }}
                 className="cursor-crosshair block"
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
