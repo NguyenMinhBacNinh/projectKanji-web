@@ -11,8 +11,15 @@ export const metadata = {
     title: 'Kanji Nhật',
   },
   icons: {
-    icon: '/favicon.ico',
-    apple: '/icons/apple-touch-icon.png',
+    icon: [
+      { url: '/favicon.ico?v=2' },
+      { url: '/images/logo_emblem.png?v=2', type: 'image/png' },
+      { url: '/icons/icon-192.png?v=2', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/icons/apple-touch-icon.png?v=2', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: ['/favicon.ico?v=2'],
   },
 };
 
@@ -36,8 +43,11 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Kanji Nhật" />
-        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=2" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png?v=2" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=2" />
+        <link rel="shortcut icon" href="/favicon.ico?v=2" />
       </head>
       <body className="antialiased select-text">
         {children}
