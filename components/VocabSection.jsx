@@ -178,7 +178,7 @@ export default function VocabSection({ onSaveToNotebook }) {
 
           {/* Giữa: Bộ lọc cấp độ JLPT */}
           <div className="flex items-center gap-1 text-xs font-bold w-full md:w-auto justify-center">
-            {['all', 'N5', 'N4', 'N3'].map((lvl) => (
+            {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => (
               <button
                 key={lvl}
                 onClick={() => {
