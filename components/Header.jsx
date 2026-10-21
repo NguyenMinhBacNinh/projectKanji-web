@@ -41,6 +41,7 @@ export default function Header({
   onTogglePetals,
   autoSpeechEnabled = false,
   onToggleAutoSpeech,
+  onReplaySplash,
 }) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const settingsRef = useRef(null);
@@ -96,9 +97,12 @@ export default function Header({
         <div className="w-full flex items-center justify-between py-1.5 sm:py-2 px-2.5 sm:px-4 gap-2">
           {/* Left: Brand Identity with New Official Logo */}
           <div
-            onClick={() => handleSelectPrimary('kanji')}
+            onClick={() => {
+              handleSelectPrimary('kanji');
+              if (onReplaySplash) onReplaySplash();
+            }}
             className="flex items-center gap-2 sm:gap-2.5 cursor-pointer group shrink-0 select-none"
-            title="Trang chủ • 漢字学習帳 (Kanji Gakushūchō)"
+            title="Trang chủ • 漢字学習帳 (Kanji Gakushūchō) - Chạm để xem chuyển cảnh Zen"
           >
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white dark:bg-[#1E2633] flex items-center justify-center border-2 border-stone-850 dark:border-amber-400/80 shadow-manga-sm p-0.5 transition-all duration-200 group-hover:scale-105 group-hover:border-torii overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}

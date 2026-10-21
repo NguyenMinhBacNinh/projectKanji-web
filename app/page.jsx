@@ -26,6 +26,7 @@ import KanjiWorksheetModal from '../components/KanjiWorksheetModal';
 import StatsModal from '../components/StatsModal';
 import SpotlightSearchModal from '../components/SpotlightSearchModal';
 import Toast from '../components/Toast';
+import ZenSplashIntro from '../components/ZenSplashIntro';
 import { KANJI_DATA } from '../lib/kanjiData';
 
 import {
@@ -50,6 +51,7 @@ import {
 } from '../lib/srsService';
 
 export default function Home() {
+  const [showSplash, setShowSplash] = useState(true);
   const [activeMode, setActiveMode] = useState('study');
   const [currentLevel, setCurrentLevel] = useState('N5');
   const [kanjiList, setKanjiList] = useState([]);
@@ -469,6 +471,7 @@ export default function Home() {
           onTogglePetals={() => setPetalsEnabled((prev) => !prev)}
           autoSpeechEnabled={autoSpeechEnabled}
           onToggleAutoSpeech={() => setAutoSpeechEnabled((prev) => !prev)}
+          onReplaySplash={() => setShowSplash(true)}
         />
 
         {activeMode === 'study' && (
@@ -694,6 +697,14 @@ export default function Home() {
         fullDb={fullDb}
         levelsData={KANJI_DATA}
       />
+
+      {/* Màn chào chuyển cảnh Zen mở đầu (Cinematic Zen Splash Transition) */}
+      {showSplash && (
+        <ZenSplashIntro
+          theme={theme}
+          onFinish={() => setShowSplash(false)}
+        />
+      )}
 
       {/* Toast Notification */}
       <Toast toast={toast} />
