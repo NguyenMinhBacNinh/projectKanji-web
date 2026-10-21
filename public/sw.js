@@ -1,5 +1,5 @@
-// Service Worker for Kanji Gakushūchō PWA (v2 with new logo assets)
-const CACHE_NAME = 'kanji-gakushucho-pwa-v2';
+// Service Worker for Kanji Gakushūchō PWA (v3 with 150 reading comprehension articles)
+const CACHE_NAME = 'kanji-gakushucho-pwa-v3';
 
 const PRECACHE_ASSETS = [
   '/',
