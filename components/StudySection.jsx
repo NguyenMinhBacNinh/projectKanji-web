@@ -387,7 +387,13 @@ export default function StudySection({
               {/* Card Back */}
               <div className="card-face card-back absolute inset-0 w-full h-full rounded-3xl karuta-card select-none dark:bg-stone-900 border border-[#D8CEBF] dark:border-stone-700/80 shadow-md shadow-stone-900/5 dark:shadow-black/30">
                 {/* Back Content */}
-                <div className="w-full h-full p-4 sm:p-5 flex flex-col justify-between overflow-y-auto relative z-10 bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 rounded-3xl">
+                <div
+                  className="w-full h-full p-4 sm:p-5 flex flex-col justify-between overflow-y-auto relative z-10 bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 rounded-3xl"
+                  onClick={(e) => {
+                    // Ngăn chặn nổi bọt sự kiện click lên thẻ cha để tránh bị lật ngược thẻ ngoài ý muốn khi cuộn hoặc xem nội dung
+                    e.stopPropagation();
+                  }}
+                >
                   {/* Back Header */}
                   <div className="w-full flex items-center justify-between pb-2 border-b border-[#E3DACB] dark:border-stone-700/70 shrink-0">
                     <div className="flex items-center gap-2.5">
@@ -484,9 +490,20 @@ export default function StudySection({
                     </div>
                   </div>
 
-                  {/* Footer back card */}
-                  <div className="pt-2 border-t border-[#E3DACB] dark:border-stone-700/70 flex items-center justify-between text-xs font-medium text-stone-500 dark:text-stone-400 shrink-0">
-                    <span>Chạm hoặc bấm [Space] để lật lại ⟲</span>
+                  {/* Footer back card: Chạm để lật lại mặt trước */}
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      playWoodClapper();
+                      setIsFlipped(false);
+                    }}
+                    className="pt-2 border-t border-[#E3DACB] dark:border-stone-700/70 flex items-center justify-between text-xs font-medium text-stone-500 dark:text-stone-400 shrink-0 cursor-pointer hover:text-[#BC002D] dark:hover:text-rose-400 transition-colors py-1 group/flipback"
+                    title="Chạm hoặc bấm [Space] để lật lại mặt trước"
+                  >
+                    <span className="flex items-center gap-1.5 font-bold">
+                      <span className="text-[#BC002D] dark:text-rose-400 group-hover/flipback:rotate-180 transition-transform">⟲</span>
+                      <span>Chạm hoặc bấm [Space] để lật lại mặt trước</span>
+                    </span>
                     <span className="font-bold text-[#BC002D] dark:text-rose-400">JLPT {currentLevel}</span>
                   </div>
                 </div>

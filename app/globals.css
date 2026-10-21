@@ -240,8 +240,6 @@ body {
 .perspective {
   perspective: 1200px;
   -webkit-perspective: 1200px;
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
 }
 
 .transform-style-3d {
@@ -281,7 +279,7 @@ body {
   box-shadow: 4px 4px 0px rgba(255, 255, 255, 0.28);
 }
 
-/* Các mặt của thẻ Flashcard 3D: Sử dụng chuẩn 3D Hardware Z-depth, loại bỏ z-index swap và transition đè để chống giật nháy */
+/* Các mặt của thẻ Flashcard 3D: Bảo đảm 3D hardware-accelerated và backface-visibility ẩn tuyệt đối */
 .card-face,
 .card-face.karuta-card {
   position: absolute !important;
@@ -295,26 +293,25 @@ body {
   margin: 0 !important;
   -webkit-backface-visibility: hidden !important;
   backface-visibility: hidden !important;
-  transform-style: flat !important;
-  -webkit-transform-style: flat !important;
-  transition: none !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.card-face.card-front {
-  transform: rotateY(0deg) translateZ(1px);
-  -webkit-transform: rotateY(0deg) translateZ(1px);
+.card-face.card-front,
+.card-face.card-front:hover {
+  transform: rotateY(0deg) !important;
+  -webkit-transform: rotateY(0deg) !important;
   pointer-events: auto;
 }
 
-.card-face.card-back {
-  transform: rotateY(180deg) translateZ(1px);
-  -webkit-transform: rotateY(180deg) translateZ(1px);
+.card-face.card-back,
+.card-face.card-back:hover {
+  transform: rotateY(180deg) !important;
+  -webkit-transform: rotateY(180deg) !important;
   pointer-events: none;
 }
 
-/* Chỉ đổi pointer-events, TUYỆT ĐỐI KHÔNG đổi z-index giữa chừng để tránh render giật nháy */
+/* Khi đã lật sang mặt sau: Card front khóa touch, Card back mở tương tác */
 .card-flip-inner.is-flipped .card-face.card-front,
 .card-flip-inner.rotate-y-180 .card-face.card-front {
   pointer-events: none;
@@ -762,14 +759,14 @@ svg, img {
   box-shadow: 0 0 0 1px var(--border-subtle), 0 4px 20px -2px rgba(0, 0, 0, 0.5);
 }
 
-/* 5. Tối ưu hóa viền và độ sâu khi hover trên desktop & cảm ứng trên mobile */
+/* 5. Tối ưu hóa viền và độ sâu khi hover trên desktop (chỉ tác động lên các thẻ không phải mặt 3D .card-face) */
 @media (hover: hover) and (pointer: fine) {
-  .karuta-card:hover {
+  .karuta-card:not(.card-face):hover {
     box-shadow: 5px 5px 0px #231F1B;
     transform: translateY(-1px);
   }
-  .dark .karuta-card:hover,
-  .theme-yozakura .karuta-card:hover {
+  .dark .karuta-card:not(.card-face):hover,
+  .theme-yozakura .karuta-card:not(.card-face):hover {
     box-shadow: 5px 5px 0px rgba(255, 255, 255, 0.35);
   }
 }
