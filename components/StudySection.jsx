@@ -705,7 +705,7 @@ export default function StudySection({
 
                     {cardInfo?.vocab && cardInfo.vocab.length > 0 ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 flex-1 min-h-0 overflow-y-auto thin-scrollbar pr-0.5 content-start auto-rows-min py-0.5">
-                        {cardInfo.vocab.slice(0, 4).map((v, i) => (
+                        {cardInfo.vocab.slice(0, 10).map((v, i) => (
                           <div
                             key={i}
                             onClick={() => {
