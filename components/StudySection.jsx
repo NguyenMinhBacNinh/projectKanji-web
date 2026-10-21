@@ -316,7 +316,6 @@ export default function StudySection({
                       onClick={(e) => {
                         e.stopPropagation();
                         playWaterDrop();
-                        playJapaneseSpeech(cardInfo?.kun?.split('、')[0].split('.')[0] || currentChar);
                       }}
                       className="relative z-10 font-kanji font-black tracking-normal cursor-pointer select-none group/kanji py-0.5 flex flex-col items-center"
                     >
@@ -350,22 +349,14 @@ export default function StudySection({
                     </div>
                   </div>
 
-                  {/* Bottom: On / Kun Readings */}
+                  {/* Bottom: On / Kun Readings (Đã bỏ phát âm loa, giữ lại chữ hiển thị cách đọc) */}
                   <div className="w-full pt-2 pb-0.5 border-t border-[#E3DACB] dark:border-stone-700/70 grid grid-cols-2 gap-2 text-left">
                     {/* On reading box */}
-                    <div
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        playWaterDrop();
-                        if (cardInfo?.on && cardInfo.on !== '—') playJapaneseSpeech(cardInfo.on.split('、')[0]);
-                      }}
-                      className="p-2 rounded-xl bg-white dark:bg-stone-800/80 border border-[#DFD7CA] dark:border-stone-700 hover:border-[#BC002D]/60 hover:bg-[#FAF5EB] dark:hover:bg-stone-750 shadow-2xs transition-colors cursor-pointer group/on active:scale-95"
-                    >
+                    <div className="p-2 rounded-xl bg-white dark:bg-stone-800/80 border border-[#DFD7CA] dark:border-stone-700 shadow-2xs select-none">
                       <div className="flex items-center justify-between">
                         <span className="text-[9px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-[#BC002D] text-white">
                           ÂM ON (音)
                         </span>
-                        <VolumeIcon className="w-3.5 h-3.5 text-stone-500 group-hover/on:text-[#BC002D] transition-colors" />
                       </div>
                       <span className="text-xs sm:text-sm font-bold font-kanji text-stone-900 dark:text-stone-100 mt-1 block truncate">
                         {cardInfo?.on || '—'}
@@ -373,19 +364,11 @@ export default function StudySection({
                     </div>
 
                     {/* Kun reading box */}
-                    <div
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        playWaterDrop();
-                        if (cardInfo?.kun && cardInfo.kun !== '—') playJapaneseSpeech(cardInfo.kun.split('、')[0].split('.')[0]);
-                      }}
-                      className="p-2 rounded-xl bg-white dark:bg-stone-800/80 border border-[#DFD7CA] dark:border-stone-700 hover:border-[#C27803]/60 hover:bg-[#FAF5EB] dark:hover:bg-stone-750 shadow-2xs transition-colors cursor-pointer group/kun active:scale-95"
-                    >
+                    <div className="p-2 rounded-xl bg-white dark:bg-stone-800/80 border border-[#DFD7CA] dark:border-stone-700 shadow-2xs select-none">
                       <div className="flex items-center justify-between">
                         <span className="text-[9px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-[#C27803] text-white">
                           ÂM KUN (訓)
                         </span>
-                        <VolumeIcon className="w-3.5 h-3.5 text-stone-500 group-hover/kun:text-[#C27803] transition-colors" />
                       </div>
                       <span className="text-xs sm:text-sm font-bold font-kanji text-[#8B0000] dark:text-rose-400 mt-1 block truncate">
                         {cardInfo?.kun || '—'}
