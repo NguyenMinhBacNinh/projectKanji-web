@@ -6,40 +6,40 @@
   --font-kanji: "Shippori Mincho", "Noto Serif JP", serif;
   --font-ui: "Plus Jakarta Sans", system-ui, sans-serif;
 
-  /* Theme: Wabi-Sabi Zen Sanctuary - Giấy Dâu Tằm Torinoko & Mực Tàu Sumi */
-  --bg-page: #FAF8F5;
-  --bg-gradient: linear-gradient(180deg, #FAF8F5 0%, #F5EFE6 55%, #ECE4D6 100%);
+  /* Theme: Modern Kyoto Zen & Muji Luxury - Giấy Dó Trắng Ngà & Sương Mai */
+  --bg-page: #FBF9F5;
+  --bg-gradient: linear-gradient(180deg, #FCFAF7 0%, #F8F5EE 50%, #F3EFE6 100%);
   --bg-card: #FFFFFF;
-  --bg-subcard: #F7F3EA;
-  --bg-wood: #F2ECE0;
-  --border-subtle: #C0B29F;
-  --border-card: #B0A08B;
+  --bg-subcard: #F8F5EE;
+  --bg-wood: #F4EFE6;
+  --border-subtle: rgba(220, 214, 203, 0.65);
+  --border-card: rgba(214, 207, 195, 0.75);
   --border-strong: #231F1B;
   --color-torii: #BC002D;
   --color-torii-light: #D93848;
   --color-gold: #C27803;
-  --color-sumi: #1D1A17;
-  --color-muted: #574F44;
-  --card-shadow: 0 4px 18px -2px rgba(45, 38, 30, 0.12), 2px 2px 0px rgba(45, 38, 30, 0.55);
+  --color-sumi: #1C1917;
+  --color-muted: #665E54;
+  --card-shadow: 0 10px 30px -4px rgba(45, 38, 28, 0.04), 0 20px 45px -10px rgba(45, 38, 28, 0.03);
 }
 
 /* Theme: Yozakura - Đêm Trăng Kyoto Tĩnh Lặng */
 .theme-yozakura,
 .dark {
-  --bg-page: #0D1117;
-  --bg-gradient: linear-gradient(180deg, #131822 0%, #0D1117 100%);
-  --bg-card: #161D27;
-  --bg-subcard: #1C2431;
-  --bg-wood: #222B3A;
-  --border-subtle: #3D4A5E;
-  --border-card: #52637D;
-  --border-strong: #E2E8F0;
+  --bg-page: #0B0F17;
+  --bg-gradient: linear-gradient(180deg, #101522 0%, #0B0F17 100%);
+  --bg-card: #141B26;
+  --bg-subcard: #1A2332;
+  --bg-wood: #202B3D;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-card: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.85);
   --color-torii: #D93848;
   --color-torii-light: #F87171;
   --color-gold: #F59E0B;
-  --color-sumi: #F5F3EF;
+  --color-sumi: #F8F6F2;
   --color-muted: #9BA3AF;
-  --card-shadow: 0 4px 18px -2px rgba(0, 0, 0, 0.55), 2px 2px 0px rgba(255, 255, 255, 0.35);
+  --card-shadow: 0 12px 36px -6px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.07);
 }
 
 html,
@@ -265,18 +265,18 @@ body {
   -webkit-transform: rotateY(180deg);
 }
 
-/* Thẻ bài Karuta / Tanzaku phong cách Neo-Brutalist Manga Pop */
+/* Thẻ bài Karuta / Tanzaku phong cách Modern Kyoto Zen / Muji Luxury */
 .karuta-card {
   background: var(--bg-card);
-  border: 2px solid #231F1B;
-  box-shadow: 4px 4px 0px #231F1B;
+  border: 1px solid rgba(220, 214, 203, 0.7);
+  box-shadow: 0 10px 30px -4px rgba(45, 38, 28, 0.04), 0 20px 45px -10px rgba(45, 38, 28, 0.03);
   position: relative;
 }
 
 .theme-yozakura .karuta-card,
 .dark .karuta-card {
-  border: 2px solid rgba(255, 255, 255, 0.88);
-  box-shadow: 4px 4px 0px rgba(255, 255, 255, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 36px -6px rgba(0, 0, 0, 0.55);
 }
 
 /* Các mặt của thẻ Flashcard 3D: Bảo đảm 3D hardware-accelerated và backface-visibility ẩn tuyệt đối */
@@ -759,15 +759,17 @@ svg, img {
   box-shadow: 0 0 0 1px var(--border-subtle), 0 4px 20px -2px rgba(0, 0, 0, 0.5);
 }
 
-/* 5. Tối ưu hóa viền và độ sâu khi hover trên desktop (chỉ tác động lên các thẻ không phải mặt 3D .card-face) */
+/* 5. Tối ưu hóa viền và độ sâu khi hover trên desktop */
 @media (hover: hover) and (pointer: fine) {
   .karuta-card:not(.card-face):hover {
-    box-shadow: 5px 5px 0px #231F1B;
+    box-shadow: 0 14px 38px -4px rgba(45, 38, 28, 0.07);
+    border-color: rgba(188, 0, 45, 0.35);
     transform: translateY(-1px);
   }
   .dark .karuta-card:not(.card-face):hover,
   .theme-yozakura .karuta-card:not(.card-face):hover {
-    box-shadow: 5px 5px 0px rgba(255, 255, 255, 0.35);
+    box-shadow: 0 16px 42px -6px rgba(0, 0, 0, 0.65);
+    border-color: rgba(248, 113, 113, 0.35);
   }
 }
 

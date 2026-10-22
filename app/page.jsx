@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
 import SakuraPetals from '../components/SakuraPetals';
 import JapaneseAtmosphericBackground from '../components/JapaneseAtmosphericBackground';
-import JapaneseSideScrolls from '../components/JapaneseSideScrolls';
 import StudySection from '../components/StudySection';
 import QuizSection from '../components/QuizSection';
 import KarutaGameSection from '../components/KarutaGameSection';
@@ -463,12 +462,8 @@ export default function Home() {
       {/* Hiệu ứng cánh hoa anh đào Sakura Fubuki rơi lãng mạn */}
       <SakuraPetals enabled={petalsEnabled} />
 
-      {/* Tranh Treo Nghệ Thuật Washi Shikishi (Torii & Núi Phú Sĩ) */}
-      <JapaneseSideScrolls theme={theme} />
-
-
-      {/* Main Container - Tối ưu 1020px trên màn hình Laptop để hiển thị tranh sườn, mở rộng 1152px trên 2xl */}
-      <div className="w-full max-w-[1020px] 2xl:max-w-6xl flex flex-col items-center gap-1 sm:gap-1.5 flex-1 min-h-0 relative z-20 overflow-hidden">
+      {/* Main Container - Modern Kyoto Zen Studio (Mở rộng tối đa 1400px thoáng đãng) */}
+      <div className="w-full max-w-7xl 2xl:max-w-[1440px] flex flex-col items-center gap-1.5 sm:gap-2 flex-1 min-h-0 relative z-20 overflow-hidden px-1 sm:px-2 lg:px-4">
         <Header
           activeMode={activeMode}
           setActiveMode={setActiveMode}
@@ -572,7 +567,7 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="w-full max-w-[1020px] 2xl:max-w-6xl mt-0.5 py-0.5 sm:py-1 border-t border-washi-border/60 dark:border-stone-800/80 text-stone-600 dark:text-stone-400 text-[10px] sm:text-xs flex flex-col sm:flex-row items-center justify-between gap-1 sm:gap-2 z-20 font-ui shrink-0">
+      <footer className="w-full max-w-7xl 2xl:max-w-[1440px] mt-0.5 py-1 px-2 sm:px-4 border-t border-stone-200/60 dark:border-stone-800/80 text-stone-600 dark:text-stone-400 text-[10px] sm:text-xs flex flex-col sm:flex-row items-center justify-between gap-1 sm:gap-2 z-20 font-ui shrink-0">
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
