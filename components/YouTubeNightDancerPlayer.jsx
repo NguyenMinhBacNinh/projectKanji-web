@@ -6,22 +6,23 @@ import { VolumeIcon } from './ZenIcons';
 export default function YouTubeNightDancerPlayer({
   isPlaying,
   onTogglePlay,
-  activeTrackId = 'night_dancer_lofi',
+  activeTrackId = 'night_dancer_youtube',
   theme = 'yozakura',
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [hasStartedOnce, setHasStartedOnce] = useState(false);
+  const [isPillDismissed, setIsPillDismissed] = useState(false);
   const [volume, setVolume] = useState(70);
   const iframeRef = useRef(null);
 
-  const shouldPlay = isPlaying && activeTrackId === 'night_dancer_lofi';
+  const shouldPlay = isPlaying && activeTrackId === 'night_dancer_youtube';
 
   // Khi người dùng bấm phát lần đầu tiên, cho phép mount iframe
   useEffect(() => {
-    if (isPlaying && !hasStartedOnce) {
+    if (shouldPlay && !hasStartedOnce) {
       setHasStartedOnce(true);
     }
-  }, [isPlaying, hasStartedOnce]);
+  }, [shouldPlay, hasStartedOnce]);
 
   // Điều khiển Play / Pause qua YouTube postMessage API
   useEffect(() => {
@@ -123,60 +124,71 @@ export default function YouTubeNightDancerPlayer({
       </div>
 
       {/* Floating Pill Mini Player (Thanh điều khiển thu nhỏ ở góc màn hình) */}
-      <div
-        className={`flex items-center gap-2 p-1.5 pr-2.5 rounded-full border shadow-xl backdrop-blur-md transition-all ${
-          isPlaying
-            ? 'bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 border-torii text-stone-900 dark:text-stone-100 shadow-torii/15'
-            : 'bg-stone-100/90 dark:bg-stone-800/90 border-stone-300 dark:border-stone-700 text-stone-600 dark:text-stone-400'
-        }`}
-      >
-        {/* Nút Play / Pause */}
-        <button
-          onClick={onTogglePlay}
-          className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-transform active:scale-90 cursor-pointer shadow-xs ${
-            isPlaying ? 'bg-torii text-white animate-spin' : 'bg-stone-300 dark:bg-stone-700 text-stone-700 dark:text-stone-200'
-          }`}
-          title={isPlaying ? 'Tạm dừng nhạc Night Dancer' : 'Tiếp tục phát'}
-        >
-          {isPlaying ? '💿' : '▶'}
-        </button>
-
-        {/* Tên bài hát & nút xem MV */}
+      {!isPillDismissed && (
         <div
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center gap-1.5 cursor-pointer hover:opacity-85 transition-opacity"
-          title="Bấm để xem video MV hoặc thu nhỏ"
+          className={`flex items-center gap-2 p-1.5 pr-2.5 rounded-full border shadow-xl backdrop-blur-md transition-all ${
+            isPlaying
+              ? 'bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 border-torii text-stone-900 dark:text-stone-100 shadow-torii/15'
+              : 'bg-stone-100/90 dark:bg-stone-800/90 border-stone-300 dark:border-stone-700 text-stone-600 dark:text-stone-400'
+          }`}
         >
-          <div className="flex flex-col">
-            <span className="text-[11px] font-bold leading-tight flex items-center gap-1">
-              <span>imase - NIGHT DANCER</span>
-              <span className="text-[9px] px-1 py-0.2 rounded bg-torii/15 text-torii font-mono">
-                YouTube MV
+          {/* Nút Play / Pause */}
+          <button
+            onClick={onTogglePlay}
+            className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-transform active:scale-90 cursor-pointer shadow-xs ${
+              isPlaying ? 'bg-torii text-white animate-spin' : 'bg-stone-300 dark:bg-stone-700 text-stone-700 dark:text-stone-200'
+            }`}
+            title={isPlaying ? 'Tạm dừng nhạc Night Dancer' : 'Tiếp tục phát'}
+          >
+            {isPlaying ? '💿' : '▶'}
+          </button>
+
+          {/* Tên bài hát & nút xem MV */}
+          <div
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="flex items-center gap-1.5 cursor-pointer hover:opacity-85 transition-opacity"
+            title="Bấm để xem video MV hoặc thu nhỏ"
+          >
+            <div className="flex flex-col">
+              <span className="text-[11px] font-bold leading-tight flex items-center gap-1">
+                <span>imase - NIGHT DANCER</span>
+                <span className="text-[9px] px-1 py-0.2 rounded bg-torii/15 text-torii font-mono">
+                  YouTube MV
+                </span>
               </span>
-            </span>
-            <span className="text-[9px] text-stone-500 dark:text-stone-400 font-medium">
-              {isPlaying ? 'Đang phát bản gốc MV • Nhấp để xem' : 'Đã tạm dừng'}
-            </span>
+              <span className="text-[9px] text-stone-500 dark:text-stone-400 font-medium">
+                {isPlaying ? 'Đang phát bản gốc MV • Nhấp để xem' : 'Đã tạm dừng'}
+              </span>
+            </div>
+
+            {isPlaying && (
+              <span className="flex items-center gap-0.5 ml-1">
+                <span className="w-0.5 h-2.5 bg-torii rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="w-0.5 h-3.5 bg-torii rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="w-0.5 h-2 bg-torii rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              </span>
+            )}
           </div>
 
-          {isPlaying && (
-            <span className="flex items-center gap-0.5 ml-1">
-              <span className="w-0.5 h-2.5 bg-torii rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-              <span className="w-0.5 h-3.5 bg-torii rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-              <span className="w-0.5 h-2 bg-torii rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-            </span>
-          )}
-        </div>
+          {/* Nút Phóng to / Thu nhỏ MV */}
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="text-xs opacity-60 hover:opacity-100 p-1 rounded-md hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors cursor-pointer"
+            title={isExpanded ? 'Ẩn màn hình video' : 'Mở rộng xem MV'}
+          >
+            {isExpanded ? '▼' : '▲'}
+          </button>
 
-        {/* Nút Phóng to / Thu nhỏ MV */}
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="text-xs opacity-60 hover:opacity-100 p-1 rounded-md hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors cursor-pointer"
-          title={isExpanded ? 'Ẩn màn hình video' : 'Mở rộng xem MV'}
-        >
-          {isExpanded ? '▼' : '▲'}
-        </button>
-      </div>
+          {/* Nút Ẩn thanh nổi này */}
+          <button
+            onClick={() => setIsPillDismissed(true)}
+            className="text-xs opacity-40 hover:opacity-100 p-1 hover:text-red-500 rounded-md transition-colors cursor-pointer"
+            title="Ẩn thanh này (nhạc vẫn tiếp tục phát trong nền)"
+          >
+            ✕
+          </button>
+        </div>
+      )}
     </div>
   );
 }

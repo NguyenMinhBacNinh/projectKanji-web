@@ -45,6 +45,8 @@ export default function Header({
   onOpenSpotlight,
   isZenMusicPlaying,
   onToggleZenMusic,
+  selectedMusicTrack,
+  onSelectMusicTrack,
   petalsEnabled = true,
   onTogglePetals,
   autoSpeechEnabled = false,
@@ -53,7 +55,7 @@ export default function Header({
 }) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const settingsRef = useRef(null);
-  const [selectedBgmTrack, setSelectedBgmTrack] = useState('night_dancer_lofi');
+  const [selectedBgmTrack, setSelectedBgmTrack] = useState(() => getSelectedMusicTrack());
   const [bgmVol, setBgmVol] = useState(0.5);
 
   useEffect(() => {
@@ -397,6 +399,9 @@ export default function Header({
                                   playWoodClapper();
                                   setSelectedBgmTrack(track.id);
                                   setSelectedMusicTrack(track.id);
+                                  if (onSelectMusicTrack) {
+                                    onSelectMusicTrack(track.id);
+                                  }
                                   if (!isZenMusicPlaying && onToggleZenMusic) {
                                     onToggleZenMusic();
                                   }

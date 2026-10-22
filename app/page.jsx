@@ -27,6 +27,7 @@ import StatsModal from '../components/StatsModal';
 import SpotlightSearchModal from '../components/SpotlightSearchModal';
 import Toast from '../components/Toast';
 import ZenSplashIntro from '../components/ZenSplashIntro';
+import YouTubeNightDancerPlayer from '../components/YouTubeNightDancerPlayer';
 import { KANJI_DATA } from '../lib/kanjiData';
 
 import {
@@ -45,6 +46,7 @@ import {
   getZenMusicPlaying,
   BGM_TRACKS,
   getSelectedMusicTrack,
+  setSelectedMusicTrack,
 } from '../lib/traditionalAudio';
 import {
   getDueKanjiList,
@@ -81,6 +83,7 @@ export default function Home() {
   // SRS and Ambient Zen Music state
   const [dueKanjiList, setDueKanjiList] = useState([]);
   const [isZenPlaying, setIsZenPlaying] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState(() => getSelectedMusicTrack());
 
   const [toast, setToast] = useState({ visible: false, message: '', icon: '' });
 
@@ -161,14 +164,20 @@ export default function Home() {
     }, 2400);
   }, []);
 
-  // BGM toggle (Nhạc nền Nhật Bản bản quyền sạch)
+  const handleSelectMusicTrack = (trackId) => {
+    setSelectedTrack(trackId);
+    setSelectedMusicTrack(trackId);
+  };
+
+  // BGM toggle (Nhạc nền Nhật Bản)
   const handleToggleZenMusic = () => {
     const next = toggleZenMusic();
     setIsZenPlaying(next);
+    const trackId = getSelectedMusicTrack();
+    setSelectedTrack(trackId);
     if (next) {
-      const trackId = getSelectedMusicTrack();
       const trackInfo = BGM_TRACKS.find((t) => t.id === trackId) || BGM_TRACKS[0];
-      showToast(`Đang phát nhạc nền: ${trackInfo.title}`, trackInfo.icon || '🎵');
+      showToast(`Đang phát: ${trackInfo.title}`, trackInfo.icon || '🎵');
     } else {
       showToast('Đã dừng phát nhạc nền', '🔇');
     }
@@ -471,6 +480,8 @@ export default function Home() {
           onOpenSpotlight={() => setIsSpotlightOpen(true)}
           isZenMusicPlaying={isZenPlaying}
           onToggleZenMusic={handleToggleZenMusic}
+          selectedMusicTrack={selectedTrack}
+          onSelectMusicTrack={handleSelectMusicTrack}
           petalsEnabled={petalsEnabled}
           onTogglePetals={() => setPetalsEnabled((prev) => !prev)}
           autoSpeechEnabled={autoSpeechEnabled}
@@ -710,6 +721,13 @@ export default function Home() {
         />
       )}
 
+      {/* Trình phát nhạc YouTube Chính thức cho bài NIGHT DANCER (Điều khiển qua Menu Cài đặt) */}
+      <YouTubeNightDancerPlayer
+        isPlaying={isZenPlaying}
+        onTogglePlay={handleToggleZenMusic}
+        activeTrackId={selectedTrack}
+        theme={theme}
+      />
 
       {/* Toast Notification */}
       <Toast toast={toast} />
