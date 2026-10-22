@@ -128,6 +128,9 @@ export default function Header({
               <img
                 src={theme === 'yozakura' ? '/images/logo_emblem_dark.png' : '/images/logo_emblem.png'}
                 alt="Logo 漢字学習帳"
+                width={36}
+                height={36}
+                style={{ width: 36, height: 36, objectFit: 'contain' }}
                 className="w-full h-full object-contain filter drop-shadow-2xs"
               />
             </div>

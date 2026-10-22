@@ -28,7 +28,17 @@ export default function JapaneseAtmosphericBackground({ theme = 'washi' }) {
 
       {/* 2. Lớp vân hạt mờ siêu mịn Film Grain Washi (0.02 - 0.03 opacity) tạo cảm giác giấy dó thủ công */}
       <svg
-        className="absolute inset-0 w-full h-full opacity-[0.028] dark:opacity-[0.038] mix-blend-multiply dark:mix-blend-screen pointer-events-none"
+        className="fixed inset-0 w-full h-full pointer-events-none"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          opacity: isDark ? 0.035 : 0.025,
+          mixBlendMode: isDark ? 'screen' : 'multiply',
+          pointerEvents: 'none',
+        }}
         xmlns="http://www.w3.org/2000/svg"
       >
         <filter id="zenGrainFilter">
