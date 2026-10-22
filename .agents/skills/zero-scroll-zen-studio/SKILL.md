@@ -14,7 +14,7 @@ Kỹ năng này định nghĩa nguyên tắc thiết kế phòng học tiếng N
 - Thanh cuộn cửa sổ chính (`window.scrollY`) luôn bằng **0**.
 - Người học quan sát được **toàn bộ hệ sinh thái của 1 chữ Hán tự** cùng lúc:
   1. Mặt chữ thư pháp & âm Hán-Việt.
-  2. Cách đọc On/Kun & Cao độ Pitch Accent Tokyo.
+  2. Cách đọc On/Kun & Âm thanh phát âm tự nhiên.
   3. Cụm từ vựng ghép tiêu biểu JLPT.
   4. Chiết tự bộ thủ cấu thành.
   5. Mẹo ghi nhớ tượng hình & tranh mộc bản Ukiyo-e.
@@ -38,8 +38,8 @@ Trên màn hình Desktop / Laptop (`lg:` trở lên):
 |  |                                     |  |  +-----------------------------+  |
 |  |       一 (ひと)                     |  |  | LƯỚI TỪ VỰNG GHÉP JLPT      |  |
 |  |      NHẤT                           |  |  | Đồng bộ chiều cao tuyệt đối |  |
-|  |  Một, số một, đứng đầu              |  |  | Đầy đủ Pitch Accent & Audio |  |
-|  |  [Âm On]        [Âm Kun + Pitch]    |  |  +-----------------------------+  |
+|  |  Một, số một, đứng đầu              |  |  | Phát âm chuẩn & Nghĩa tiếng Việt|  |
+|  |  [Âm On]        [Âm Kun]            |  |  +-----------------------------+  |
 |  +-------------------------------------+  |                                   |
 |                                           |  +-----------------------------+  |
 |  [ 1: Chưa nhớ (Sổ tay) ] [ 2: Đã thuộc ]  |  | CHIẾT TỰ & BỘ THỦ CẤU THÀNH |  |
@@ -55,7 +55,7 @@ Trên màn hình Desktop / Laptop (`lg:` trở lên):
 - Các thẻ từ vựng trong lưới phải có kích thước bằng nhau 100% (`h-[132px]` hoặc `h-[120px]`).
 - Khóa cứng chiều cao cho từng tầng nội dung:
   - Tầng Kanji + Furigana: `h-10`
-  - Tầng Pitch Accent: `h-[22px]`
+  - Tầng Cách đọc & Phát âm: `h-[22px]`
   - Tầng Dịch nghĩa: `h-8` (`line-clamp-2`)
 - Không để sự chênh lệch độ dài văn bản làm xô lệch giao diện.
 

@@ -1,6 +1,6 @@
 ---
 name: japanese-web-craft
-description: Tiêu chuẩn thiết kế giao diện và sư phạm số chuyên sâu cho ứng dụng học tiếng Nhật (Furigana Ruby, Bảng màu Dentōshoku, Âm học Zen, Pitch Accent & Keyboard-First UX).
+description: Tiêu chuẩn thiết kế giao diện và sư phạm số chuyên sâu cho ứng dụng học tiếng Nhật (Furigana Ruby, Bảng màu Dentōshoku, Âm học Zen & Keyboard-First UX).
 ---
 
 # Japanese Web Craft: Bộ 4 Kỹ Năng Thiết Kế & Sư Phạm Tiếng Nhật
@@ -42,14 +42,8 @@ Trải nghiệm học không chỉ bằng mắt mà còn kích hoạt xúc giác
 
 ---
 
-## Kỹ năng 4: Sư phạm Kỹ thuật số (Tokyo Pitch Accent & Keyboard-First UX)
-- **Cao độ phát âm (Pitch Accent - アクセント):**
-  - Tiếng Nhật là ngôn ngữ cao độ (Pitch), không phải trọng âm độ mạnh (Stress).
-  - Tích hợp bộ trực quan hóa cao độ chuẩn Tokyo NHK:
-    - 平板 (Heiban [0]): Bằng phẳng
-    - 頭高 (Atamadaka [1]): Cao ở âm tiết đầu
-    - 中高 (Nakadaka [2-3]): Cao ở giữa từ
-    - 尾高 (Odaka): Cao ở cuối từ
+## Kỹ năng 4: Sư phạm Tốc độ cao (Keyboard-First Mastery & Audio)
+- **Tập trung vào phát âm tự nhiên:** Nghe audio trực tiếp, không làm rối mắt người học bằng các biểu đồ cao độ phức tạp.
 - **Điều khiển phím tắt tốc độ cao (Keyboard-First Mastery):**
   - `Space`: Lật mặt thẻ Flashcard
   - `←` / `→`: Chuyển từ vựng / Hán tự trước - sau

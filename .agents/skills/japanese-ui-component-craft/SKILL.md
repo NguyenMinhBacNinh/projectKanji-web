@@ -1,6 +1,6 @@
 ---
 name: japanese-ui-component-craft
-description: Hệ thống tiêu chuẩn component UI văn hóa Nhật Bản (Karuta Glassmorphism, Hanko Seals, Pitch Accent Graph, Kifuda Woodblock Tabs, Nihon Dentōshoku Palette và Chế độ tối Yozakura).
+description: Hệ thống tiêu chuẩn component UI văn hóa Nhật Bản (Karuta Glassmorphism, Hanko Seals, Kifuda Woodblock Tabs, Nihon Dentōshoku Palette và Chế độ tối Yozakura).
 ---
 
 # Japanese UI Component Craft: Hệ Thống Component Nhật Bản Cao Cấp
@@ -37,13 +37,10 @@ Kỹ năng này quy định chi tiết cách xây dựng và hoàn thiện từn
 
 ---
 
-## 4. Biểu đồ cao độ phát âm (Tokyo Pitch Accent Component)
-- Hiển thị nhãn trực quan theo chuẩn NHK Tokyo:
-  - **Bình bản (Heiban [0]):** Xanh ngọc lục bảo (Emerald)
-  - **Đầu cao (Atamadaka [1]):** Đỏ hoa trà (Rose)
-  - **Trung cao (Nakadaka [2-3]):** Vàng hoa sơn xuy (Amber)
-  - **Vĩ cao (Odaka):** Xanh chàm (Blue)
-- Đảm bảo độ tương phản cao WCAG AAA ở cả chế độ Sáng và Tối (Dark Mode).
+## 4. Tương tác phát âm Audio tự nhiên (Zen Audio Component)
+- Nút loa tròn tối giản, thanh lịch với phản hồi haptic và âm thanh giọt nước Suikinkutsu tinh tế.
+- Tích hợp giọng phát âm chuẩn Nhật Bản (Web Speech API / Cloud TTS) không gây rối mắt bởi các đồ thị cao độ thừa.
+- Trạng thái hover/active chuyển màu đỏ Torii hoặc xanh tre dịu mắt.
 
 ---
 

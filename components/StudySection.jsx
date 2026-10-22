@@ -10,7 +10,6 @@ import {
 } from '../lib/traditionalAudio';
 import RadicalBreakdownCard from './RadicalBreakdownCard';
 import KanjiIllustrationBox from './KanjiIllustrationBox';
-import PitchAccentVisual from './PitchAccentVisual';
 import FloatingIslandDock from './FloatingIslandDock';
 import {
   VolumeIcon,
@@ -659,7 +658,7 @@ export default function StudySection({
               {/* ========================================================================= */}
               {studioTab === 'bento' && (
                 <div className="w-full flex-1 flex flex-col gap-2 animate-in fade-in duration-200">
-                  {/* BENTO TILE 1 (HERO): TỪ GHÉP QUAN TRỌNG NHẤT VỚI BIỂU ĐỒ CAO ĐỘ PITCH ACCENT */}
+                  {/* BENTO TILE 1 (HERO): TỪ GHÉP TIÊU BIỂU JLPT & PHÁT ÂM AUDIO */}
                   {heroVocab ? (
                     <div
                       onClick={() => {
@@ -698,25 +697,19 @@ export default function StudySection({
                           </p>
                         </div>
 
-                        {/* Right: Tokyo Pitch Accent Contour Graph & Audio Button */}
-                        <div className="flex flex-col items-end gap-2 shrink-0">
+                        {/* Right: Audio Button */}
+                        <div className="flex items-center gap-1.5 shrink-0 self-center">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               playWaterDrop();
                               playJapaneseSpeech(heroVocab.word || heroVocab.reading);
                             }}
-                            className="w-8 h-8 rounded-full bg-stone-100 dark:bg-stone-800 hover:bg-[#BC002D] hover:text-white text-stone-600 dark:text-stone-300 border border-stone-200/80 dark:border-stone-700/80 flex items-center justify-center transition-all cursor-pointer shadow-2xs group-hover:scale-105"
+                            className="w-10 h-10 rounded-full bg-stone-100 dark:bg-stone-800 hover:bg-[#BC002D] hover:text-white text-stone-600 dark:text-stone-300 border border-stone-200/80 dark:border-stone-700/80 flex items-center justify-center transition-all cursor-pointer shadow-2xs group-hover:scale-105"
                             title="Nghe phát âm từ ghép"
                           >
                             <VolumeIcon className="w-4 h-4" />
                           </button>
-
-                          {/* NHK Pitch Accent Visual Curve */}
-                          <PitchAccentVisual
-                            word={heroVocab.word}
-                            reading={heroVocab.reading}
-                          />
                         </div>
                       </div>
                     </div>
@@ -745,21 +738,24 @@ export default function StudySection({
                                 playWaterDrop();
                                 playJapaneseSpeech(v.word || v.reading);
                               }}
-                              className="px-2 py-1 rounded-xl bg-stone-50/80 dark:bg-stone-800/60 hover:bg-stone-100 dark:hover:bg-stone-800 border border-stone-200/60 dark:border-stone-750/60 flex items-center justify-between gap-1.5 transition-colors cursor-pointer group/sec"
+                              className="px-2.5 py-1.5 rounded-xl bg-stone-50/80 dark:bg-stone-800/60 hover:bg-stone-100 dark:hover:bg-stone-800 border border-stone-200/60 dark:border-stone-750/60 flex items-center justify-between gap-2 transition-colors cursor-pointer group/sec"
                             >
                               <div className="flex-1 truncate">
                                 <span className="font-kanji font-bold text-xs text-stone-900 dark:text-stone-100 group-hover/sec:text-[#BC002D]">
                                   {v.word}
                                 </span>
+                                {v.reading && (
+                                  <span className="text-[10px] text-[#BC002D] dark:text-rose-400 font-kanji ml-1">
+                                    ({v.reading})
+                                  </span>
+                                )}
                                 <span className="text-[10px] text-stone-500 dark:text-stone-400 ml-1.5 truncate">
                                   {v.meaning_vi || v.vn}
                                 </span>
                               </div>
-                              <PitchAccentVisual
-                                word={v.word}
-                                reading={v.reading}
-                                compact={true}
-                              />
+                              <div className="w-5 h-5 rounded-md border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-500 flex items-center justify-center shrink-0 group-hover/sec:bg-[#BC002D] group-hover/sec:text-white transition-colors">
+                                <VolumeIcon className="w-2.5 h-2.5" />
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -891,15 +887,8 @@ export default function StudySection({
                                   v.word
                                 )}
                               </div>
-                              <div className="flex items-center gap-1 shrink-0">
-                                <PitchAccentVisual
-                                  word={v.word}
-                                  reading={v.reading}
-                                  compact={true}
-                                />
-                                <div className="w-5 h-5 rounded-md border border-stone-200 dark:border-stone-700 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center justify-center group-hover:bg-[#BC002D] group-hover:text-white transition-colors">
-                                  <VolumeIcon className="w-3 h-3" />
-                                </div>
+                              <div className="w-6 h-6 rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center justify-center shrink-0 group-hover:bg-[#BC002D] group-hover:text-white transition-colors" title="Phát âm">
+                                <VolumeIcon className="w-3.5 h-3.5" />
                               </div>
                             </div>
                             <span className="text-[11px] font-medium text-stone-600 dark:text-stone-300 leading-snug mt-1 line-clamp-1">
