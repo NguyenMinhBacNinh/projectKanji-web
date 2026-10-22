@@ -10,6 +10,7 @@ export default function KanjiGridModal({
   currentLevel,
   currentIndex,
   onSelectKanji,
+  fullDb = null,
 }) {
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -17,10 +18,12 @@ export default function KanjiGridModal({
     if (!searchTerm.trim()) return kanjiList;
     const term = searchTerm.trim().toUpperCase();
     return kanjiList.filter((char) => {
-      const hv = (HAN_VIET_FALLBACK_MAP[char] || '').toUpperCase();
-      return char.includes(term) || hv.includes(term);
+      const dbItem = fullDb && fullDb[char] ? fullDb[char] : null;
+      const hv = (dbItem?.hanViet || HAN_VIET_FALLBACK_MAP[char] || '').toUpperCase();
+      const mean = (dbItem?.meaning || '').toUpperCase();
+      return char.includes(term) || hv.includes(term) || mean.includes(term);
     });
-  }, [kanjiList, searchTerm]);
+  }, [kanjiList, searchTerm, fullDb]);
 
   if (!isOpen) return null;
 
@@ -30,17 +33,17 @@ export default function KanjiGridModal({
       onClick={onClose}
     >
       <div
-        className="karuta-card w-full max-w-xl max-h-[85vh] rounded-3xl border-2 border-washi-border shadow-2xl flex flex-col overflow-hidden relative"
+        className="karuta-card w-full max-w-xl max-h-[85vh] rounded-3xl border-[2.5px] border-stone-900 dark:border-white shadow-manga-lg flex flex-col overflow-hidden relative bg-white dark:bg-stone-900"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="karuta-inner-border pointer-events-none" />
 
-        <div className="p-4 border-b border-washi-border/70 flex items-center justify-between relative z-10 bg-black/5 dark:bg-white/5">
+        <div className="p-4 border-b-2 border-stone-900 dark:border-white flex items-center justify-between relative z-10 bg-yellow-100 dark:bg-stone-850">
           <div>
-            <h3 className="font-bold text-base font-kanji">
+            <h3 className="font-black text-base sm:text-lg font-kanji text-stone-950 dark:text-white">
               Mục lục Kanji {currentLevel} ({kanjiList.length} chữ)
             </h3>
-            <p className="text-[11px] opacity-70">
+            <p className="text-xs font-bold text-stone-700 dark:text-stone-300">
               Nhấp vào một chữ để chuyển đến thẻ học tương ứng
             </p>
           </div>
@@ -49,19 +52,19 @@ export default function KanjiGridModal({
               playWaterDrop();
               onClose();
             }}
-            className="w-8 h-8 rounded-xl opacity-70 hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 text-xl font-bold flex items-center justify-center transition-all cursor-pointer"
+            className="w-8 h-8 rounded-xl border-2 border-stone-900 dark:border-white bg-white dark:bg-stone-800 hover:bg-akira hover:text-white text-stone-900 dark:text-stone-100 text-lg font-black flex items-center justify-center transition-all cursor-pointer shadow-2xs active:translate-x-0.5 active:translate-y-0.5"
           >
             &times;
           </button>
         </div>
 
-        <div className="p-3 border-b border-washi-border/70 relative z-10">
+        <div className="p-3 border-b-2 border-stone-900 dark:border-white relative z-10 bg-stone-50 dark:bg-stone-800">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Tìm theo chữ Kanji hoặc âm Hán Việt (vd: NHẤT, 一)..."
-            className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-washi-border text-xs md:text-sm outline-none focus:border-torii transition-colors"
+            className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-stone-900 border-2 border-stone-900 dark:border-white text-xs md:text-sm font-bold text-stone-950 dark:text-white outline-none focus:bg-yellow-50 dark:focus:bg-stone-800 shadow-2xs transition-colors"
             autoFocus
           />
         </div>
@@ -70,7 +73,7 @@ export default function KanjiGridModal({
           {filteredList.map((char) => {
             const originalIndex = kanjiList.indexOf(char);
             const isCurrent = originalIndex === currentIndex;
-            const hv = HAN_VIET_FALLBACK_MAP[char] || '';
+            const hv = fullDb?.[char]?.hanViet || HAN_VIET_FALLBACK_MAP[char] || '';
 
             return (
               <button
@@ -80,14 +83,14 @@ export default function KanjiGridModal({
                   onSelectKanji(originalIndex);
                   onClose();
                 }}
-                className={`p-2 rounded-xl border flex flex-col items-center justify-center transition-all cursor-pointer ${
+                className={`p-2 rounded-xl border-2 border-stone-900 dark:border-white flex flex-col items-center justify-center transition-colors cursor-pointer ${
                   isCurrent
-                    ? 'bg-torii text-white border-torii shadow-md scale-105 font-bold'
-                    : 'bg-black/5 dark:bg-white/5 border-washi-border hover:border-torii/60 hover:scale-102'
+                    ? 'bg-akira text-white shadow-manga-sm font-black'
+                    : 'bg-white dark:bg-stone-800 text-stone-950 dark:text-white hover:bg-manga-yellow hover:text-stone-950 shadow-2xs active:translate-x-0.5 active:translate-y-0.5'
                 }`}
               >
-                <span className="text-xl font-kanji font-bold">{char}</span>
-                <span className={`text-[10px] mt-0.5 font-medium truncate max-w-full ${isCurrent ? 'text-white/90' : 'opacity-70'}`}>
+                <span className="text-xl font-kanji font-black">{char}</span>
+                <span className={`text-[10px] mt-0.5 font-bold truncate max-w-full ${isCurrent ? 'text-white' : 'text-stone-600 dark:text-stone-300'}`}>
                   {hv || '—'}
                 </span>
               </button>

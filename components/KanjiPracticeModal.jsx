@@ -260,67 +260,115 @@ export default function KanjiPracticeModal({
     setAnimKey((k) => k + 1);
   };
 
-  // Canvas Drawing Logic (Tab 2)
+  // Canvas Drawing Logic (Tab 2) - Hỗ trợ hiển thị sắc nét Retina High-DPI (2x, 3x) trên mọi OS/thiết bị
   const redrawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    const dpr = typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
     const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
 
-    ctx.clearRect(0, 0, width, height);
+    // Đảm bảo kích thước buffer của canvas khớp chuẩn tỉ lệ pixel phần cứng của màn hình
+    const logicalSize = 320;
+    if (canvas.width !== Math.round(logicalSize * dpr)) {
+      canvas.width = Math.round(logicalSize * dpr);
+      canvas.height = Math.round(logicalSize * dpr);
+      canvas.style.width = `${logicalSize}px`;
+      canvas.style.height = `${logicalSize}px`;
+    }
 
-    // Vẽ lưới ô mễ truyền thống (米字格 - Mi Zi Ge)
     ctx.save();
-    ctx.strokeStyle = '#e2d7c5';
-    ctx.lineWidth = 1.2;
-    ctx.strokeRect(1, 1, width - 2, height - 2);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // Đường gióng trục ngang & dọc đứt nét
-    ctx.setLineDash([4, 4]);
-    ctx.strokeStyle = '#c8baa2';
+    const width = logicalSize;
+    const height = logicalSize;
+
+    // 1. Phủ màu nền giấy Washi truyền thống (không để trong suốt)
+    const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+    ctx.fillStyle = isDark ? '#161e2e' : '#fcfbf7';
+    ctx.fillRect(0, 0, width, height);
+
+    // 2. Viền ngoài trang giấy thư pháp sắc nét rõ ràng
+    ctx.save();
+    ctx.strokeStyle = isDark ? 'rgba(245, 158, 11, 0.75)' : '#B8A082';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(3, 3, width - 6, height - 6);
+
+    // Viền trong đôi mỏng phong cách Nhật Bản
+    ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.22)' : 'rgba(180, 83, 9, 0.25)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(7, 7, width - 14, height - 14);
+
+    // 3. Vẽ lưới ô mễ truyền thống (米字格 - Mi Zi Ge) sắc nét
+    ctx.setLineDash([5, 5]);
+    ctx.strokeStyle = isDark ? 'rgba(245, 158, 11, 0.65)' : '#A89274';
+    ctx.lineWidth = 1;
+
+    // Trục chữ thập chính (Cross)
     ctx.beginPath();
-    ctx.moveTo(0, height / 2);
-    ctx.lineTo(width, height / 2);
-    ctx.moveTo(width / 2, 0);
-    ctx.lineTo(width / 2, height);
-    ctx.moveTo(0, 0);
-    ctx.lineTo(width, height);
-    ctx.moveTo(width, 0);
-    ctx.lineTo(0, height);
+    ctx.moveTo(8, height / 2);
+    ctx.lineTo(width - 8, height / 2);
+    ctx.moveTo(width / 2, 8);
+    ctx.lineTo(width / 2, height - 8);
+    ctx.stroke();
+
+    // Hai đường chéo phụ (Diagonal)
+    ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(168, 146, 116, 0.45)';
+    ctx.setLineDash([3, 5]);
+    ctx.beginPath();
+    ctx.moveTo(12, 12);
+    ctx.lineTo(width - 12, height - 12);
+    ctx.moveTo(width - 12, 12);
+    ctx.lineTo(12, height - 12);
     ctx.stroke();
     ctx.restore();
 
-    // Vẽ chữ mẫu mờ (Ghost Kanji) nếu bật
+    // Con dấu chữ nhỏ góc trên: 和紙 • 練習帳 (Sổ luyện viết giấy Washi)
+    ctx.save();
+    ctx.font = '700 10px serif';
+    ctx.fillStyle = isDark ? 'rgba(245, 158, 11, 0.5)' : 'rgba(185, 28, 28, 0.45)';
+    ctx.textAlign = 'right';
+    ctx.fillText('和紙 • 練習帳', width - 12, 20);
+    ctx.restore();
+
+    // 4. Vẽ chữ mẫu mờ (Ghost Kanji) nếu bật
     if (showGhost && currentChar) {
       ctx.save();
       ctx.font = `900 ${Math.round(width * 0.72)}px "Shippori Mincho", "Noto Serif JP", serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = `rgba(185, 28, 28, ${ghostOpacity})`;
+      ctx.fillStyle = isDark
+        ? `rgba(239, 68, 68, ${Math.max(ghostOpacity, 0.28)})`
+        : `rgba(185, 28, 28, ${Math.max(ghostOpacity, 0.25)})`;
       ctx.fillText(currentChar, width / 2, height / 2 + 8);
       ctx.restore();
     }
 
-    // Vẽ lại lịch sử các nét đã vẽ
+    // 5. Vẽ lại toàn bộ lịch sử các nét đã lưu (bảo tồn nguyên vẹn trên giấy)
     strokeHistory.forEach((stroke) => {
-      if (stroke.points.length < 2) return;
+      if (!stroke.points || stroke.points.length === 0) return;
       ctx.save();
       ctx.strokeStyle = stroke.color;
       ctx.lineWidth = stroke.width;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      ctx.beginPath();
-      ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
 
-      for (let i = 1; i < stroke.points.length; i++) {
-        const xc = (stroke.points[i - 1].x + stroke.points[i].x) / 2;
-        const yc = (stroke.points[i - 1].y + stroke.points[i].y) / 2;
-        ctx.quadraticCurveTo(stroke.points[i - 1].x, stroke.points[i - 1].y, xc, yc);
+      if (stroke.points.length === 1) {
+        ctx.fillStyle = stroke.color;
+        ctx.beginPath();
+        ctx.arc(stroke.points[0].x, stroke.points[0].y, stroke.width / 2, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
+        for (let i = 1; i < stroke.points.length; i++) {
+          ctx.lineTo(stroke.points[i].x, stroke.points[i].y);
+        }
+        ctx.stroke();
       }
-      ctx.stroke();
       ctx.restore();
     });
+
+    ctx.restore();
   }, [showGhost, currentChar, ghostOpacity, strokeHistory]);
 
   useEffect(() => {
@@ -329,25 +377,46 @@ export default function KanjiPracticeModal({
     }
   }, [redrawCanvas, activeTab]);
 
+  // Reset nét vẽ khi đổi sang Hán tự khác
+  useEffect(() => {
+    setStrokeHistory([]);
+    setScoreResult(null);
+  }, [currentChar]);
+
   const getCanvasCoords = (e) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
     const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY,
+      x: Math.max(0, Math.min(320, ((clientX - rect.left) / rect.width) * 320)),
+      y: Math.max(0, Math.min(320, ((clientY - rect.top) / rect.height) * 320)),
     };
   };
 
   const handlePointerDown = (e) => {
     e.preventDefault();
+    try {
+      e.target.setPointerCapture(e.pointerId);
+    } catch (_) {}
     setIsDrawing(true);
     const pos = getCanvasCoords(e);
     currentPathRef.current = [pos];
+
+    // Vẽ ngay điểm chấm ban đầu trên canvas
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const dpr = typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
+      const ctx = canvas.getContext('2d');
+      ctx.save();
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = brushColor;
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, brushWidth / 2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
   };
 
   const handlePointerMove = (e) => {
@@ -358,10 +427,12 @@ export default function KanjiPracticeModal({
 
     const canvas = canvasRef.current;
     if (!canvas) return;
+    const dpr = typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
     const ctx = canvas.getContext('2d');
     const points = currentPathRef.current;
     if (points.length >= 2) {
       ctx.save();
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.strokeStyle = brushColor;
       ctx.lineWidth = brushWidth;
       ctx.lineCap = 'round';
@@ -376,19 +447,34 @@ export default function KanjiPracticeModal({
     }
   };
 
-  const handlePointerUp = () => {
+  const handlePointerUp = (e) => {
     if (!isDrawing) return;
+    try {
+      if (e?.pointerId && e?.target?.hasPointerCapture?.(e.pointerId)) {
+        e.target.releasePointerCapture(e.pointerId);
+      }
+    } catch (_) {}
     setIsDrawing(false);
-    if (currentPathRef.current.length > 0) {
+
+    // BẢO VỆ DỮ LIỆU: Tạo bản sao mảng điểm trước khi dọn ref
+    const pointsToSave = [...currentPathRef.current];
+    currentPathRef.current = [];
+
+    if (pointsToSave.length > 0) {
       setStrokeHistory((prev) => [
         ...prev,
         {
-          points: currentPathRef.current,
+          points: pointsToSave,
           color: brushColor,
           width: brushWidth,
         },
       ]);
-      currentPathRef.current = [];
+    }
+  };
+
+  const handlePointerLeave = (e) => {
+    if (isDrawing && (!e?.target?.hasPointerCapture || !e.target.hasPointerCapture(e.pointerId))) {
+      handlePointerUp(e);
     }
   };
 
@@ -403,33 +489,181 @@ export default function KanjiPracticeModal({
     setScoreResult(null);
   };
 
-  const handleEvaluateHandwriting = () => {
-    if (strokeHistory.length === 0) return;
+  // Thuật toán chấm điểm chuẩn hóa 100% toán học (Deterministic - Tuyệt đối không random)
+  const handleEvaluateHandwriting = useCallback(() => {
+    if (!strokeHistory || strokeHistory.length === 0) return;
     playWoodClapper();
 
-    const standardStrokes = strokes.length || 1;
-    const userStrokes = strokeHistory.length;
-    const diff = Math.abs(userStrokes - standardStrokes);
+    const W = 80;
+    const H = 80;
 
-    let base = 96 - diff * 5;
-    if (diff === 0) base += 3;
-    const finalScore = Math.max(68, Math.min(99, Math.round(base + (Math.random() * 4 - 2))));
+    // 1. Offscreen Canvas A: Chữ mẫu chuẩn (Template)
+    const c1 = document.createElement('canvas');
+    c1.width = W;
+    c1.height = H;
+    const ctx1 = c1.getContext('2d', { willReadFrequently: true });
 
-    let label = 'Nét chữ khá tốt! Hãy chú ý hơn thứ tự từng nét nhé.';
-    let hanko = '合格';
-    if (finalScore >= 92) {
-      label = 'Xuất sắc! Nét bút rất chuẩn xác và cân đối!';
-      hanko = '大変よくできました';
-    } else if (finalScore >= 82) {
-      label = 'Rất tốt! Dáng chữ đẹp và rõ ràng.';
-      hanko = '秀';
+    let renderedTemplate = false;
+    // Vẽ từ vector KanjiVG SVG paths nếu có
+    if (strokes && strokes.length > 0 && typeof Path2D !== 'undefined') {
+      try {
+        ctx1.save();
+        ctx1.scale(W / 109, H / 109);
+        ctx1.strokeStyle = '#000000';
+        ctx1.lineWidth = 9;
+        ctx1.lineCap = 'round';
+        ctx1.lineJoin = 'round';
+        strokes.forEach((s) => {
+          if (s.d) {
+            ctx1.stroke(new Path2D(s.d));
+          }
+        });
+        ctx1.restore();
+        renderedTemplate = true;
+      } catch (e) {
+        renderedTemplate = false;
+      }
     }
 
-    setScoreResult({ score: finalScore, label, hanko });
+    // Nếu không có strokes SVG hoặc lỗi Path2D, vẽ fallback bằng font chữ Nhật
+    if (!renderedTemplate && currentChar) {
+      ctx1.save();
+      ctx1.fillStyle = '#000000';
+      ctx1.font = `900 ${Math.round(W * 0.72)}px "Shippori Mincho", "Noto Serif JP", serif`;
+      ctx1.textAlign = 'center';
+      ctx1.textBaseline = 'middle';
+      ctx1.fillText(currentChar, W / 2, H / 2 + 4);
+      ctx1.restore();
+    }
+
+    // 2. Offscreen Canvas B: Nét vẽ của người dùng (User Strokes)
+    const c2 = document.createElement('canvas');
+    c2.width = W;
+    c2.height = H;
+    const ctx2 = c2.getContext('2d', { willReadFrequently: true });
+
+    ctx2.save();
+    ctx2.scale(W / 320, H / 320); // Canvas chính là 320x320
+    ctx2.lineCap = 'round';
+    ctx2.lineJoin = 'round';
+
+    let totalPoints = 0;
+    let sumX = 0;
+    let sumY = 0;
+
+    strokeHistory.forEach((s) => {
+      if (!s.points || s.points.length === 0) return;
+      ctx2.strokeStyle = '#000000';
+      ctx2.lineWidth = Math.max(s.width || 6, 8);
+      if (s.points.length === 1) {
+        ctx2.fillStyle = '#000000';
+        ctx2.beginPath();
+        ctx2.arc(s.points[0].x, s.points[0].y, ctx2.lineWidth / 2, 0, Math.PI * 2);
+        ctx2.fill();
+        totalPoints += 1;
+        sumX += s.points[0].x;
+        sumY += s.points[0].y;
+      } else {
+        ctx2.beginPath();
+        ctx2.moveTo(s.points[0].x, s.points[0].y);
+        for (let i = 0; i < s.points.length; i++) {
+          if (i > 0) ctx2.lineTo(s.points[i].x, s.points[i].y);
+          totalPoints += 1;
+          sumX += s.points[i].x;
+          sumY += s.points[i].y;
+        }
+        ctx2.stroke();
+      }
+    });
+    ctx2.restore();
+
+    // 3. Phân tích Pixel Overlap & Coverage (80x80 = 6400 pixels)
+    const imgData1 = ctx1.getImageData(0, 0, W, H).data;
+    const imgData2 = ctx2.getImageData(0, 0, W, H).data;
+
+    let templatePixelCount = 0;
+    let userPixelCount = 0;
+    let overlapPixelCount = 0;
+
+    for (let i = 3; i < imgData1.length; i += 4) {
+      const a1 = imgData1[i] > 30; // Pixel thuộc chữ mẫu
+      const a2 = imgData2[i] > 30; // Pixel do người dùng viết
+
+      if (a1) templatePixelCount++;
+      if (a2) userPixelCount++;
+      if (a1 && a2) overlapPixelCount++;
+    }
+
+    if (templatePixelCount === 0) templatePixelCount = 1;
+    if (userPixelCount === 0) userPixelCount = 1;
+
+    // Coverage: Tỷ lệ người dùng bao phủ nét chữ mẫu
+    const coverage = overlapPixelCount / templatePixelCount;
+    // Precision: Tỷ lệ nét viết chuẩn xác, không bị nguệch ngoạc ra ngoài
+    const precision = overlapPixelCount / userPixelCount;
+
+    let shapeScore = 0;
+    if (coverage + precision > 0) {
+      shapeScore = Math.round(((2 * coverage * precision) / (coverage + precision)) * 100);
+    }
+    // Chuẩn hóa hệ số thực tế cho nét viết tay tự nhiên
+    const normalizedShapeScore = Math.min(100, Math.round(shapeScore * 1.35));
+
+    // 4. Stroke Count Accuracy (Độ chuẩn xác số nét viết)
+    const expectedStrokes = strokes.length || 1;
+    const actualStrokes = strokeHistory.length;
+    const strokeDiff = Math.abs(actualStrokes - expectedStrokes);
+    let strokeScore = 100;
+    if (strokeDiff === 1) strokeScore = 75;
+    else if (strokeDiff === 2) strokeScore = 50;
+    else if (strokeDiff >= 3) strokeScore = Math.max(15, 100 - strokeDiff * 25);
+
+    // 5. Balance Score (Độ cân đối trọng tâm ô mễ)
+    let balanceScore = 90;
+    if (totalPoints > 0) {
+      const avgX = sumX / totalPoints;
+      const avgY = sumY / totalPoints;
+      const distFromCenter = Math.hypot(avgX - 160, avgY - 160);
+      balanceScore = Math.max(30, Math.min(100, Math.round(100 - (distFromCenter / 160) * 70)));
+    }
+
+    // 6. Tổng điểm chuẩn hóa: 100% Deterministic (Không ngẫu nhiên)
+    const finalScore = Math.min(
+      100,
+      Math.max(
+        15,
+        Math.round(normalizedShapeScore * 0.50 + strokeScore * 0.30 + balanceScore * 0.20)
+      )
+    );
+
+    let label = 'Nét chữ đạt chuẩn! Hãy chú ý giữ vững độ đều và thứ tự từng nét.';
+    let hanko = '優';
+    if (finalScore >= 90) {
+      label = 'Tuyệt tác thư pháp! Nét bút rất chuẩn xác, thần thái cân đối!';
+      hanko = '大変よくできました';
+    } else if (finalScore >= 80) {
+      label = 'Rất tốt! Dáng chữ đẹp, số nét chuẩn và trọng tâm vững vàng.';
+      hanko = '秀';
+    } else if (finalScore < 60) {
+      label = 'Chưa đạt chuẩn. Hãy bật chữ mẫu mờ để đồ lại đúng dáng nét nhé!';
+      hanko = 'がんばろう';
+    }
+
+    setScoreResult({
+      score: finalScore,
+      shapeScore: normalizedShapeScore,
+      strokeScore,
+      actualStrokes,
+      expectedStrokes,
+      balanceScore,
+      label,
+      hanko,
+    });
+
     setTimeout(() => {
       playHankoStamp();
     }, 200);
-  };
+  }, [strokeHistory, strokes, currentChar]);
 
   const handleDownload = () => {
     playTempleBell();
@@ -466,38 +700,35 @@ export default function KanjiPracticeModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl max-h-[94vh] overflow-y-auto rounded-3xl karuta-card border-2 border-border-strong shadow-2xl p-5 md:p-6 flex flex-col gap-4 text-color-sumi relative z-10"
+        className="w-full max-w-xl max-h-[92vh] overflow-y-auto rounded-3xl border-[2.5px] border-stone-900 dark:border-white shadow-manga-xl p-5 md:p-6 flex flex-col gap-4 bg-white dark:bg-stone-900 text-stone-950 dark:text-white relative z-10"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Viền đôi phong cách Nhật */}
-        <div className="karuta-inner-border" />
-
         {/* Modal Header */}
-        <div className="w-full flex items-center justify-between pb-3 border-b border-washi-border relative z-10">
+        <div className="w-full flex items-center justify-between pb-3 border-b-2 border-stone-900 dark:border-white relative z-10">
           <div className="flex items-center gap-3">
-            <span className="text-3xl font-kanji font-black text-torii">{currentChar}</span>
+            <span className="text-3xl sm:text-4xl font-kanji font-black text-akira dark:text-red-400 leading-none">{currentChar}</span>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-extrabold text-base">{cardInfo?.hanViet || 'HÁN TỰ'}</span>
-                <span className="hanko-stamp text-[10px] py-0.5 px-2">JLPT {currentLevel}</span>
+                <span className="font-black text-base sm:text-lg">{cardInfo?.hanViet || 'HÁN TỰ'}</span>
+                <span className="px-2 py-0.5 rounded-lg border-2 border-stone-900 dark:border-white bg-manga-yellow text-stone-950 text-[10px] font-black shadow-2xs">JLPT {currentLevel}</span>
                 {totalStrokes > 0 && (
-                  <span className="px-2 py-0.5 rounded-full bg-torii/10 text-torii font-bold text-xs border border-torii/30">
+                  <span className="px-2 py-0.5 rounded-lg border-2 border-stone-900 dark:border-white bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white text-[10px] font-black font-mono shadow-2xs">
                     {totalStrokes} nét bút
                   </span>
                 )}
               </div>
-              <span className="text-xs opacity-70 block truncate max-w-xs">{cardInfo?.meaning}</span>
+              <span className="text-xs font-bold text-stone-600 dark:text-stone-300 block truncate max-w-xs mt-0.5">{cardInfo?.meaning}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             {onOpenRadicalModal && (
               <button
                 onClick={() => {
                   onClose();
                   onOpenRadicalModal();
                 }}
-                className="px-2.5 py-1 rounded-xl bg-washi hover:bg-torii hover:text-white border border-torii/30 text-torii font-bold text-xs transition-all flex items-center gap-1 active:scale-95"
+                className="px-2.5 py-1 rounded-xl bg-manga-yellow hover:bg-yellow-300 text-stone-950 border-2 border-stone-900 dark:border-white font-black text-xs transition-all flex items-center gap-1 shadow-2xs active:translate-x-0.5 active:translate-y-0.5 cursor-pointer"
                 title="Xem chiết tự bộ thủ cấu thành (Phím R)"
               >
                 <span>🧩</span>
@@ -507,7 +738,7 @@ export default function KanjiPracticeModal({
 
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-washi hover:bg-torii hover:text-white flex items-center justify-center font-bold text-sm transition-all border border-washi-border active:scale-95"
+              className="w-8 h-8 rounded-xl border-2 border-stone-900 dark:border-white bg-white dark:bg-stone-800 hover:bg-akira hover:text-white text-stone-900 dark:text-stone-100 font-black text-sm flex items-center justify-center transition-all cursor-pointer shadow-2xs active:translate-x-0.5 active:translate-y-0.5"
               title="Đóng (Phím Esc)"
             >
               ✕
@@ -516,7 +747,7 @@ export default function KanjiPracticeModal({
         </div>
 
         {/* Tab Switcher */}
-        <div className="w-full flex items-center justify-center p-1 rounded-2xl bg-washi border border-washi-border gap-1 relative z-10">
+        <div className="w-full flex items-center justify-center p-1 rounded-2xl bg-stone-100 dark:bg-stone-800 border-2 border-stone-900 dark:border-white gap-1 relative z-10 shadow-2xs">
           <button
             onClick={() => {
               playWaterDrop();
@@ -525,10 +756,10 @@ export default function KanjiPracticeModal({
               setAnimatingIndex(0);
               setAnimKey((k) => k + 1);
             }}
-            className={`flex-1 py-2 px-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-2 px-3 rounded-xl text-xs md:text-sm font-black transition-all flex items-center justify-center gap-1.5 border-2 ${
               activeTab === 'stroke'
-                ? 'bg-torii text-white shadow-sm'
-                : 'opacity-70 hover:opacity-100 hover:bg-torii/10'
+                ? 'bg-akira text-white border-stone-900 dark:border-white shadow-manga-sm -translate-y-0.5'
+                : 'border-transparent text-stone-800 dark:text-stone-200 hover:bg-manga-yellow hover:text-stone-950'
             }`}
           >
             <span>🖌️</span>
@@ -541,10 +772,10 @@ export default function KanjiPracticeModal({
               setActiveTab('draw');
               setIsPlaying(false);
             }}
-            className={`flex-1 py-2 px-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-2 px-3 rounded-xl text-xs md:text-sm font-black transition-all flex items-center justify-center gap-1.5 border-2 ${
               activeTab === 'draw'
-                ? 'bg-torii text-white shadow-sm'
-                : 'opacity-70 hover:opacity-100 hover:bg-torii/10'
+                ? 'bg-akira text-white border-stone-900 dark:border-white shadow-manga-sm -translate-y-0.5'
+                : 'border-transparent text-stone-800 dark:text-stone-200 hover:bg-manga-yellow hover:text-stone-950'
             }`}
           >
             <span>✍️</span>
@@ -556,13 +787,14 @@ export default function KanjiPracticeModal({
         {activeTab === 'stroke' && (
           <div className="flex flex-col items-center gap-3 relative z-10">
             {/* Khung hiển thị Vector nét bút KanjiVG với animation nét vẽ */}
-            <div className="relative w-64 h-64 md:w-72 md:h-72 rounded-2xl bg-washi-light border-2 border-washi-border shadow-inner flex items-center justify-center overflow-hidden">
-              {/* Lưới ô mễ nền mờ (Mi Zi Ge) */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-30" viewBox="0 0 100 100">
-                <line x1="0" y1="50" x2="100" y2="50" stroke="#b45309" strokeDasharray="2,2" strokeWidth="0.8" />
-                <line x1="50" y1="0" x2="50" y2="100" stroke="#b45309" strokeDasharray="2,2" strokeWidth="0.8" />
-                <line x1="0" y1="0" x2="100" y2="100" stroke="#b45309" strokeDasharray="2,2" strokeWidth="0.5" />
-                <line x1="100" y1="0" x2="0" y2="100" stroke="#b45309" strokeDasharray="2,2" strokeWidth="0.5" />
+            <div className="relative w-64 h-64 md:w-72 md:h-72 rounded-2xl bg-[#FFFDF9] dark:bg-stone-850 border-2 border-stone-900 dark:border-white shadow-manga-sm flex items-center justify-center overflow-hidden">
+              {/* Lưới ô mễ nền mờ (Mi Zi Ge) sắc nét đa thiết bị */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40 dark:opacity-60" viewBox="0 0 100 100">
+                <rect x="2" y="2" width="96" height="96" fill="none" stroke="#b45309" strokeDasharray="3,3" strokeWidth="0.8" />
+                <line x1="0" y1="50" x2="100" y2="50" stroke="#b45309" strokeDasharray="2,2" strokeWidth="0.9" />
+                <line x1="50" y1="0" x2="50" y2="100" stroke="#b45309" strokeDasharray="2,2" strokeWidth="0.9" />
+                <line x1="0" y1="0" x2="100" y2="100" stroke="#b45309" strokeDasharray="2,2" strokeWidth="0.6" />
+                <line x1="100" y1="0" x2="0" y2="100" stroke="#b45309" strokeDasharray="2,2" strokeWidth="0.6" />
               </svg>
 
               {loadingStrokes ? (
@@ -591,14 +823,14 @@ export default function KanjiPracticeModal({
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   {/* Lớp 1: Khung nét mờ hướng dẫn toàn bộ chữ */}
-                  <g stroke="rgba(180, 83, 9, 0.18)" strokeWidth="3.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                  <g className="stroke-amber-900/35 dark:stroke-amber-300/45" strokeWidth="3.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
                     {strokes.map((s, idx) => (
                       <path key={`ghost-${idx}`} d={s.d} />
                     ))}
                   </g>
 
-                  {/* Lớp 2: Các nét đã vẽ xong (Completed Strokes) */}
-                  <g stroke="#1f1d1a" strokeWidth="4.2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                  {/* Lớp 2: Các nét đã vẽ xong (Completed Strokes) - Tương thích tương phản Dark / Light */}
+                  <g className="stroke-stone-900 dark:stroke-stone-100" strokeWidth="4.2" fill="none" strokeLinecap="round" strokeLinejoin="round">
                     {strokes.map((s, idx) => {
                       const isCompleted = animatingIndex === -1 || idx < animatingIndex;
                       if (!isCompleted) return null;
@@ -679,12 +911,12 @@ export default function KanjiPracticeModal({
                     <button
                       key={`badge-${idx}`}
                       onClick={() => handleSelectStroke(idx)}
-                      className={`min-w-[28px] h-7 px-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center ${
+                      className={`min-w-[28px] h-7 px-1.5 rounded-lg text-xs font-black transition-all flex items-center justify-center cursor-pointer border-2 border-stone-900 dark:border-white ${
                         isCurrent
-                          ? 'bg-torii text-white shadow-md scale-110 ring-2 ring-torii/40 font-black'
+                          ? 'bg-akira text-white shadow-manga-sm -translate-y-0.5'
                           : isDone
-                          ? 'bg-torii/15 text-torii border border-torii/30 hover:bg-torii/25'
-                          : 'bg-washi border border-washi-border opacity-60 hover:opacity-100'
+                          ? 'bg-manga-yellow text-stone-950 shadow-2xs'
+                          : 'bg-white dark:bg-stone-800 text-stone-900 dark:text-white opacity-60 hover:opacity-100'
                       }`}
                       title={`Xem nét thứ ${idx + 1}`}
                     >
@@ -701,7 +933,7 @@ export default function KanjiPracticeModal({
                 <button
                   onClick={handlePlayAnimation}
                   disabled={loadingStrokes || strokes.length === 0}
-                  className="p-2 md:px-3 md:py-2 rounded-xl bg-washi hover:bg-torii/10 border border-washi-border font-bold text-xs active:scale-95 flex items-center gap-1 disabled:opacity-40"
+                  className="py-1.5 px-2.5 rounded-xl bg-white dark:bg-stone-800 hover:bg-manga-yellow hover:text-stone-950 text-stone-950 dark:text-white border-2 border-stone-900 dark:border-white font-black text-xs active:translate-x-0.5 active:translate-y-0.5 shadow-2xs flex items-center gap-1 disabled:opacity-40 cursor-pointer"
                   title="Vẽ lại từ nét đầu tiên"
                 >
                   <span>🔄</span>
@@ -711,7 +943,7 @@ export default function KanjiPracticeModal({
                 <button
                   onClick={handleStepBack}
                   disabled={loadingStrokes || strokes.length === 0}
-                  className="p-2 md:px-3 md:py-2 rounded-xl bg-washi hover:bg-torii/10 border border-washi-border font-bold text-xs active:scale-95 flex items-center gap-1 disabled:opacity-40"
+                  className="py-1.5 px-2.5 rounded-xl bg-white dark:bg-stone-800 hover:bg-manga-yellow hover:text-stone-950 text-stone-950 dark:text-white border-2 border-stone-900 dark:border-white font-black text-xs active:translate-x-0.5 active:translate-y-0.5 shadow-2xs flex items-center gap-1 disabled:opacity-40 cursor-pointer"
                   title="Nét trước"
                 >
                   <span>⏮️</span>
@@ -721,7 +953,7 @@ export default function KanjiPracticeModal({
                 <button
                   onClick={handleTogglePlayPause}
                   disabled={loadingStrokes || strokes.length === 0}
-                  className="py-2 px-4 md:px-5 rounded-xl font-bold text-xs md:text-sm text-white shadow-md flex items-center gap-1.5 bg-torii hover:bg-torii-light transition-all active:scale-95 disabled:opacity-40"
+                  className="py-2 px-4 md:px-5 rounded-xl font-black text-xs md:text-sm text-white shadow-manga-sm flex items-center gap-1.5 bg-akira hover:bg-red-600 border-2 border-stone-900 dark:border-white transition-all active:translate-x-0.5 active:translate-y-0.5 cursor-pointer disabled:opacity-40"
                 >
                   <span>{isPlaying ? '⏸️ Tạm dừng' : '▶️ Tự động vẽ'}</span>
                 </button>
@@ -729,7 +961,7 @@ export default function KanjiPracticeModal({
                 <button
                   onClick={handleStepForward}
                   disabled={loadingStrokes || strokes.length === 0}
-                  className="p-2 md:px-3 md:py-2 rounded-xl bg-washi hover:bg-torii/10 border border-washi-border font-bold text-xs active:scale-95 flex items-center gap-1 disabled:opacity-40"
+                  className="py-1.5 px-2.5 rounded-xl bg-white dark:bg-stone-800 hover:bg-manga-yellow hover:text-stone-950 text-stone-950 dark:text-white border-2 border-stone-900 dark:border-white font-black text-xs active:translate-x-0.5 active:translate-y-0.5 shadow-2xs flex items-center gap-1 disabled:opacity-40 cursor-pointer"
                   title="Nét sau"
                 >
                   <span className="hidden sm:inline">Nét sau</span>
@@ -739,7 +971,7 @@ export default function KanjiPracticeModal({
                 <button
                   onClick={handleReplayCurrent}
                   disabled={loadingStrokes || strokes.length === 0}
-                  className="p-2 md:px-3 md:py-2 rounded-xl bg-washi hover:bg-torii/10 border border-washi-border font-bold text-xs active:scale-95 flex items-center gap-1 disabled:opacity-40"
+                  className="py-1.5 px-2.5 rounded-xl bg-white dark:bg-stone-800 hover:bg-manga-yellow hover:text-stone-950 text-stone-950 dark:text-white border-2 border-stone-900 dark:border-white font-black text-xs active:translate-x-0.5 active:translate-y-0.5 shadow-2xs flex items-center gap-1 disabled:opacity-40 cursor-pointer"
                   title="Vẽ lại nét hiện tại"
                 >
                   <span>🖌️</span>
@@ -749,10 +981,10 @@ export default function KanjiPracticeModal({
                 <button
                   onClick={handleShowAllStrokes}
                   disabled={loadingStrokes || strokes.length === 0}
-                  className={`p-2 md:px-3 md:py-2 rounded-xl border font-bold text-xs active:scale-95 flex items-center gap-1 disabled:opacity-40 ${
+                  className={`py-1.5 px-2.5 rounded-xl border-2 border-stone-900 dark:border-white font-black text-xs active:translate-x-0.5 active:translate-y-0.5 shadow-2xs flex items-center gap-1 cursor-pointer disabled:opacity-40 ${
                     animatingIndex === -1
-                      ? 'bg-torii text-white border-torii'
-                      : 'bg-washi border-washi-border hover:bg-torii/10'
+                      ? 'bg-akira text-white'
+                      : 'bg-white dark:bg-stone-800 text-stone-950 dark:text-white hover:bg-manga-yellow hover:text-stone-950'
                   }`}
                   title="Hiện toàn bộ các nét cùng số thứ tự"
                 >
@@ -832,17 +1064,48 @@ export default function KanjiPracticeModal({
         {/* TAB 2: KHUNG TẬP VIẾT THƯ PHÁP (CANVAS DRAWING) */}
         {activeTab === 'draw' && (
           <div className="flex flex-col items-center gap-3 relative z-10">
-            {/* Khung vẽ Canvas ô mễ */}
-            <div className="relative rounded-2xl overflow-hidden shadow-lg border-2 border-torii/40 touch-none">
+            {/* Thanh trạng thái bảo tồn nét trên giấy Washi */}
+            <div className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/25 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="text-base">📜</span>
+                <div>
+                  <div className="font-bold text-torii flex items-center gap-1.5">
+                    <span>Giấy Washi • {strokeHistory.length} / {totalStrokes || 1} nét đã lưu</span>
+                  </div>
+                  <p className="text-[11px] opacity-75">
+                    {strokeHistory.length === 0
+                      ? `Cầm bút viết từng nét của chữ ${currentChar} lên giấy trước khi chấm điểm`
+                      : strokeHistory.length === totalStrokes
+                      ? 'Đã viết đủ số nét chuẩn! Nét đã lưu trên giấy, sẵn sàng chấm điểm.'
+                      : `Đã lưu ${strokeHistory.length} nét trên giấy. Hãy viết tiếp hoặc bấm Chấm điểm.`}
+                  </p>
+                </div>
+              </div>
+              <span
+                className={`px-2 py-0.5 rounded text-[11px] font-bold shrink-0 ${
+                  strokeHistory.length >= (totalStrokes || 1)
+                    ? 'bg-emerald-600 text-white'
+                    : strokeHistory.length > 0
+                    ? 'bg-amber-600 text-white'
+                    : 'bg-washi-border/60 text-foreground/60'
+                }`}
+              >
+                {strokeHistory.length === 0 ? 'Chưa vẽ' : `${strokeHistory.length} nét`}
+              </span>
+            </div>
+
+            {/* Khung vẽ Canvas ô mễ - Giấy Washi chuẩn mực sắc nét đa thiết bị */}
+            <div className="relative rounded-2xl overflow-hidden shadow-manga-sm border-2 border-stone-850 dark:border-amber-400/80 touch-none bg-[#FCFBF7] dark:bg-[#161E2E]">
               <canvas
                 ref={canvasRef}
                 width={320}
                 height={320}
-                className="cursor-crosshair bg-[#fdfbf7] dark:bg-[#1a2230]"
+                style={{ width: 320, height: 320 }}
+                className="cursor-crosshair block"
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
-                onPointerLeave={handlePointerUp}
+                onPointerLeave={handlePointerLeave}
               />
             </div>
 
@@ -924,29 +1187,58 @@ export default function KanjiPracticeModal({
               </div>
             </div>
 
-            {/* Kết quả chấm điểm nét vẽ AI */}
+            {/* Kết quả chấm điểm nét vẽ toán học chuẩn xác 100% */}
             {scoreResult && (
-              <div className="w-full p-3.5 bg-gradient-to-r from-amber-500/15 via-red-500/15 to-amber-500/15 border-2 border-torii rounded-2xl flex items-center justify-between gap-3 animate-fadeIn shadow-md">
-                <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-full border-2 border-torii bg-torii/10 text-torii flex flex-col items-center justify-center font-kanji font-black rotate-[-8deg] shrink-0">
-                    <span className="text-xl font-bold leading-none">{scoreResult.score}</span>
-                    <span className="text-[9px] uppercase tracking-wider">ĐIỂM</span>
+              <div className="w-full p-4 bg-gradient-to-br from-amber-500/10 via-red-500/10 to-amber-500/10 border-2 border-torii rounded-2xl flex flex-col gap-3 animate-fadeIn shadow-md">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    {/* Con dấu tròn Hanko đỏ */}
+                    <div className="w-16 h-16 rounded-full border-2 border-red-600 bg-red-600/10 text-red-600 dark:text-red-400 flex flex-col items-center justify-center font-kanji font-black rotate-[-6deg] shrink-0 shadow-inner">
+                      <span className="text-2xl font-bold leading-none">{scoreResult.score}</span>
+                      <span className="text-[9px] uppercase tracking-wider font-sans font-bold">ĐIỂM</span>
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-torii flex items-center gap-1.5">
+                        <span>💮 Con dấu:</span>
+                        <span className="font-kanji text-sm font-black px-1.5 py-0.5 rounded bg-red-600/15 text-red-700 dark:text-red-300 border border-red-500/30">
+                          {scoreResult.hanko}
+                        </span>
+                      </div>
+                      <div className="text-xs font-medium opacity-90 mt-1 leading-snug">
+                        {scoreResult.label}
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-xs font-bold text-torii flex items-center gap-1.5">
-                      <span>💮 Con dấu: {scoreResult.hanko}</span>
-                    </div>
-                    <div className="text-xs opacity-85 mt-0.5 font-medium">
-                      {scoreResult.label}
-                    </div>
+                  <button
+                    onClick={() => setScoreResult(null)}
+                    className="text-xs opacity-50 hover:opacity-100 p-1 rounded-md hover:bg-black/5"
+                    title="Đóng kết quả"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {/* Chi tiết 3 tiêu chí chấm chuẩn hóa */}
+                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-torii/20 text-center">
+                  <div className="p-2 rounded-xl bg-washi/80 border border-washi-border flex flex-col">
+                    <span className="text-[10px] opacity-70 font-semibold">Khớp hình dáng</span>
+                    <span className="text-xs font-black text-torii mt-0.5">{scoreResult.shapeScore}%</span>
+                  </div>
+                  <div className="p-2 rounded-xl bg-washi/80 border border-washi-border flex flex-col">
+                    <span className="text-[10px] opacity-70 font-semibold">Số lượng nét</span>
+                    <span className="text-xs font-black text-torii mt-0.5">
+                      {scoreResult.actualStrokes}/{scoreResult.expectedStrokes} nét
+                    </span>
+                  </div>
+                  <div className="p-2 rounded-xl bg-washi/80 border border-washi-border flex flex-col">
+                    <span className="text-[10px] opacity-70 font-semibold">Độ cân đối</span>
+                    <span className="text-xs font-black text-torii mt-0.5">{scoreResult.balanceScore}%</span>
                   </div>
                 </div>
-                <button
-                  onClick={() => setScoreResult(null)}
-                  className="text-xs opacity-50 hover:opacity-100 p-1"
-                >
-                  ✕
-                </button>
+
+                <div className="text-[10px] text-center opacity-65 italic">
+                  ✓ Chấm điểm toán học chuẩn xác theo hình học nét vẽ thực tế (kết quả cố định 100%, không ngẫu nhiên).
+                </div>
               </div>
             )}
 

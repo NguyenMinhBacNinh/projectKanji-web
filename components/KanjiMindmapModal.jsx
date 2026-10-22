@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { playJapaneseSpeech } from '../lib/kanjiService';
 import { playWaterDrop, playWoodClapper } from '../lib/traditionalAudio';
+import { VolumeIcon } from './ZenIcons';
 
 export default function KanjiMindmapModal({
   isOpen,
@@ -85,7 +86,7 @@ export default function KanjiMindmapModal({
               playWaterDrop();
               playJapaneseSpeech(currentChar);
             }}
-            className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-torii to-torii-dark text-white flex flex-col items-center justify-center shadow-xl cursor-pointer hover:scale-105 active:scale-95 transition-all relative group ring-4 ring-torii/20"
+            className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-torii to-torii-dark text-white flex flex-col items-center justify-center shadow-xl cursor-pointer active:scale-95 transition-all relative group ring-4 ring-torii/20"
           >
             <span className="text-4xl sm:text-5xl font-kanji font-black leading-none drop-shadow-sm">
               {currentChar}
@@ -93,8 +94,8 @@ export default function KanjiMindmapModal({
             <span className="text-xs font-extrabold tracking-wider mt-1 opacity-95">
               {cardInfo?.hanViet || '—'}
             </span>
-            <span className="text-[10px] opacity-80 uppercase tracking-widest mt-0.5">
-              🔊 Nghe chữ
+            <span className="text-[10px] opacity-80 uppercase tracking-widest mt-1 flex items-center gap-1">
+              <VolumeIcon className="w-3 h-3" /> Nghe chữ
             </span>
           </div>
 
@@ -119,12 +120,12 @@ export default function KanjiMindmapModal({
                   {comp.positionTag}
                 </span>
                 <span className="text-xs opacity-60 group-hover:text-torii group-hover:opacity-100 transition-colors">
-                  🔊
+                  <VolumeIcon className="w-3.5 h-3.5" />
                 </span>
               </div>
 
               <div className="my-2">
-                <div className="text-xl sm:text-2xl font-kanji font-black text-torii group-hover:scale-105 origin-left transition-transform">
+                <div className="text-xl sm:text-2xl font-kanji font-black text-torii transition-colors">
                   {comp.word}
                 </div>
                 <div className="text-xs font-bold text-color-sumi/80 font-kanji mt-0.5">

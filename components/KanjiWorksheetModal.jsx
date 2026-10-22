@@ -100,12 +100,16 @@ export default function KanjiWorksheetModal({
         <div className="w-full bg-white text-black p-6 sm:p-8 rounded-2xl border border-border-strong shadow-inner font-serif select-text print:p-0 print:border-none print:shadow-none">
           {/* Paper Header */}
           <div className="border-b-2 border-black pb-3 mb-5 flex items-end justify-between">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-black font-kanji tracking-wider text-black">
-                日本語 漢字練習帳 • PHIẾU TẬP VIẾT CHỮ HÁN
-              </h2>
-              <div className="text-xs text-gray-700 mt-1">
-                Cấp độ: <strong>JLPT {currentLevel}</strong> • Ngày luyện tập: {new Date().toLocaleDateString('vi-VN')}
+            <div className="flex items-center gap-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/logo.png" alt="Logo" className="w-11 h-11 object-contain shrink-0" />
+              <div>
+                <h2 className="text-xl sm:text-2xl font-black font-kanji tracking-wider text-black">
+                  日本語 漢字練習帳 • PHIẾU TẬP VIẾT CHỮ HÁN
+                </h2>
+                <div className="text-xs text-gray-700 mt-1">
+                  Cấp độ: <strong>JLPT {currentLevel}</strong> • Ngày luyện tập: {new Date().toLocaleDateString('vi-VN')}
+                </div>
               </div>
             </div>
             <div className="text-right text-xs text-gray-600">
@@ -179,7 +183,11 @@ export default function KanjiWorksheetModal({
 
           {/* Paper Footer */}
           <div className="mt-4 pt-2 border-t border-gray-400 text-[10px] text-gray-500 flex items-center justify-between">
-            <span>⛩️ 漢字学習帳 (Kanji Gakushūchō) • Luyện viết chữ Hán mỗi ngày</span>
+            <span className="flex items-center gap-1.5">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/logo_emblem.png" alt="Logo" className="w-3.5 h-3.5 object-contain" />
+              <span>漢字学習帳 (Kanji Gakushūchō) • Luyện viết chữ Hán mỗi ngày</span>
+            </span>
             <span>Trang 1 / 1</span>
           </div>
         </div>

@@ -10,6 +10,8 @@ import {
   playHankoStamp,
   playWaterDrop,
 } from '../lib/traditionalAudio';
+import { SensuFanIcon } from './ZenIcons';
+
 
 export default function KarutaGameSection({ currentLevel, kanjiList, fullDb, onChangeLevel }) {
   const [gridSize, setGridSize] = useState(12); // 12 cards (6 pairs) hoặc 16 cards (8 pairs)
@@ -140,44 +142,46 @@ export default function KarutaGameSection({ currentLevel, kanjiList, fullDb, onC
   };
 
   return (
-    <section className="w-full max-w-3xl flex flex-col items-center gap-5 z-20 animate-fadeIn">
+    <section className="w-full max-w-[1020px] 2xl:max-w-6xl h-full min-h-0 flex-1 flex flex-col items-center justify-between gap-1 sm:gap-1.5 z-20 animate-fadeIn select-none overflow-hidden">
       {/* Top Controls Bar */}
-      <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 bg-washi/80 p-3 rounded-2xl border border-washi-border shadow-xs">
-        <div className="flex items-center gap-2">
-          <span className="hanko-stamp text-xs">KARUTA MATCH</span>
+      <div className="w-full flex items-center justify-between gap-2 p-1 sm:p-1.5 rounded-2xl bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 border border-[#D8CEBF] dark:border-stone-700/80 shadow-md backdrop-blur-md shrink-0">
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span className="px-2 py-0.5 rounded-md bg-torii text-white font-black text-[10px]">
+            KARUTA
+          </span>
           <span className="text-xs font-bold font-kanji text-torii">
             JLPT {currentLevel}
           </span>
         </div>
 
         {/* Stats */}
-        <div className="flex items-center gap-4 text-xs font-semibold">
-          <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded-lg">
-            <span>⏱ Thời gian:</span>
+        <div className="flex items-center gap-2 sm:gap-3 text-xs font-semibold">
+          <div className="flex items-center gap-1 bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded-lg text-[11px]">
+            <span>⏱</span>
             <span className="font-mono font-bold text-torii">{formatTime(seconds)}</span>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded-lg">
-            <span>🎯 Lượt lật:</span>
+          <div className="flex items-center gap-1 bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded-lg text-[11px]">
+            <span>🎯 Lượt:</span>
             <span className="font-mono font-bold">{moves}</span>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded-lg">
-            <span>Pairs:</span>
+          <div className="flex items-center gap-1 bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded-lg text-[11px]">
+            <span>Cặp:</span>
             <span className="font-mono font-bold text-emerald-600">
-              {matchedPairs.size} / {cards.length / 2}
+              {matchedPairs.size}/{cards.length / 2}
             </span>
           </div>
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 shrink-0">
           <button
             onClick={() => {
               playWaterDrop();
               setGridSize((s) => (s === 12 ? 16 : 12));
             }}
-            className="px-2.5 py-1 rounded-lg border border-washi-border text-[11px] font-bold hover:bg-torii hover:text-white transition-all"
+            className="px-2 py-0.5 rounded-lg border border-washi-border text-[11px] font-bold bg-[#F5EFE6] dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-torii hover:text-white transition-all cursor-pointer"
             title="Đổi số lượng thẻ"
           >
             {gridSize === 12 ? '12 Thẻ' : '16 Thẻ'}
@@ -188,7 +192,7 @@ export default function KarutaGameSection({ currentLevel, kanjiList, fullDb, onC
               playWoodClapper();
               startNewGame();
             }}
-            className="px-3 py-1 bg-torii hover:bg-torii-light text-white rounded-lg text-xs font-bold transition-all active:scale-95 flex items-center gap-1"
+            className="px-2.5 py-0.5 bg-torii hover:bg-torii-light text-white rounded-lg text-xs font-bold transition-all active:scale-95 flex items-center gap-1 cursor-pointer"
           >
             <span>Làm mới ↺</span>
           </button>
@@ -196,17 +200,17 @@ export default function KarutaGameSection({ currentLevel, kanjiList, fullDb, onC
       </div>
 
       {/* Main Karuta Tatami Board */}
-      <div className="w-full p-4 sm:p-6 rounded-3xl karuta-card border-2 border-border-strong shadow-2xl relative overflow-hidden">
+      <div className="w-full flex-1 min-h-0 p-2 sm:p-3 rounded-2xl sm:rounded-3xl karuta-card border border-[#D8CEBF] dark:border-stone-700/80 bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 shadow-md flex flex-col justify-center overflow-y-auto thin-scrollbar relative backdrop-blur-md">
         <div className="karuta-inner-border" />
 
         {/* Hanko Victory Stamp */}
         {showHanko && (
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none animate-hankoStamp">
-            <div className="w-32 h-32 md:w-36 md:h-36 rounded-full border-4 border-red-600/90 text-red-600/90 flex flex-col items-center justify-center font-kanji font-black rotate-[-12deg] bg-red-600/15 backdrop-blur-xs shadow-2xl">
-              <span className="text-4xl md:text-5xl tracking-widest leading-none">
+            <div className="w-28 h-28 rounded-full border-4 border-red-600/90 text-red-600/90 flex flex-col items-center justify-center font-kanji font-black rotate-[-12deg] bg-red-600/15 backdrop-blur-xs shadow-2xl">
+              <span className="text-3xl md:text-4xl tracking-widest leading-none">
                 皆勤
               </span>
-              <span className="text-[10px] tracking-wider mt-1 uppercase opacity-85 border-t border-red-600/50 pt-0.5">
+              <span className="text-[9px] tracking-wider mt-0.5 uppercase opacity-85 border-t border-red-600/50 pt-0.5">
                 XUẤT SẮC
               </span>
             </div>
@@ -215,18 +219,20 @@ export default function KarutaGameSection({ currentLevel, kanjiList, fullDb, onC
 
         {/* Completion Screen Overlay */}
         {isCompleted && (
-          <div className="w-full py-8 text-center flex flex-col items-center gap-3 relative z-10 animate-fadeIn">
-            <div className="text-5xl animate-bounce">🎴</div>
-            <h3 className="text-2xl sm:text-3xl font-black font-kanji text-torii">
+          <div className="w-full py-6 text-center flex flex-col items-center gap-2.5 relative z-10 animate-fadeIn my-auto">
+            <div className="w-16 h-16 rounded-2xl bg-torii/10 dark:bg-torii/20 text-torii dark:text-torii-light flex items-center justify-center border border-torii/30 shadow-inner animate-bounce">
+              <SensuFanIcon className="w-10 h-10" />
+            </div>
+            <h3 className="text-xl sm:text-2xl font-black font-kanji text-torii">
               CHIẾN THẮNG TRÒ CHƠI KARUTA!
             </h3>
-            <p className="text-xs sm:text-sm opacity-80 max-w-md">
-              Bạn đã ghép chính xác tất cả {cards.length / 2} cặp thẻ chữ Hán trong {formatTime(seconds)} với {moves} lượt lật.
+            <p className="text-xs opacity-80 max-w-md">
+              Bạn đã ghép chính xác {cards.length / 2} cặp thẻ chữ Hán trong {formatTime(seconds)} với {moves} lượt lật.
             </p>
 
             <button
               onClick={startNewGame}
-              className="mt-3 px-8 py-3 bg-torii hover:bg-torii-light text-white font-extrabold rounded-2xl shadow-lg transition-all active:scale-95 flex items-center gap-2"
+              className="mt-2 px-6 py-2 bg-torii hover:bg-torii-light text-white font-extrabold rounded-xl shadow-md transition-all active:scale-95 flex items-center gap-2 text-xs sm:text-sm cursor-pointer"
             >
               <span>Chơi ván mới ↺</span>
             </button>
@@ -236,7 +242,7 @@ export default function KarutaGameSection({ currentLevel, kanjiList, fullDb, onC
         {/* Cards Grid */}
         {!isCompleted && (
           <div
-            className={`w-full grid gap-2.5 sm:gap-3.5 relative z-10 ${
+            className={`w-full grid gap-1.5 sm:gap-2.5 relative z-10 my-auto ${
               gridSize === 12
                 ? 'grid-cols-3 sm:grid-cols-4'
                 : 'grid-cols-4 sm:grid-cols-4'
@@ -247,7 +253,7 @@ export default function KarutaGameSection({ currentLevel, kanjiList, fullDb, onC
               const isMatched = matchedPairs.has(card.pairId);
 
               let cardStyle =
-                'bg-washi/90 border-washi-border hover:border-torii/70 text-color-sumi cursor-pointer';
+                'bg-[#FFFDF9] dark:bg-stone-850 border-washi-border hover:border-torii/70 text-color-sumi cursor-pointer';
 
               if (isMatched) {
                 cardStyle =
@@ -261,25 +267,25 @@ export default function KarutaGameSection({ currentLevel, kanjiList, fullDb, onC
                 <div
                   key={card.id}
                   onClick={() => handleCardClick(idx)}
-                  className={`h-24 sm:h-28 md:h-32 rounded-2xl border-2 flex flex-col items-center justify-center p-2 text-center transition-all duration-200 active:scale-95 select-none ${cardStyle}`}
+                  className={`h-16 sm:h-20 md:h-[82px] rounded-xl sm:rounded-2xl border-2 flex flex-col items-center justify-center p-1 sm:p-1.5 text-center transition-all duration-200 active:scale-95 select-none ${cardStyle}`}
                 >
                   {isFlipped || isMatched ? (
                     <div className="flex flex-col items-center justify-center w-full animate-fadeIn">
                       {card.type === 'kanji' ? (
                         <>
-                          <span className="text-3xl sm:text-4xl md:text-5xl font-kanji font-black text-torii leading-none">
+                          <span className="text-2xl sm:text-3xl md:text-4xl font-kanji font-black text-torii leading-none">
                             {card.display}
                           </span>
-                          <span className="text-[10px] opacity-60 font-bold uppercase tracking-wider mt-1">
+                          <span className="text-[9px] opacity-60 font-bold uppercase tracking-wider mt-0.5">
                             {card.sub}
                           </span>
                         </>
                       ) : (
                         <>
-                          <span className="text-sm sm:text-base md:text-lg font-kanji font-black text-torii leading-tight">
+                          <span className="text-xs sm:text-sm md:text-base font-kanji font-black text-torii leading-tight">
                             {card.display}
                           </span>
-                          <span className="text-[10px] sm:text-xs opacity-75 font-medium line-clamp-2 mt-0.5 leading-snug">
+                          <span className="text-[9px] sm:text-[10px] opacity-75 font-medium line-clamp-1 mt-0.5 leading-snug">
                             {card.sub}
                           </span>
                         </>
@@ -287,10 +293,10 @@ export default function KarutaGameSection({ currentLevel, kanjiList, fullDb, onC
                     </div>
                   ) : (
                     /* Mặt úp của thẻ Karuta */
-                    <div className="flex flex-col items-center justify-center gap-1 opacity-40 hover:opacity-80 transition-opacity">
-                      <span className="text-xl sm:text-2xl">🎴</span>
-                      <span className="text-[9px] font-kanji font-bold uppercase tracking-widest">
-                        花札
+                    <div className="flex flex-col items-center justify-center gap-1 opacity-50 hover:opacity-90 transition-opacity">
+                      <SensuFanIcon className="w-5 h-5 sm:w-6 sm:h-6 text-torii/80" />
+                      <span className="text-[8px] sm:text-[9px] font-kanji font-bold uppercase tracking-widest text-sumi/80 dark:text-stone-300">
+                        かるた
                       </span>
                     </div>
                   )}
@@ -299,11 +305,6 @@ export default function KarutaGameSection({ currentLevel, kanjiList, fullDb, onC
             })}
           </div>
         )}
-      </div>
-
-      {/* Guide hint */}
-      <div className="text-[11px] opacity-60 text-center font-medium">
-        Lật mở từng cặp thẻ để tìm ra chữ Kanji tương ứng với âm Hán Việt và ý nghĩa!
       </div>
     </section>
   );

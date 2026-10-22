@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { playJapaneseSpeech, getLocalKanjiInfo } from '../lib/kanjiService';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { playJapaneseSpeech, getLocalKanjiInfo, loadQuizDatabase } from '../lib/kanjiService';
 import {
   playQuizSuccess,
   playQuizError,
@@ -11,34 +11,53 @@ import {
   playHankoStamp,
 } from '../lib/traditionalAudio';
 import EnsoCircle from './EnsoCircle';
-
-// Hằng số dạng bài
-const QUESTION_TYPES = {
-  KANJI_TO_MEANING: 'kanji_to_meaning', // Dạng 1: Nhìn Kanji ➔ Chọn Nghĩa / Hán Việt
-  READING_TO_KANJI: 'reading_to_kanji', // Dạng 2: Nhìn Hiragana ➔ Chọn Kanji (JLPT Moji-Goi)
-  VOCAB_FILL: 'vocab_fill',             // Dạng 3: Điền Kanji vào từ vựng ghép (Ngữ cảnh)
-};
+import { VolumeIcon } from './ZenIcons';
 
 const SPEEDRUN_DURATION = 60; // 60 giây
 const HIGH_SCORE_KEY = 'project_kanji_speedrun_highscore_v1';
 
+// Danh sách các bộ lọc dạng câu hỏi
+const QUIZ_FILTER_TYPES = [
+  { id: 'all', label: '🎲 Tất cả dạng' },
+  { id: 'vocab_reading', label: '📖 Đọc từ vựng' },
+  { id: 'vocab_meaning', label: '💡 Nghĩa từ vựng' },
+  { id: 'sentence_fill', label: '✍️ Điền câu ví dụ' },
+  { id: 'sentence_reading', label: '🔍 Đọc từ trong câu' },
+  { id: 'kanji_from_reading', label: '🎯 Viết chữ Hán' },
+  { id: 'kanji_hanviet', label: '🈳 Hán tự & Hán Việt' },
+];
+
 export default function QuizSection({
-  currentLevel,
-  kanjiList,
+  currentLevel = 'N5',
+  kanjiList = [],
   onFailKanji,
-  fullDb,
+  fullDb = null,
 }) {
+  // Kho dữ liệu Quiz nạp từ public/quiz_data.json
+  const [quizDatabase, setQuizDatabase] = useState(null);
+  const [isLoadingQuiz, setIsLoadingQuiz] = useState(true);
+
+  // Cấp độ Quiz đang chọn: 'N5' | 'N4' | 'N3' | 'N2' | 'N1'
+  const [selectedLevel, setSelectedLevel] = useState(currentLevel || 'N5');
+
   // Game Mode: 'zen' (Luyện tập thong thả) | 'speedrun' (Thử thách 60s)
   const [gameMode, setGameMode] = useState('zen');
-  
-  // Question Filter: 'mixed' | 'kanji_to_meaning' | 'reading_to_kanji' | 'vocab_fill'
-  const [questionFilter, setQuestionFilter] = useState('mixed');
 
-  // Stats
+  // Question Filter
+  const [filterType, setFilterType] = useState('all');
+
+  // Length Mode: 'all' | '100' | '50' | '20'
+  const [lengthMode, setLengthMode] = useState('all');
+
+  // Current Question Index in Zen mode
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // User answers map: { [questionId]: { selectedIndex, isCorrect } }
+  const [userAnswers, setUserAnswers] = useState({});
+
+  // Streak & Stats
   const [streak, setStreak] = useState(0);
   const [maxStreak, setMaxStreak] = useState(0);
-  const [showHankoStamp, setShowHankoStamp] = useState(false);
-  const [hankoText, setHankoText] = useState('合格');
 
   // Speedrun stats
   const [timeLeft, setTimeLeft] = useState(SPEEDRUN_DURATION);
@@ -49,13 +68,39 @@ export default function QuizSection({
   const [correctCount, setCorrectCount] = useState(0);
   const [totalAttempted, setTotalAttempted] = useState(0);
   const [highScore, setHighScore] = useState(0);
+  const [showHankoStamp, setShowHankoStamp] = useState(false);
+  const [hankoText, setHankoText] = useState('合格');
 
-  // Current Question Data
-  const [currentQuestion, setCurrentQuestion] = useState(null);
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [isAnswered, setIsAnswered] = useState(false);
+  // Speedrun current question
+  const [speedrunQuestion, setSpeedrunQuestion] = useState(null);
 
   const timerRef = useRef(null);
+
+  // 1. Nạp kho dữ liệu Quiz 1,100 câu
+  useEffect(() => {
+    let isMounted = true;
+    loadQuizDatabase()
+      .then((data) => {
+        if (isMounted) {
+          setQuizDatabase(data);
+          setIsLoadingQuiz(false);
+        }
+      })
+      .catch((err) => {
+        console.warn('Lỗi nạp quiz_data.json:', err);
+        if (isMounted) setIsLoadingQuiz(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Đồng bộ cấp độ khi prop currentLevel thay đổi
+  useEffect(() => {
+    if (currentLevel) {
+      setSelectedLevel(currentLevel);
+    }
+  }, [currentLevel]);
 
   // Load High Score on mount
   useEffect(() => {
@@ -65,7 +110,54 @@ export default function QuizSection({
     }
   }, []);
 
-  // Countdown timer for Speedrun
+  // 2. Danh sách câu hỏi theo bộ lọc
+  const activeQuestions = useMemo(() => {
+    if (!quizDatabase || !quizDatabase[selectedLevel]) {
+      return [];
+    }
+
+    let list = quizDatabase[selectedLevel];
+
+    // Lọc theo dạng câu hỏi
+    if (filterType !== 'all') {
+      const filtered = list.filter((q) => q.type === filterType);
+      list = filtered.length > 0 ? filtered : list;
+    }
+
+    // Lọc theo độ dài
+    if (lengthMode === '100' && list.length > 100) {
+      list = list.slice(0, 100);
+    } else if (lengthMode === '50' && list.length > 50) {
+      list = list.slice(0, 50);
+    } else if (lengthMode === '20' && list.length > 20) {
+      list = list.slice(0, 20);
+    }
+
+    return list;
+  }, [quizDatabase, selectedLevel, filterType, lengthMode]);
+
+  // Reset index & câu trả lời khi đổi level hoặc filter
+  useEffect(() => {
+    setCurrentIndex(0);
+    setUserAnswers({});
+    setStreak(0);
+  }, [selectedLevel, filterType, lengthMode]);
+
+  // Câu hỏi hiện tại trong Zen mode
+  const currentItem = activeQuestions[currentIndex] || null;
+  const currentAnswer = currentItem ? userAnswers[currentItem.id] : null;
+  const isAnswered = !!currentAnswer;
+
+  // Thống kê điểm số Zen mode
+  const totalCorrect = useMemo(() => {
+    return Object.values(userAnswers).filter((a) => a.isCorrect).length;
+  }, [userAnswers]);
+
+  const totalWrong = useMemo(() => {
+    return Object.values(userAnswers).filter((a) => !a.isCorrect).length;
+  }, [userAnswers]);
+
+  // 3. Countdown timer for Speedrun
   useEffect(() => {
     if (gameMode === 'speedrun' && isSpeedrunActive && !isSpeedrunFinished) {
       timerRef.current = setInterval(() => {
@@ -84,7 +176,7 @@ export default function QuizSection({
     return () => clearInterval(timerRef.current);
   }, [gameMode, isSpeedrunActive, isSpeedrunFinished]);
 
-  // Kết thúc lượt Speedrun
+  // Kết thúc Speedrun
   const finishSpeedrun = useCallback(() => {
     setIsSpeedrunActive(false);
     setIsSpeedrunFinished(true);
@@ -106,7 +198,14 @@ export default function QuizSection({
     });
   }, []);
 
-  // Khởi động lại Speedrun
+  // Rút một câu hỏi ngẫu nhiên cho Speedrun
+  const pickSpeedrunQuestion = useCallback(() => {
+    if (!activeQuestions.length) return;
+    const rand = activeQuestions[Math.floor(Math.random() * activeQuestions.length)];
+    setSpeedrunQuestion(rand);
+  }, [activeQuestions]);
+
+  // Bắt đầu Speedrun
   const startSpeedrun = () => {
     playTaikoDrum();
     setTimeLeft(SPEEDRUN_DURATION);
@@ -119,679 +218,623 @@ export default function QuizSection({
     setIsSpeedrunFinished(false);
     setShowHankoStamp(false);
     setIsSpeedrunActive(true);
-    generateQuestion();
+    pickSpeedrunQuestion();
   };
 
-  // Sinh câu hỏi thông minh theo các dạng JLPT
-  const generateQuestion = useCallback(() => {
-    if (!kanjiList || kanjiList.length === 0) return;
+  // 4. Xử lý khi người dùng chọn đáp án
+  const handleSelectOption = (optIndex) => {
+    if (gameMode === 'speedrun') {
+      if (!isSpeedrunActive || isSpeedrunFinished || !speedrunQuestion) return;
 
-    // Xác định dạng câu hỏi
-    let chosenType = questionFilter;
-    if (chosenType === 'mixed') {
-      const types = [
-        QUESTION_TYPES.KANJI_TO_MEANING,
-        QUESTION_TYPES.READING_TO_KANJI,
-        QUESTION_TYPES.VOCAB_FILL,
-      ];
-      chosenType = types[Math.floor(Math.random() * types.length)];
+      const isCorrect = optIndex === speedrunQuestion.correctIndex;
+      setTotalAttempted((prev) => prev + 1);
+
+      if (isCorrect) {
+        playQuizSuccess();
+        const nextStreak = streak + 1;
+        setStreak(nextStreak);
+        if (nextStreak > maxStreak) setMaxStreak(nextStreak);
+
+        const newMultiplier = nextStreak >= 10 ? 4 : nextStreak >= 5 ? 3 : nextStreak >= 3 ? 2 : 1;
+        setComboMultiplier(newMultiplier);
+        setScore((prev) => prev + 100 * newMultiplier);
+        setCorrectCount((prev) => prev + 1);
+      } else {
+        playQuizError();
+        setStreak(0);
+        setComboMultiplier(1);
+        if (speedrunQuestion.kanji && onFailKanji) {
+          onFailKanji(speedrunQuestion.kanji);
+        }
+      }
+
+      pickSpeedrunQuestion();
+      return;
     }
 
-    // Chọn chữ Kanji mục tiêu
-    const randomIndex = Math.floor(Math.random() * kanjiList.length);
-    const targetChar = kanjiList[randomIndex];
-    const targetInfo = getLocalKanjiInfo(targetChar, fullDb);
+    // Zen Mode
+    if (isAnswered || !currentItem) return;
 
-    // Lấy 3 chữ gây nhiễu cùng level
-    const pool = kanjiList.filter((c) => c !== targetChar);
-    const shuffledPool = [...pool].sort(() => 0.5 - Math.random());
-    const distractorChars = shuffledPool.slice(0, 3);
-    const distractorInfos = distractorChars.map((char) => ({
-      char,
-      info: getLocalKanjiInfo(char, fullDb),
+    const isCorrect = optIndex === currentItem.correctIndex;
+
+    setUserAnswers((prev) => ({
+      ...prev,
+      [currentItem.id]: {
+        selectedIndex: optIndex,
+        isCorrect,
+      },
     }));
 
-    // Xây dựng câu hỏi theo dạng
-    let questionObj = null;
-
-    if (chosenType === QUESTION_TYPES.VOCAB_FILL) {
-      // Dạng 3: Điền chữ vào từ vựng
-      const validVocab = targetInfo?.vocab?.find(
-        (v) => v.word && v.word.length >= 2 && v.word.includes(targetChar)
-      );
-
-      if (validVocab) {
-        // Tạo chuỗi có ô khuyết [ ？ ]
-        const maskedWord = validVocab.word.replace(
-          new RegExp(targetChar, 'g'),
-          '【 ？ 】'
-        );
-
-        const correctOpt = {
-          id: 'target',
-          kanji: targetChar,
-          hanViet: targetInfo.hanViet,
-          meaning: targetInfo.meaning,
-          display: targetChar,
-          subText: targetInfo.hanViet,
-          isCorrect: true,
-        };
-
-        const distractorOpts = distractorInfos.map((d, i) => ({
-          id: `dist_${i}`,
-          kanji: d.char,
-          hanViet: d.info.hanViet,
-          meaning: d.info.meaning,
-          display: d.char,
-          subText: d.info.hanViet,
-          isCorrect: false,
-        }));
-
-        questionObj = {
-          type: QUESTION_TYPES.VOCAB_FILL,
-          badge: 'ĐIỀN TỪ VỰNG',
-          instruction: 'Chọn chữ Kanji thích hợp để điền vào ô trống:',
-          targetChar,
-          targetInfo,
-          promptDisplay: maskedWord,
-          promptFurigana: validVocab.reading || '',
-          promptMeaning: validVocab.meaning_vi || validVocab.vn || '',
-          options: [correctOpt, ...distractorOpts].sort(() => 0.5 - Math.random()),
-        };
-      } else {
-        // Fallback về Dạng 2 nếu chữ này không có từ ghép thích hợp
-        chosenType = QUESTION_TYPES.READING_TO_KANJI;
-      }
-    }
-
-    if (chosenType === QUESTION_TYPES.READING_TO_KANJI) {
-      // Dạng 2: Nhìn Hiragana ➔ Chọn chữ Kanji
-      // Lấy âm Kun hoặc âm On hoặc từ vựng tiêu biểu
-      let promptReading = '';
-      if (targetInfo?.kun && targetInfo.kun !== '—' && !targetInfo.kun.includes('Tra từ điển')) {
-        promptReading = targetInfo.kun.split(/[,、]/)[0].trim();
-      } else if (targetInfo?.on && targetInfo.on !== '—' && !targetInfo.on.includes('Tra từ điển')) {
-        promptReading = targetInfo.on.split(/[,、]/)[0].trim();
-      } else if (targetInfo?.vocab?.[0]?.reading) {
-        promptReading = targetInfo.vocab[0].reading;
-      } else {
-        promptReading = targetInfo.hanViet;
-      }
-
-      const correctOpt = {
-        id: 'target',
-        kanji: targetChar,
-        hanViet: targetInfo.hanViet,
-        meaning: targetInfo.meaning,
-        display: targetChar,
-        subText: targetInfo.hanViet,
-        isCorrect: true,
-      };
-
-      const distractorOpts = distractorInfos.map((d, i) => ({
-        id: `dist_${i}`,
-        kanji: d.char,
-        hanViet: d.info.hanViet,
-        meaning: d.info.meaning,
-        display: d.char,
-        subText: d.info.hanViet,
-        isCorrect: false,
-      }));
-
-      questionObj = {
-        type: QUESTION_TYPES.READING_TO_KANJI,
-        badge: 'JLPT MOJI-GOI',
-        instruction: 'Nhìn cách đọc Hiragana / Katakana ➔ Chọn chữ Kanji tương ứng:',
-        targetChar,
-        targetInfo,
-        promptDisplay: promptReading,
-        promptFurigana: `Âm Hán Việt: ${targetInfo.hanViet}`,
-        promptMeaning: targetInfo.meaning,
-        options: [correctOpt, ...distractorOpts].sort(() => 0.5 - Math.random()),
-      };
-    }
-
-    if (chosenType === QUESTION_TYPES.KANJI_TO_MEANING || !questionObj) {
-      // Dạng 1: Nhìn chữ Kanji ➔ Chọn Nghĩa & Hán Việt
-      const correctOpt = {
-        id: 'target',
-        kanji: targetChar,
-        hanViet: targetInfo.hanViet,
-        meaning: targetInfo.meaning,
-        display: targetInfo.hanViet,
-        subText: targetInfo.meaning,
-        isCorrect: true,
-      };
-
-      const distractorOpts = distractorInfos.map((d, i) => ({
-        id: `dist_${i}`,
-        kanji: d.char,
-        hanViet: d.info.hanViet,
-        meaning: d.info.meaning,
-        display: d.info.hanViet,
-        subText: d.info.meaning,
-        isCorrect: false,
-      }));
-
-      questionObj = {
-        type: QUESTION_TYPES.KANJI_TO_MEANING,
-        badge: 'HÁN TỰ ➔ Ý NGHĨA',
-        instruction: 'Chọn âm Hán Việt và ý nghĩa đúng nhất:',
-        targetChar,
-        targetInfo,
-        promptDisplay: targetChar,
-        promptFurigana: '',
-        promptMeaning: '',
-        options: [correctOpt, ...distractorOpts].sort(() => 0.5 - Math.random()),
-      };
-    }
-
-    setCurrentQuestion(questionObj);
-    setSelectedOption(null);
-    setIsAnswered(false);
-  }, [kanjiList, fullDb, questionFilter]);
-
-  // Sinh câu hỏi đầu tiên
-  useEffect(() => {
-    generateQuestion();
-  }, [generateQuestion]);
-
-  // Xử lý khi chọn đáp án
-  const handleSelectOption = (opt) => {
-    if (isAnswered) return;
-    setSelectedOption(opt);
-    setIsAnswered(true);
-    setTotalAttempted((prev) => prev + 1);
-
-    if (opt.isCorrect) {
+    if (isCorrect) {
       playQuizSuccess();
-      const newStreak = streak + 1;
-      setStreak(newStreak);
-      if (newStreak > maxStreak) setMaxStreak(newStreak);
-
-      // Thưởng dấu Hanko khi đạt mốc 5, 10, 15 câu
-      if (newStreak % 5 === 0) {
-        setTimeout(() => {
-          playHankoStamp();
-          setHankoText(newStreak >= 10 ? '大吉' : '合格');
-          setShowHankoStamp(true);
-          setTimeout(() => setShowHankoStamp(false), 2400);
-        }, 200);
-      }
-
-      // Xử lý điểm số trong Speedrun
-      if (gameMode === 'speedrun' && isSpeedrunActive) {
-        setCorrectCount((prev) => prev + 1);
-        const newMultiplier = Math.min(5, 1 + Math.floor(newStreak / 2) * 0.5);
-        setComboMultiplier(newMultiplier);
-        setScore((prev) => prev + Math.round(100 * newMultiplier));
-
-        // Tự động chuyển câu siêu nhanh (450ms) trong Speedrun
-        setTimeout(() => {
-          generateQuestion();
-        }, 450);
-      }
+      const nextStreak = streak + 1;
+      setStreak(nextStreak);
+      if (nextStreak > maxStreak) setMaxStreak(nextStreak);
     } else {
       playQuizError();
       setStreak(0);
-      setComboMultiplier(1);
-
-      // Phạt thời gian trong Speedrun (-2s)
-      if (gameMode === 'speedrun' && isSpeedrunActive) {
-        setTimeLeft((prev) => Math.max(0, prev - 2));
-        // Chuyển câu sau 700ms để kịp nhìn đáp án đúng
-        setTimeout(() => {
-          generateQuestion();
-        }, 700);
-      }
-
-      // Lưu chữ sai vào Sổ tay ôn tập
-      if (onFailKanji && currentQuestion?.targetChar) {
-        onFailKanji(currentQuestion.targetChar);
+      if (currentItem.kanji && onFailKanji) {
+        onFailKanji(currentItem.kanji);
       }
     }
   };
 
-  // Keyboard shortcuts (Phím 1, 2, 3, 4 chọn đáp án; Space/Enter sang câu tiếp)
+  // Chuyển sang câu tiếp theo
+  const handleNextQuestion = () => {
+    playWoodClapper();
+    if (currentIndex < activeQuestions.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    }
+  };
+
+  // Quay lại câu trước
+  const handlePrevQuestion = () => {
+    playWoodClapper();
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
+  };
+
+  // Keyboard shortcuts (Phím 1, 2, 3, 4 chọn đáp án; Space / Enter sang câu tiếp)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
 
-      if (!isAnswered && currentQuestion?.options) {
-        if (['1', '2', '3', '4'].includes(e.key)) {
-          e.preventDefault();
-          const idx = parseInt(e.key, 10) - 1;
-          if (currentQuestion.options[idx]) {
-            handleSelectOption(currentQuestion.options[idx]);
-          }
-        }
+      if (['1', '2', '3', '4'].includes(e.key)) {
+        e.preventDefault();
+        const idx = parseInt(e.key, 10) - 1;
+        handleSelectOption(idx);
       } else if (isAnswered && gameMode === 'zen') {
         if (e.code === 'Space' || e.key === 'Enter') {
           e.preventDefault();
-          playWoodClapper();
-          generateQuestion();
+          if (currentIndex < activeQuestions.length - 1) {
+            handleNextQuestion();
+          }
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isAnswered, currentQuestion, gameMode, generateQuestion]);
+  }, [isAnswered, currentIndex, activeQuestions.length, gameMode, speedrunQuestion, currentItem]);
 
-  if (!currentQuestion) {
-    return (
-      <div className="p-12 text-center opacity-70 text-sm font-kanji">
-        Đang khởi tạo đề trắc nghiệm JLPT...
-      </div>
-    );
-  }
+  // Câu hỏi đang hiển thị (Zen vs Speedrun)
+  const displayItem = gameMode === 'speedrun' ? speedrunQuestion : currentItem;
+
+  // Tổng số câu của từng level trong database
+  const levelCounts = useMemo(() => {
+    if (!quizDatabase) return { N5: 160, N4: 160, N3: 160, N2: 260, N1: 360 };
+    return {
+      N5: quizDatabase.N5?.length || 160,
+      N4: quizDatabase.N4?.length || 160,
+      N3: quizDatabase.N3?.length || 160,
+      N2: quizDatabase.N2?.length || 260,
+      N1: quizDatabase.N1?.length || 360,
+    };
+  }, [quizDatabase]);
+
+  const progressPercent = activeQuestions.length > 0
+    ? Math.round(((currentIndex + 1) / activeQuestions.length) * 100)
+    : 0;
 
   return (
-    <section className="w-full max-w-2xl flex flex-col items-center gap-5 z-20">
-      {/* Thanh chọn Chế độ chơi & Dạng bài (Japanese Segmented Nav) */}
-      <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 bg-washi/80 p-2 rounded-2xl border border-washi-border shadow-xs backdrop-blur-xs">
-        {/* Game Mode Tabs */}
-        <div className="flex items-center gap-1.5 w-full sm:w-auto">
-          <button
-            onClick={() => {
-              playWaterDrop();
-              setGameMode('zen');
-              setIsSpeedrunActive(false);
-              setIsSpeedrunFinished(false);
-            }}
-            className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              gameMode === 'zen'
-                ? 'bg-torii text-white shadow-xs'
-                : 'text-color-sumi/70 hover:text-torii hover:bg-black/5 dark:hover:bg-white/5'
-            }`}
-          >
-            <span>🎯</span>
-            <span>Luyện Tập Zen</span>
-          </button>
+    <section className="w-full max-w-[1020px] 2xl:max-w-6xl h-full min-h-0 flex-1 flex flex-col items-center justify-between gap-1 sm:gap-1.5 z-20 select-none overflow-hidden">
+      {/* 1. Sleek Consolidated Kyoto Control Deck */}
+      <div className="w-full flex flex-col gap-1 p-1 sm:p-1.5 rounded-2xl bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 border border-[#D8CEBF] dark:border-stone-700/80 shadow-md backdrop-blur-md shrink-0">
+        <div className="w-full flex flex-wrap sm:flex-nowrap items-center justify-between gap-1">
+          {/* Level Tabs */}
+          <div className="flex items-center gap-1 shrink-0">
+            {['N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => {
+              const isSelected = selectedLevel === lvl;
+              const count = levelCounts[lvl];
+              return (
+                <button
+                  key={lvl}
+                  onClick={() => {
+                    playWaterDrop();
+                    setSelectedLevel(lvl);
+                  }}
+                  className={`py-1 px-2 sm:px-2.5 rounded-xl text-xs font-bold transition-all text-center relative flex items-center gap-1 shrink-0 border cursor-pointer ${
+                    isSelected
+                      ? 'bg-torii text-white border-[#9B0024] shadow-xs font-black'
+                      : 'bg-[#F5EFE6] dark:bg-[#1E2633] text-stone-700 dark:text-stone-300 border-[#E3DACB] dark:border-stone-700 hover:bg-[#EAE1D2] dark:hover:bg-stone-800'
+                  }`}
+                >
+                  <span>{lvl}</span>
+                  <span className={`text-[10px] ${isSelected ? 'text-white/80' : 'text-stone-500 dark:text-stone-400 font-medium'}`}>
+                    ({count})
+                  </span>
+                </button>
+              );
+            })}
+          </div>
 
-          <button
-            onClick={() => {
-              playWaterDrop();
-              setGameMode('speedrun');
-              if (!isSpeedrunActive && !isSpeedrunFinished) {
-                // Sẵn sàng chơi speedrun
-              }
-            }}
-            className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              gameMode === 'speedrun'
-                ? 'bg-amber-600 text-white shadow-xs'
-                : 'text-color-sumi/70 hover:text-amber-600 hover:bg-black/5 dark:hover:bg-white/5'
-            }`}
-          >
-            <span>⚡</span>
-            <span>Thử Thách 60s</span>
-          </button>
-        </div>
-
-        {/* Filter Question Type */}
-        <div className="flex items-center gap-1 text-xs overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
-          {[
-            { id: 'mixed', label: '🎲 Trộn Đề' },
-            { id: QUESTION_TYPES.KANJI_TO_MEANING, label: '🈸 Kanji ➔ Nghĩa' },
-            { id: QUESTION_TYPES.READING_TO_KANJI, label: '🈳 Kana ➔ Kanji' },
-            { id: QUESTION_TYPES.VOCAB_FILL, label: '🧩 Điền Từ' },
-          ].map((t) => (
-            <button
-              key={t.id}
-              onClick={() => {
-                playWaterDrop();
-                setQuestionFilter(t.id);
-              }}
-              className={`px-2.5 py-1 rounded-lg font-semibold text-[11px] whitespace-nowrap transition-all ${
-                questionFilter === t.id
-                  ? 'bg-color-sumi text-bg-page font-bold'
-                  : 'opacity-65 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Main Karuta Quiz Card */}
-      <div className="w-full p-5 sm:p-7 md:p-8 rounded-3xl karuta-card relative overflow-hidden flex flex-col items-center shadow-washi">
-        {/* Viền trong kép kiểu Nhật */}
-        <div className="karuta-inner-border" />
-
-        {/* Hiệu ứng con dấu triện đỏ Hanko khi thưởng / đỗ đạt */}
-        {showHankoStamp && (
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none animate-hankoStamp">
-            <div className="w-28 h-28 md:w-32 md:h-32 rounded-full border-4 border-red-600/90 text-red-600/90 flex flex-col items-center justify-center font-kanji font-black rotate-[-12deg] bg-red-600/10 backdrop-blur-xs shadow-2xl">
-              <span className="text-3xl md:text-4xl tracking-widest leading-none">
-                {hankoText}
-              </span>
-              <span className="text-[10px] tracking-wider mt-1 uppercase opacity-80 border-t border-red-600/50 pt-0.5">
-                JLPT {currentLevel}
-              </span>
+          {/* Mode Switch & Question Counts */}
+          <div className="flex items-center gap-1.5 ml-auto shrink-0">
+            {/* Game Mode Tabs */}
+            <div className="flex items-center p-0.5 rounded-xl bg-[#F5EFE6] dark:bg-[#1E2633] border border-[#E3DACB] dark:border-stone-700 text-xs font-bold gap-0.5">
+              <button
+                onClick={() => {
+                  playWaterDrop();
+                  setGameMode('zen');
+                  setIsSpeedrunActive(false);
+                  setIsSpeedrunFinished(false);
+                }}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                  gameMode === 'zen'
+                    ? 'bg-torii text-white shadow-2xs font-black'
+                    : 'text-stone-700 dark:text-stone-300 hover:text-torii'
+                }`}
+              >
+                <span>🎯 Luyện Zen</span>
+              </button>
+              <button
+                onClick={() => {
+                  playWaterDrop();
+                  setGameMode('speedrun');
+                }}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                  gameMode === 'speedrun'
+                    ? 'bg-amber-600 text-white shadow-2xs font-black'
+                    : 'text-stone-700 dark:text-stone-300 hover:text-amber-600'
+                }`}
+              >
+                <span>⚡ 60s Speed</span>
+              </button>
             </div>
+
+            {/* Length selector in Zen mode */}
+            {gameMode === 'zen' && (
+              <div className="hidden md:flex items-center gap-0.5 text-[11px] font-bold">
+                {[
+                  { id: 'all', label: `Trọn bộ (${activeQuestions.length})` },
+                  { id: '100', label: '100 câu' },
+                  { id: '50', label: '50 câu' },
+                  { id: '20', label: '20 câu' },
+                ].map((len) => (
+                  <button
+                    key={len.id}
+                    onClick={() => {
+                      playWaterDrop();
+                      setLengthMode(len.id);
+                    }}
+                    className={`px-2 py-0.5 rounded-lg border transition-all cursor-pointer ${
+                      lengthMode === len.id
+                        ? 'bg-torii text-white border-torii font-extrabold shadow-2xs'
+                        : 'bg-[#F5EFE6] dark:bg-[#1E2633] text-stone-600 dark:text-stone-400 border-[#E3DACB] dark:border-stone-700 hover:text-stone-900'
+                    }`}
+                  >
+                    {len.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Row 2: Question Type Filters (Single Line Scroll) */}
+        {gameMode === 'zen' && (
+          <div className="w-full flex items-center gap-1 overflow-x-auto py-0.5 no-scrollbar border-t border-[#ebdccb]/60 dark:border-stone-700/60">
+            {QUIZ_FILTER_TYPES.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => {
+                  playWaterDrop();
+                  setFilterType(t.id);
+                }}
+                className={`px-2.5 py-0.5 rounded-lg text-[11px] font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 border ${
+                  filterType === t.id
+                    ? 'border-torii bg-torii text-white font-bold shadow-2xs'
+                    : 'border-[#E3DACB] dark:border-stone-700 bg-[#F5EFE6]/80 dark:bg-[#1E2633]/80 hover:bg-[#EAE1D2] text-stone-700 dark:text-stone-300'
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
           </div>
         )}
+      </div>
 
-        {/* Speedrun Finished View */}
-        {gameMode === 'speedrun' && isSpeedrunFinished ? (
-          <div className="w-full py-8 text-center flex flex-col items-center gap-4 relative z-10 animate-fadeIn">
-            <div className="text-5xl animate-bounce">🏆</div>
-            <h3 className="text-2xl md:text-3xl font-black font-kanji text-torii">
-              KẾT THÚC THỬ THÁCH 60 GIÂY
+      {/* 2. Main Studio Karuta Card */}
+      <div className="w-full flex-1 min-h-0 karuta-card rounded-2xl sm:rounded-3xl border border-[#D8CEBF] dark:border-stone-700/80 bg-[#FFFDF9]/95 dark:bg-[#161D27]/95 shadow-md p-2.5 sm:p-4 flex flex-col justify-between relative overflow-hidden backdrop-blur-md">
+        <div className="karuta-inner-border" />
+
+        {/* A. Speedrun Start Screen */}
+        {gameMode === 'speedrun' && !isSpeedrunActive && !isSpeedrunFinished ? (
+          <div className="py-12 flex flex-col items-center text-center relative z-10">
+            <span className="text-6xl mb-3 animate-bounce">⚡</span>
+            <h3 className="text-2xl font-black font-kanji text-amber-600 mb-1">
+              SAMURAI SPEEDRUN 60 GIÂY
             </h3>
-            <p className="text-xs opacity-75 max-w-md">
-              Bạn đã hoàn thành xuất sắc thử thách phản xạ chữ Hán JLPT {currentLevel}!
+            <p className="text-xs sm:text-sm opacity-75 max-w-md mb-6 leading-relaxed">
+              Thử thách phản xạ kiếm đạo với kho {levelCounts[selectedLevel]} câu trắc nghiệm JLPT {selectedLevel}.
+              Trả lời đúng liên tục để kích hoạt nhân điểm Combo x2, x3, x4!
             </p>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-lg my-2">
-              <div className="bg-washi/80 p-3 rounded-2xl border border-washi-border">
-                <span className="text-[10px] font-bold opacity-60 uppercase block">Tổng điểm</span>
-                <span className="text-xl md:text-2xl font-black text-amber-600 font-kanji">
-                  {score.toLocaleString()}
-                </span>
+            {highScore > 0 && (
+              <div className="mb-6 px-4 py-2 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-200 text-xs font-bold flex items-center gap-2">
+                <span>🏆 Kỷ lục của bạn:</span>
+                <span className="font-kanji font-black text-sm">{highScore} điểm</span>
               </div>
-              <div className="bg-washi/80 p-3 rounded-2xl border border-washi-border">
-                <span className="text-[10px] font-bold opacity-60 uppercase block">Số câu đúng</span>
-                <span className="text-xl md:text-2xl font-black text-emerald-600 font-kanji">
-                  {correctCount} / {totalAttempted}
-                </span>
-              </div>
-              <div className="bg-washi/80 p-3 rounded-2xl border border-washi-border">
-                <span className="text-[10px] font-bold opacity-60 uppercase block">Độ chính xác</span>
-                <span className="text-xl md:text-2xl font-black text-torii font-kanji">
-                  {totalAttempted > 0 ? Math.round((correctCount / totalAttempted) * 100) : 0}%
-                </span>
-              </div>
-              <div className="bg-washi/80 p-3 rounded-2xl border border-washi-border">
-                <span className="text-[10px] font-bold opacity-60 uppercase block">Kỷ lục cao nhất</span>
-                <span className="text-xl md:text-2xl font-black text-purple-600 font-kanji">
-                  {highScore.toLocaleString()}
-                </span>
-              </div>
-            </div>
+            )}
 
             <button
               onClick={startSpeedrun}
-              className="mt-2 px-8 py-3.5 bg-torii hover:bg-torii-light text-white font-extrabold rounded-2xl shadow-lg transition-all active:scale-95 flex items-center gap-2"
+              className="px-8 py-3.5 bg-gradient-to-r from-amber-600 to-torii hover:from-amber-500 hover:to-torii-light text-white font-extrabold rounded-2xl text-sm sm:text-base shadow-lg transition-all active:scale-95 flex items-center gap-2 cursor-pointer"
             >
-              <span>Thử thách lại ↺</span>
+              <span>⚔️</span>
+              <span>BẮT ĐẦU THỬ THÁCH (60 GIÂY)</span>
             </button>
           </div>
-        ) : gameMode === 'speedrun' && !isSpeedrunActive ? (
-          /* Speedrun Standby Screen */
-          <div className="w-full py-10 text-center flex flex-col items-center gap-5 relative z-10">
-            <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-3xl">
-              ⚡
-            </div>
-            <div>
-              <h3 className="text-2xl font-black font-kanji text-color-sumi">
-                THỬ THÁCH TỐC ĐỘ 60 GIÂY
-              </h3>
-              <p className="text-xs opacity-75 mt-1 max-w-md mx-auto">
-                Trả lời chính xác nhiều câu hỏi nhất có thể trong vòng 60 giây. Trả lời đúng liên tiếp để nhân điểm thưởng Combo!
-              </p>
+        ) : gameMode === 'speedrun' && isSpeedrunFinished ? (
+          /* B. Speedrun Result Screen */
+          <div className="py-8 flex flex-col items-center text-center relative z-10 animate-fadeIn">
+            {showHankoStamp && (
+              <div className="w-24 h-24 rounded-full border-4 border-torii flex flex-col items-center justify-center text-torii font-kanji font-black text-xl rotate-[-12deg] mb-3 animate-stamp shadow-md">
+                <span>{score >= 1000 ? '合格' : '努力'}</span>
+                <span className="text-[9px] tracking-widest uppercase font-sans">JLPT HANKO</span>
+              </div>
+            )}
+
+            <h3 className="text-2xl font-black font-kanji text-torii mb-1">
+              HẾT THỜI GIAN!
+            </h3>
+            <p className="text-xs opacity-75 mb-4">
+              Bạn đã hoàn thành lượt chạy tốc độ Samurai Speedrun
+            </p>
+
+            <div className="grid grid-cols-3 gap-2.5 w-full max-w-sm mb-6">
+              <div className="bg-washi/80 p-3 rounded-2xl border border-washi-border flex flex-col items-center">
+                <span className="text-xs opacity-70">Điểm số</span>
+                <span className="text-xl font-black font-kanji text-torii mt-0.5">{score}</span>
+              </div>
+              <div className="bg-washi/80 p-3 rounded-2xl border border-washi-border flex flex-col items-center">
+                <span className="text-xs opacity-70">Số câu đúng</span>
+                <span className="text-xl font-black font-kanji text-emerald-600 mt-0.5">
+                  {correctCount}/{totalAttempted}
+                </span>
+              </div>
+              <div className="bg-washi/80 p-3 rounded-2xl border border-washi-border flex flex-col items-center">
+                <span className="text-xs opacity-70">Chuỗi cao nhất</span>
+                <span className="text-xl font-black font-kanji text-amber-600 mt-0.5">
+                  {maxStreak} 🔥
+                </span>
+              </div>
             </div>
 
-            <div className="flex items-center gap-4 text-xs font-semibold bg-washi/80 px-4 py-2 rounded-xl border border-washi-border">
-              <span>👑 Kỷ lục của bạn:</span>
-              <span className="font-extrabold text-amber-600 font-kanji text-sm">
-                {highScore > 0 ? `${highScore.toLocaleString()} điểm` : 'Chưa có'}
-              </span>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={startSpeedrun}
+                className="px-6 py-2.5 bg-torii hover:bg-torii-light text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer"
+              >
+                Chơi lại ⚡
+              </button>
+              <button
+                onClick={() => {
+                  setGameMode('zen');
+                  setIsSpeedrunActive(false);
+                  setIsSpeedrunFinished(false);
+                }}
+                className="px-5 py-2.5 karuta-card border border-washi-border font-bold rounded-xl text-xs sm:text-sm opacity-80 hover:opacity-100 transition-all cursor-pointer"
+              >
+                Về Luyện tập Zen
+              </button>
             </div>
-
-            <button
-              onClick={startSpeedrun}
-              className="px-8 py-3.5 bg-amber-600 hover:bg-amber-500 text-white font-extrabold rounded-2xl shadow-lg transition-all active:scale-95 flex items-center gap-2 text-sm"
-            >
-              <span>Bắt Đầu Thử Thách 60s 🚀</span>
-            </button>
+          </div>
+        ) : !displayItem ? (
+          /* C. Empty or Loading */
+          <div className="py-12 text-center opacity-70 text-sm font-kanji relative z-10">
+            {isLoadingQuiz ? 'Đang nạp 1,100 câu hỏi trắc nghiệm JLPT...' : 'Chưa có câu hỏi cho bộ lọc này.'}
           </div>
         ) : (
-          /* Standard Quiz Question Display */
+          /* D. Standard Question Display */
           <>
-            {/* Top Stats Bar */}
-            <div className="w-full flex items-center justify-between pb-3.5 border-b border-washi-border/60 relative z-10">
-              <div className="flex items-center gap-2">
-                <span className="hanko-stamp text-xs">JLPT {currentLevel}</span>
-                <span className="px-2 py-0.5 rounded-full bg-torii/10 text-torii font-bold text-[10px] border border-torii/30">
-                  {currentQuestion.badge}
+            {/* Top Bar: Badges, Counter & Score */}
+            <div className="w-full flex items-center justify-between pb-1 border-b border-washi-border/60 relative z-10 shrink-0">
+              <div className="flex items-center gap-1.5">
+                <span className="px-2 py-0.5 rounded-md bg-torii text-white font-black text-[11px]">
+                  JLPT {displayItem.level || selectedLevel}
+                </span>
+                <span className="px-2 py-0.5 rounded-md bg-[#F5EFE6] dark:bg-stone-800 border border-washi-border font-bold text-[10px] opacity-80">
+                  {displayItem.typeBadge || displayItem.typeName || 'Trắc nghiệm'}
                 </span>
               </div>
 
               {gameMode === 'speedrun' ? (
-                /* Speedrun Header Display */
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1.5 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/30">
-                    <span className="text-xs font-bold text-amber-700 dark:text-amber-300">
-                      ⏱ {timeLeft}s
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5 bg-torii/10 px-3 py-1 rounded-full border border-torii/30">
-                    <span className="text-xs font-black text-torii font-kanji">
-                      {score} điểm (x{comboMultiplier})
-                    </span>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-bold text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/30">
+                    ⏱ {timeLeft}s
+                  </span>
+                  <span className="text-xs font-black text-torii font-kanji">
+                    {score} điểm (x{comboMultiplier})
+                  </span>
                 </div>
               ) : (
-                /* Zen Header Display */
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/30">
-                    <span className="text-xs font-bold text-amber-700 dark:text-amber-300">Chuỗi đúng:</span>
-                    <span className={`font-extrabold font-kanji text-sm ${streak >= 3 ? 'text-amber-500 animate-pulse' : 'text-torii'}`}>
-                      {streak} 🔥
-                    </span>
-                  </div>
+                <div className="flex items-center gap-2 text-xs font-bold">
+                  <span className="text-torii font-extrabold font-kanji">
+                    Câu {currentIndex + 1} / {activeQuestions.length}
+                  </span>
+                  <span className="text-emerald-600 text-[11px]">✓ {totalCorrect}</span>
+                  <span className="text-rose-600 text-[11px]">✕ {totalWrong}</span>
+                  {streak > 0 && <span className="text-amber-500 text-[11px]">🔥 {streak}</span>}
                 </div>
               )}
             </div>
 
-            {/* Time progress bar for Speedrun */}
-            {gameMode === 'speedrun' && isSpeedrunActive && (
-              <div className="w-full h-1.5 bg-black/10 dark:bg-white/10 rounded-full mt-2 overflow-hidden relative z-10">
+            {/* Progress Bar (Zen mode) */}
+            {gameMode === 'zen' && (
+              <div className="w-full h-1 rounded-full bg-black/5 dark:bg-white/5 overflow-hidden mt-1 shrink-0 relative z-10">
                 <div
-                  className="h-full bg-gradient-to-r from-amber-500 to-torii transition-all duration-1000 ease-linear"
-                  style={{ width: `${(timeLeft / SPEEDRUN_DURATION) * 100}%` }}
+                  className="h-full bg-torii transition-all duration-300 rounded-full"
+                  style={{ width: `${progressPercent}%` }}
                 />
               </div>
             )}
 
-            {/* Kanji / Question Prompt */}
-            <div className="text-center py-5 relative z-10 w-full flex flex-col items-center">
-              {/* Vòng cọ thiền Enso phía sau */}
-              <EnsoCircle />
-
-              <p className="text-xs opacity-60 font-bold uppercase tracking-wider mb-2">
-                {currentQuestion.instruction}
-              </p>
-
-              {/* Hiển thị câu hỏi theo từng dạng */}
-              {currentQuestion.type === QUESTION_TYPES.KANJI_TO_MEANING ? (
-                /* Dạng 1: Chữ Kanji khổng lồ */
-                <div className="flex flex-col items-center">
-                  <div className="text-8xl md:text-9xl font-kanji font-black tracking-wider drop-shadow-sm select-none py-1 transition-transform hover:scale-105">
-                    {currentQuestion.promptDisplay}
-                  </div>
-                  <button
-                    onClick={() => {
-                      playWaterDrop();
-                      playJapaneseSpeech(currentQuestion.promptDisplay);
-                    }}
-                    className="mt-2 inline-flex items-center gap-1.5 text-xs text-torii hover:text-white font-bold bg-washi hover:bg-torii border border-torii/30 hover:border-torii px-3.5 py-1.5 rounded-xl transition-all shadow-xs group"
-                  >
-                    <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-                    </svg>
-                    <span>Phát âm</span>
-                  </button>
+            {/* Scrollable Middle Content Area (Ensures Zero Page Overflow on any laptop) */}
+            <div className="w-full flex-1 min-h-0 overflow-y-auto thin-scrollbar flex flex-col justify-start py-1 sm:py-2 relative z-10 gap-2 sm:gap-2.5">
+              
+              {/* KHỐI 1: KHỐI CÂU HỎI (Tách bạch riêng biệt, rõ ràng, không lộ đáp án) */}
+              <div className="w-full rounded-2xl border border-[#D8CEBF] dark:border-stone-700/80 bg-[#FBF8F2] dark:bg-[#18202C] p-3 sm:p-4 text-center shadow-xs flex flex-col items-center justify-center shrink-0 relative overflow-hidden transition-all">
+                {/* Header nhãn câu hỏi */}
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-torii" />
+                  <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-torii font-sans">
+                    CÂU HỎI {gameMode === 'speedrun' ? 'TỐC ĐỘ' : `${currentIndex + 1} / ${activeQuestions.length}`} • {displayItem.typeBadge || displayItem.typeName || 'Trắc nghiệm'}
+                  </span>
                 </div>
-              ) : currentQuestion.type === QUESTION_TYPES.READING_TO_KANJI ? (
-                /* Dạng 2: Cách đọc Hiragana to & rõ */
-                <div className="flex flex-col items-center py-2">
-                  <div className="text-4xl sm:text-5xl md:text-6xl font-kanji font-black text-torii tracking-widest drop-shadow-xs select-none">
-                    {currentQuestion.promptDisplay}
+
+                {/* Nội dung câu hỏi (đã lọc bỏ gợi ý Hán Việt trong câu hỏi để tránh suy đoán) */}
+                <h4 className="font-kanji font-bold text-xs sm:text-sm text-stone-900 dark:text-stone-100 leading-snug max-w-xl">
+                  {displayItem.question ? displayItem.question.replace(/\s*\(lấy từ chữ.*?\)/g, '') : ''}
+                </h4>
+
+                {/* Ngữ cảnh câu ví dụ (dành cho sentence_fill & sentence_reading) - KHÔNG HIỂN THỊ DỊCH CÂU TRƯỚC KHI TRẢ LỜI */}
+                {displayItem.context && displayItem.context.trim() && (
+                  <div className="w-full max-w-lg mt-2 p-2.5 bg-white dark:bg-stone-900/90 rounded-xl border border-stone-200 dark:border-stone-700/70 text-center shadow-2xs">
+                    <div
+                      className="font-kanji text-sm sm:text-base font-semibold leading-relaxed text-stone-900 dark:text-stone-100"
+                      dangerouslySetInnerHTML={{
+                        __html: displayItem.context
+                          .replace(
+                            '[ ? ]',
+                            '<span class="px-2.5 py-0.5 bg-torii/15 text-torii rounded-lg border border-torii/40 font-black inline-block mx-1 shadow-2xs">[ ? ]</span>'
+                          )
+                          .replace(
+                            /【(.*?)】/g,
+                            '<span class="px-2 py-0.5 bg-amber-500/15 text-amber-700 dark:text-amber-300 rounded-lg border border-amber-500/40 font-black inline-block mx-1 font-kanji text-base">【$1】</span>'
+                          ),
+                      }}
+                    />
                   </div>
-                  <div className="text-xs sm:text-sm font-semibold opacity-75 mt-2 max-w-sm">
-                    {currentQuestion.promptFurigana}
+                )}
+
+                {/* Từ vựng / Hán tự mục tiêu */}
+                {/* ĐẶC BIỆT: KHÔNG hiển thị từ/Hán tự cho 'kanji_from_reading' và 'sentence_fill/reading' vì sẽ làm lộ đáp án */}
+                {displayItem.type !== 'sentence_fill' && displayItem.type !== 'sentence_reading' && (
+                  <div className="mt-2 flex flex-col items-center justify-center">
+                    {displayItem.type === 'kanji_from_reading' ? (
+                      <div className="flex items-center gap-2 px-3 py-1 bg-torii/10 dark:bg-torii/20 rounded-xl border border-torii/30">
+                        <span className="text-[11px] font-medium text-stone-600 dark:text-stone-300">Cách đọc cần tìm Hán tự:</span>
+                        <span className="text-xl sm:text-2xl font-kanji font-black text-torii drop-shadow-2xs">
+                          「{displayItem.targetReading}」
+                        </span>
+                      </div>
+                    ) : (displayItem.word || displayItem.kanji) ? (
+                      <div className="flex items-center justify-center">
+                        <span className="text-2xl sm:text-3xl font-kanji font-black text-torii drop-shadow-2xs leading-none">
+                          {displayItem.word || displayItem.kanji}
+                        </span>
+                      </div>
+                    ) : null}
                   </div>
-                  <div className="text-xs opacity-60 italic mt-0.5 max-w-xs truncate">
-                    Ý nghĩa: {currentQuestion.promptMeaning}
-                  </div>
+                )}
+              </div>
+
+              {/* KHỐI 2: KHỐI CÂU TRẢ LỜI / LỰA CHỌN (Tách bạch hoàn toàn khỏi khối câu hỏi) */}
+              <div className="w-full flex flex-col gap-1.5 shrink-0">
+                <div className="flex items-center justify-between px-1">
+                  <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-stone-500 dark:text-stone-400 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-stone-400" />
+                    LỰA CHỌN ĐÁP ÁN
+                  </span>
+                  <span className="text-[10px] font-mono opacity-50">
+                    Phím tắt: [1] [2] [3] [4]
+                  </span>
                 </div>
-              ) : (
-                /* Dạng 3: Điền chữ vào từ vựng */
-                <div className="flex flex-col items-center py-2">
-                  <div className="text-3xl sm:text-4xl md:text-5xl font-kanji font-black text-color-sumi tracking-wider drop-shadow-xs select-none bg-washi/80 px-6 py-3 rounded-2xl border border-washi-border">
-                    {currentQuestion.promptDisplay}
+
+                <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2">
+                  {displayItem.options &&
+                    displayItem.options.map((optText, optIdx) => {
+                      const letters = ['A', 'B', 'C', 'D'];
+                      const keyLetter = letters[optIdx];
+                      const keyNum = optIdx + 1;
+
+                      // Mặc định khi chưa trả lời: Thẻ trung tính, tuyệt đối không có chỉ dấu đáp án
+                      let btnStyle = 'bg-white dark:bg-stone-850 border-stone-200 dark:border-stone-700/80 hover:border-torii/60 hover:bg-torii/5 text-stone-900 dark:text-stone-100 shadow-2xs';
+
+                      if (isAnswered && gameMode === 'zen') {
+                        if (currentAnswer.isCorrect) {
+                          // Nếu làm ĐÚNG: Chỉ làm nổi bật lựa chọn của người dùng, không cần lộ đáp án khác
+                          if (optIdx === currentAnswer.selectedIndex) {
+                            btnStyle = 'bg-emerald-500/15 border-emerald-500 text-emerald-950 dark:text-emerald-200 font-bold ring-2 ring-emerald-500/30';
+                          } else {
+                            btnStyle = 'bg-stone-100/40 dark:bg-stone-900/30 border-stone-200/40 dark:border-stone-800/40 opacity-35 text-stone-400';
+                          }
+                        } else {
+                          // Nếu làm SAI: Lúc này MỚI TIẾT LỘ đáp án đúng!
+                          if (optIdx === currentAnswer.selectedIndex) {
+                            // Câu người dùng đã chọn sai -> Đỏ
+                            btnStyle = 'bg-rose-500/15 border-rose-500 text-rose-950 dark:text-rose-200 font-bold ring-2 ring-rose-500/30';
+                          } else if (optIdx === displayItem.correctIndex) {
+                            // Đáp án chính xác được hiển thị -> Xanh lá
+                            btnStyle = 'bg-emerald-500/20 border-emerald-500 text-emerald-950 dark:text-emerald-200 font-bold ring-2 ring-emerald-500/30';
+                          } else {
+                            btnStyle = 'bg-stone-100/40 dark:bg-stone-900/30 border-stone-200/40 dark:border-stone-800/40 opacity-35 text-stone-400';
+                          }
+                        }
+                      }
+
+                      return (
+                        <button
+                          key={optIdx}
+                          disabled={isAnswered && gameMode === 'zen'}
+                          onClick={() => handleSelectOption(optIdx)}
+                          className={`py-2 px-3 rounded-xl border text-left flex items-center justify-between transition-all duration-150 select-none cursor-pointer ${btnStyle}`}
+                        >
+                          <div className="flex items-center gap-2 overflow-hidden">
+                            <span className="w-5 h-5 rounded-md bg-black/5 dark:bg-white/10 text-[10px] font-black flex items-center justify-center font-mono shrink-0">
+                              {keyLetter}
+                            </span>
+                            <span className="font-kanji font-bold text-xs sm:text-sm leading-snug truncate">
+                              {optText}
+                            </span>
+                          </div>
+
+                          <div className="shrink-0 flex items-center gap-1 ml-1.5">
+                            {isAnswered && gameMode === 'zen' && (
+                              <>
+                                {currentAnswer.isCorrect && optIdx === currentAnswer.selectedIndex && (
+                                  <span className="px-1.5 py-0.5 rounded bg-emerald-600 text-white text-[9px] font-black">
+                                    ✓ BẠN CHỌN ĐÚNG
+                                  </span>
+                                )}
+                                {!currentAnswer.isCorrect && optIdx === currentAnswer.selectedIndex && (
+                                  <span className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[9px] font-black">
+                                    ✕ BẠN CHỌN SAI
+                                  </span>
+                                )}
+                                {!currentAnswer.isCorrect && optIdx === displayItem.correctIndex && (
+                                  <span className="px-1.5 py-0.5 rounded bg-emerald-600 text-white text-[9px] font-black animate-pulse">
+                                    ✓ ĐÁP ÁN ĐÚNG
+                                  </span>
+                                )}
+                              </>
+                            )}
+                            {!isAnswered && (
+                              <span className="text-[10px] opacity-40 font-mono px-1 py-0.5 rounded bg-black/5 dark:bg-white/5">
+                                [{keyNum}]
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                </div>
+              </div>
+
+              {/* KHỐI 3: HỘP GIẢI THÍCH & PHẢN HỒI (Chỉ xuất hiện sau khi đã trả lời) */}
+              {isAnswered && gameMode === 'zen' && currentAnswer && (
+                <div
+                  className={`w-full p-2.5 rounded-xl border text-xs leading-relaxed animate-fadeIn shrink-0 text-left ${
+                    currentAnswer.isCorrect
+                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-950 dark:text-emerald-200'
+                      : 'bg-rose-500/10 border-rose-500/30 text-rose-950 dark:text-rose-200'
+                  }`}
+                >
+                  <div className="font-bold flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-1.5">
+                      {currentAnswer.isCorrect ? (
+                        <span className="text-emerald-700 dark:text-emerald-300 font-extrabold flex items-center gap-1">
+                          🎉 Xuất sắc! Bạn đã chọn chính xác!
+                        </span>
+                      ) : (
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-rose-700 dark:text-rose-300 font-extrabold flex items-center gap-1">
+                            ✕ Chưa chính xác! Đáp án đúng: <span className="underline decoration-2 font-black text-emerald-600 dark:text-emerald-400 ml-1">{displayItem.options[displayItem.correctIndex]}</span>
+                          </span>
+                          <span className="text-[10px] font-normal text-stone-500 dark:text-stone-400">
+                            (Đã tự động lưu vào Sổ tay để ôn tập lại)
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {displayItem.ttsText && (
+                      <button
+                        onClick={() => {
+                          playWaterDrop();
+                          playJapaneseSpeech(displayItem.ttsText);
+                        }}
+                        className="text-[11px] font-bold underline flex items-center gap-1 opacity-80 hover:opacity-100 cursor-pointer ml-auto shrink-0 bg-white/40 dark:bg-black/20 px-2 py-0.5 rounded-lg border border-current"
+                        title="Nghe phát âm tiếng Nhật"
+                      >
+                        <VolumeIcon className="w-3 h-3" /> Nghe đọc
+                      </button>
+                    )}
                   </div>
-                  {currentQuestion.promptFurigana && (
-                    <div className="text-xs font-bold text-torii font-kanji mt-2">
-                      Cách đọc: {currentQuestion.promptFurigana}
+
+                  {/* Dịch câu ví dụ (CHỈ HIỂN THỊ TẠI ĐÂY SAU KHI ĐÃ TRẢ LỜI) */}
+                  {displayItem.contextTrans && (
+                    <div className="pt-1 mt-1 border-t border-current/20 text-[11px] font-medium opacity-90">
+                      💬 {displayItem.contextTrans}
                     </div>
                   )}
-                  {currentQuestion.promptMeaning && (
-                    <div className="text-xs opacity-70 italic mt-0.5">
-                      Nghĩa: {currentQuestion.promptMeaning}
+
+                  {displayItem.explanation && (
+                    <div className="pt-1 mt-1 border-t border-current/20 text-[11px] opacity-90 leading-normal">
+                      <span dangerouslySetInnerHTML={{ __html: displayItem.explanation.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
                     </div>
                   )}
                 </div>
               )}
             </div>
 
-            {/* 4 Lựa chọn Multiple Choice (Thẻ Karuta) */}
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1 relative z-10">
-              {currentQuestion.options.map((opt, i) => {
-                let btnClass = 'karuta-card hover:border-torii/60 hover:-translate-y-0.5';
+            {/* Navigation buttons: Trước / Tiếp theo / Làm lại */}
+            {gameMode === 'zen' && (
+              <div className="w-full pt-1.5 border-t border-washi-border/60 flex items-center justify-between shrink-0 text-xs relative z-10">
+                <button
+                  disabled={currentIndex === 0}
+                  onClick={handlePrevQuestion}
+                  className="px-3 py-1 rounded-lg bg-[#F5EFE6] dark:bg-stone-800 border border-washi-border font-bold text-xs opacity-80 hover:opacity-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                >
+                  ← Trước
+                </button>
 
-                if (isAnswered) {
-                  if (opt.isCorrect) {
-                    btnClass = 'bg-emerald-500/20 border-emerald-500 text-emerald-950 dark:text-emerald-200 shadow-md ring-2 ring-emerald-500/40';
-                  } else if (selectedOption === opt) {
-                    btnClass = 'bg-red-500/20 border-red-500 text-red-950 dark:text-red-200 ring-2 ring-red-500/40';
-                  } else {
-                    btnClass = 'opacity-35 karuta-card';
-                  }
-                }
-
-                // Check hiển thị chữ to nếu đáp án là Kanji
-                const isKanjiOption = opt.display.length === 1 && !opt.display.match(/[a-zA-Z0-9]/);
-
-                return (
-                  <button
-                    key={opt.id || i}
-                    disabled={isAnswered}
-                    onClick={() => handleSelectOption(opt)}
-                    className={`p-3.5 sm:p-4 rounded-2xl border text-left flex items-center justify-between transition-all duration-200 active:scale-98 cursor-pointer relative group ${btnClass}`}
-                  >
-                    <div className="flex items-center gap-3 overflow-hidden">
-                      {/* Phím tắt số (1, 2, 3, 4) */}
-                      <span className="w-6 h-6 rounded-lg bg-black/5 dark:bg-white/10 text-[11px] font-bold flex items-center justify-center font-mono opacity-60 group-hover:opacity-100 group-hover:bg-torii group-hover:text-white transition-all shrink-0">
-                        {i + 1}
-                      </span>
-
-                      <div className="overflow-hidden">
-                        {isKanjiOption ? (
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-2xl sm:text-3xl font-kanji font-black text-torii">
-                              {opt.display}
-                            </span>
-                            <span className="text-xs font-bold opacity-80 truncate">
-                              {opt.subText || opt.hanViet}
-                            </span>
-                          </div>
-                        ) : (
-                          <div>
-                            <span className="font-extrabold text-sm sm:text-base font-kanji text-torii block">
-                              {opt.display}
-                            </span>
-                            <span className="text-xs opacity-75 mt-0.5 leading-snug line-clamp-1">
-                              {opt.subText}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Status Badge */}
-                    <div className="shrink-0 ml-2">
-                      {isAnswered && opt.isCorrect && (
-                        <span className="text-emerald-600 dark:text-emerald-400 font-extrabold text-xs bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">
-                          ✓ ĐÚNG
-                        </span>
-                      )}
-                      {isAnswered && selectedOption === opt && !opt.isCorrect && (
-                        <span className="text-red-600 dark:text-red-400 font-extrabold text-xs bg-red-500/10 px-2 py-0.5 rounded-full border border-red-500/30">
-                          ✗ SAI
-                        </span>
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Feedback & Mnemonic Box in Zen Mode */}
-            {isAnswered && gameMode === 'zen' && (
-              <div
-                className={`w-full mt-4 p-4 rounded-2xl border text-xs md:text-sm animate-fadeIn relative z-10 ${
-                  selectedOption?.isCorrect
-                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-950 dark:text-emerald-200'
-                    : 'bg-red-500/10 border-red-500/30 text-red-950 dark:text-red-200'
-                }`}
-              >
-                <div className="font-bold flex items-center gap-1.5 mb-1">
-                  <span>{selectedOption?.isCorrect ? '🎉 Tuyệt vời! Chính xác!' : '😢 Chưa chính xác!'}</span>
-                  {!selectedOption?.isCorrect && (
-                    <span className="text-[11px] font-normal text-torii">
-                      (Đã tự động thêm vào Sổ tay để bạn ôn lại)
-                    </span>
-                  )}
-                </div>
-                
-                {currentQuestion.targetInfo && (
-                  <div className="mt-1 text-xs opacity-85 leading-relaxed space-y-1">
-                    <div>
-                      <strong>Chữ:</strong> 「{currentQuestion.targetChar}」 •{' '}
-                      <strong>Âm Hán Việt:</strong> {currentQuestion.targetInfo.hanViet} •{' '}
-                      <strong>Nghĩa:</strong> {currentQuestion.targetInfo.meaning}
-                    </div>
-                    {currentQuestion.targetInfo.mnemonic && (
-                      <div className="italic text-[11px] opacity-80 pt-0.5">
-                        💡 <strong>Mẹo nhớ:</strong> {currentQuestion.targetInfo.mnemonic}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Next Question Button (Zen Mode) */}
-            {isAnswered && gameMode === 'zen' && (
-              <div className="mt-5 flex items-center gap-3 relative z-10">
                 <button
                   onClick={() => {
                     playWoodClapper();
-                    generateQuestion();
+                    setUserAnswers({});
+                    setStreak(0);
                   }}
-                  className="px-8 py-3 bg-torii hover:bg-torii-light text-white font-bold rounded-2xl text-xs md:text-sm shadow-md transition-all active:scale-95 flex items-center gap-2"
+                  className="px-2.5 py-1 rounded-lg text-[11px] opacity-60 hover:opacity-100 transition-all cursor-pointer"
+                  title="Làm lại từ đầu bộ đề này"
                 >
-                  <span>Câu tiếp theo [Space / Enter]</span>
+                  🔄 Làm lại
+                </button>
+
+                <button
+                  onClick={handleNextQuestion}
+                  disabled={currentIndex >= activeQuestions.length - 1}
+                  className="px-4 py-1 rounded-lg bg-torii hover:bg-torii-light text-white font-bold text-xs shadow-xs transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1"
+                >
+                  <span>Tiếp</span>
                   <span>→</span>
                 </button>
               </div>
             )}
           </>
         )}
-      </div>
-
-      {/* Hints footer */}
-      <div className="text-[11px] opacity-60 text-center font-medium">
-        Bấm phím số <kbd className="px-1 py-0.5 bg-black/5 dark:bg-white/10 rounded font-mono">1</kbd>{' '}
-        <kbd className="px-1 py-0.5 bg-black/5 dark:bg-white/10 rounded font-mono">2</kbd>{' '}
-        <kbd className="px-1 py-0.5 bg-black/5 dark:bg-white/10 rounded font-mono">3</kbd>{' '}
-        <kbd className="px-1 py-0.5 bg-black/5 dark:bg-white/10 rounded font-mono">4</kbd> để chọn nhanh đáp án
       </div>
     </section>
   );

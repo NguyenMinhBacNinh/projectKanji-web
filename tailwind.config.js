@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ['class', '.theme-yozakura'],
+  darkMode: 'class',
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -37,6 +37,21 @@ module.exports = {
           light: '#d97706',
           bg: '#fffbeb',
         },
+        matcha: {
+          DEFAULT: '#059669',
+          light: '#10b981',
+          dark: '#047857',
+        },
+        stone: {
+          850: '#211e1c',
+          925: '#141211',
+        },
+        akira: {
+          DEFAULT: '#BC002D',
+          light: '#D93848',
+          dark: '#8B0000',
+        },
+        'manga-yellow': '#F59E0B',
       },
       fontFamily: {
         kanji: ['var(--font-kanji)', '"Shippori Mincho"', '"Noto Serif JP"', 'serif'],
@@ -44,7 +59,19 @@ module.exports = {
       },
       boxShadow: {
         washi: 'var(--card-shadow)',
-        hanko: '0 0 0 3px var(--color-torii), 0 4px 12px rgba(185, 28, 28, 0.3)',
+        hanko: '0 0 0 3px var(--color-torii), 0 4px 12px rgba(188, 0, 45, 0.3)',
+        manga: '2px 2px 0px rgba(45, 38, 30, 0.5), 0 3px 10px -2px rgba(45, 38, 30, 0.1)',
+        'manga-sm': '1.5px 1.5px 0px rgba(45, 38, 30, 0.45)',
+        'manga-lg': '3px 3px 0px rgba(45, 38, 30, 0.5), 0 6px 18px -3px rgba(45, 38, 30, 0.12)',
+        'manga-xl': '4px 4px 0px rgba(45, 38, 30, 0.55), 0 8px 24px -4px rgba(45, 38, 30, 0.15)',
+        'manga-red': '2px 2px 0px #BC002D',
+        'manga-yellow': '2px 2px 0px #C27803',
+        'manga-dark': '2px 2px 0px rgba(255, 255, 255, 0.25)',
+        'manga-dark-lg': '3px 3px 0px rgba(255, 255, 255, 0.3)',
+      },
+      transitionTimingFunction: {
+        spring: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        karuta: 'cubic-bezier(0.16, 1, 0.3, 1)',
       },
     },
   },

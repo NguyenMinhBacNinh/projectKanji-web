@@ -1,5 +1,5 @@
-// Service Worker for Kanji Gakushūchō PWA
-const CACHE_NAME = 'kanji-gakushucho-pwa-v1';
+// Service Worker for Kanji Gakushūchō PWA (v3 with 150 reading comprehension articles)
+const CACHE_NAME = 'kanji-gakushucho-pwa-v3';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -9,6 +9,10 @@ const PRECACHE_ASSETS = [
   '/icons/icon-512.png',
   '/icons/apple-touch-icon.png',
   '/favicon.ico',
+  '/images/logo.png',
+  '/images/logo_dark.png',
+  '/images/logo_emblem.png',
+  '/images/logo_emblem_dark.png',
   '/illustrations/fuji.jpg',
   '/illustrations/sumo.jpg',
   '/illustrations/torii.jpg'
@@ -74,6 +78,7 @@ self.addEventListener('fetch', (event) => {
   const isStaticAsset =
     url.pathname.startsWith('/_next/static/') ||
     url.pathname.startsWith('/icons/') ||
+    url.pathname.startsWith('/images/') ||
     url.pathname.startsWith('/illustrations/') ||
     url.pathname === '/kanji_full_database.json' ||
     url.hostname.includes('fonts.googleapis.com') ||

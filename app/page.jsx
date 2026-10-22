@@ -18,12 +18,17 @@ import VoiceShadowingModal from '../components/VoiceShadowingModal';
 import KanjiGridModal from '../components/KanjiGridModal';
 import KanjiPracticeModal from '../components/KanjiPracticeModal';
 import RadicalModal from '../components/RadicalModal';
-import KanjiMindmapModal from '../components/KanjiMindmapModal';
+import KanjiVocabModal from '../components/KanjiVocabModal';
+import KanjiMnemonicModal from '../components/KanjiMnemonicModal';
+import KanjiExampleModal from '../components/KanjiExampleModal';
 import KanjiWorksheetModal from '../components/KanjiWorksheetModal';
 import StatsModal from '../components/StatsModal';
 import SpotlightSearchModal from '../components/SpotlightSearchModal';
 import Toast from '../components/Toast';
+import ZenSplashIntro from '../components/ZenSplashIntro';
+import YouTubeNightDancerPlayer from '../components/YouTubeNightDancerPlayer';
 import { KANJI_DATA } from '../lib/kanjiData';
+
 import {
   loadFullDatabase,
   fetchLiveKanjiInfo,
@@ -38,6 +43,9 @@ import {
   getAudioMuted,
   toggleZenMusic,
   getZenMusicPlaying,
+  BGM_TRACKS,
+  getSelectedMusicTrack,
+  setSelectedMusicTrack,
 } from '../lib/traditionalAudio';
 import {
   getDueKanjiList,
@@ -46,6 +54,7 @@ import {
 } from '../lib/srsService';
 
 export default function Home() {
+  const [showSplash, setShowSplash] = useState(true);
   const [activeMode, setActiveMode] = useState('study');
   const [currentLevel, setCurrentLevel] = useState('N5');
   const [kanjiList, setKanjiList] = useState([]);
@@ -62,7 +71,9 @@ export default function Home() {
   const [isGridModalOpen, setIsGridModalOpen] = useState(false);
   const [isPracticeModalOpen, setIsPracticeModalOpen] = useState(false);
   const [isRadicalModalOpen, setIsRadicalModalOpen] = useState(false);
-  const [isMindmapModalOpen, setIsMindmapModalOpen] = useState(false);
+  const [isVocabModalOpen, setIsVocabModalOpen] = useState(false);
+  const [isMnemonicModalOpen, setIsMnemonicModalOpen] = useState(false);
+  const [isExampleModalOpen, setIsExampleModalOpen] = useState(false);
   const [isWorksheetModalOpen, setIsWorksheetModalOpen] = useState(false);
   const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
   const [isSpotlightOpen, setIsSpotlightOpen] = useState(false);
@@ -71,6 +82,7 @@ export default function Home() {
   // SRS and Ambient Zen Music state
   const [dueKanjiList, setDueKanjiList] = useState([]);
   const [isZenPlaying, setIsZenPlaying] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState(() => getSelectedMusicTrack());
 
   const [toast, setToast] = useState({ visible: false, message: '', icon: '' });
 
@@ -80,14 +92,23 @@ export default function Home() {
   // Audio mute state
   const [isMuted, setIsMuted] = useState(false);
 
+  // Cherry blossom petals animation toggle
+  const [petalsEnabled, setPetalsEnabled] = useState(true);
+
+  // Auto speech on card change toggle
+  const [autoSpeechEnabled, setAutoSpeechEnabled] = useState(false);
+
+  // Analysis / Zen focus mode state
+  const [isAnalysisMode, setIsAnalysisMode] = useState(true);
+
   // Apply theme class to <html> element
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'yozakura') {
-      root.classList.add('theme-yozakura');
+      root.classList.add('theme-yozakura', 'dark');
       root.classList.remove('theme-washi');
     } else {
-      root.classList.remove('theme-yozakura');
+      root.classList.remove('theme-yozakura', 'dark');
       root.classList.add('theme-washi');
     }
     if (typeof window !== 'undefined') {
@@ -95,7 +116,7 @@ export default function Home() {
     }
   }, [theme]);
 
-  // Load persisted theme + audio preference
+  // Load persisted theme + audio preference + study mode
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('project_kanji_theme');
@@ -103,8 +124,27 @@ export default function Home() {
       const muted = getAudioMuted();
       setIsMuted(muted);
       setAudioMuted(muted);
+
+      const savedMode = localStorage.getItem('project_kanji_analysis_mode');
+      if (savedMode !== null) {
+        setIsAnalysisMode(savedMode === 'true');
+      }
     }
   }, []);
+
+  const handleToggleAnalysisMode = () => {
+    setIsAnalysisMode((prev) => {
+      const next = !prev;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('project_kanji_analysis_mode', String(next));
+      }
+      showToast(
+        next ? 'Đã bật Chế độ Phân tích chuyên sâu' : 'Đã về Chế độ Học Tinh giản (Zen Focus)',
+        next ? '🔍' : '⛩️'
+      );
+      return next;
+    });
+  };
 
   const handleToggleTheme = () => {
     setTheme((t) => (t === 'washi' ? 'yozakura' : 'washi'));
@@ -123,14 +163,22 @@ export default function Home() {
     }, 2400);
   }, []);
 
-  // Zen Music toggle (Ngũ cung Hirajoshi & Tiếng đàn Koto)
+  const handleSelectMusicTrack = (trackId) => {
+    setSelectedTrack(trackId);
+    setSelectedMusicTrack(trackId);
+  };
+
+  // BGM toggle (Nhạc nền Nhật Bản)
   const handleToggleZenMusic = () => {
     const next = toggleZenMusic();
     setIsZenPlaying(next);
+    const trackId = getSelectedMusicTrack();
+    setSelectedTrack(trackId);
     if (next) {
-      showToast('Đang phát nhạc thiền Zen (Ngũ cung Hirajoshi & Đàn Koto)', '🎋');
+      const trackInfo = BGM_TRACKS.find((t) => t.id === trackId) || BGM_TRACKS[0];
+      showToast(`Đang phát: ${trackInfo.title}`, trackInfo.icon || '🎵');
     } else {
-      showToast('Đã dừng nhạc thiền Zen', '🔇');
+      showToast('Đã dừng phát nhạc nền', '🔇');
     }
   };
 
@@ -163,6 +211,16 @@ export default function Home() {
 
   // 3. Update current card info
   const currentChar = kanjiList[currentIndex] || '';
+
+  // Tự động phát âm khi chuyển sang chữ Hán mới nếu bật Auto Speech
+  useEffect(() => {
+    if (autoSpeechEnabled && activeMode === 'study' && currentChar) {
+      const timer = setTimeout(() => {
+        playJapaneseSpeech(currentChar);
+      }, 180);
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex, currentChar, autoSpeechEnabled, activeMode]);
 
   useEffect(() => {
     if (!currentChar) return;
@@ -306,7 +364,9 @@ export default function Home() {
         isGridModalOpen ||
         isPracticeModalOpen ||
         isRadicalModalOpen ||
-        isMindmapModalOpen ||
+        isVocabModalOpen ||
+        isMnemonicModalOpen ||
+        isExampleModalOpen ||
         isWorksheetModalOpen ||
         isStatsModalOpen ||
         isSpotlightOpen ||
@@ -316,7 +376,9 @@ export default function Home() {
           setIsGridModalOpen(false);
           setIsPracticeModalOpen(false);
           setIsRadicalModalOpen(false);
-          setIsMindmapModalOpen(false);
+          setIsVocabModalOpen(false);
+          setIsMnemonicModalOpen(false);
+          setIsExampleModalOpen(false);
           setIsWorksheetModalOpen(false);
           setIsStatsModalOpen(false);
           setIsSpotlightOpen(false);
@@ -335,12 +397,30 @@ export default function Home() {
         } else if (e.key === 'r' || e.key === 'R') {
           e.preventDefault();
           setIsRadicalModalOpen(true);
+        } else if (e.key === 'v' || e.key === 'V') {
+          e.preventDefault();
+          setIsVocabModalOpen(true);
         } else if (e.key === 'm' || e.key === 'M') {
           e.preventDefault();
-          setIsMindmapModalOpen(true);
+          setIsMnemonicModalOpen(true);
+        } else if (e.key === 'e' || e.key === 'E') {
+          e.preventDefault();
+          setIsExampleModalOpen(true);
+        } else if (e.key === 'g' || e.key === 'G') {
+          e.preventDefault();
+          setIsGridModalOpen(true);
+        } else if (e.key === 'd' || e.key === 'D') {
+          e.preventDefault();
+          handleToggleAnalysisMode();
         } else if (isFlipped && ['1', '2', '3', '4'].includes(e.key)) {
           e.preventDefault();
           handleSrsReview(parseInt(e.key, 10));
+        } else if (!isFlipped && e.key === '1') {
+          e.preventDefault();
+          handleMarkForgotten();
+        } else if (!isFlipped && e.key === '2') {
+          e.preventDefault();
+          handleMarkMastered();
         } else if (e.key === 'ArrowRight') {
           handleNextCard();
         } else if (e.key === 'ArrowLeft') {
@@ -355,35 +435,35 @@ export default function Home() {
     isGridModalOpen,
     isPracticeModalOpen,
     isRadicalModalOpen,
-    isMindmapModalOpen,
+    isVocabModalOpen,
+    isMnemonicModalOpen,
+    isExampleModalOpen,
     isWorksheetModalOpen,
     isStatsModalOpen,
     isSpotlightOpen,
     isVoiceShadowingOpen,
     isFlipped,
+    currentChar,
     handleSrsReview,
+    handleMarkForgotten,
+    handleMarkMastered,
     handleNextCard,
     handlePrevCard,
+    handleToggleAnalysisMode,
   ]);
 
   const isMastered = masteredList.includes(currentChar);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-between p-4 md:p-6 relative select-none">
-      {/* Họa tiết sóng biển Seigaiha (青海波) - lớp nền trang truyền thống */}
-      <div className="wagara-pattern" aria-hidden="true" />
-
-      {/* Vân xơ giấy Washi */}
-      <div className="washi-grain" aria-hidden="true" />
-
-      {/* Phong cảnh Nhật Bản: Mặt trời đỏ / Trăng bạc, Núi Phú Sĩ & Mây Kasumi */}
+    <div className="min-h-[100dvh] lg:h-[100dvh] lg:max-h-[100dvh] flex flex-col items-center justify-between p-1 sm:p-2 lg:px-3 lg:py-1 xl:py-1.5 relative select-none overflow-x-hidden lg:overflow-hidden">
+      {/* Khung cảnh Mỹ học Nhật Bản bao bọc xung quanh (Núi Phú Sĩ, Torii, Rừng Trúc, Chùa Kyoto, Trăng & Mặt trời) */}
       <JapaneseAtmosphericBackground theme={theme} />
 
-      {/* Cánh hoa anh đào rơi (Sakura) */}
-      <SakuraPetals />
+      {/* Hiệu ứng cánh hoa anh đào Sakura Fubuki rơi lãng mạn */}
+      <SakuraPetals enabled={petalsEnabled} />
 
-      {/* Main Container */}
-      <div className="w-full max-w-4xl flex flex-col items-center gap-6 relative z-20">
+      {/* Main Container - Modern Kyoto Zen Studio (Mở rộng tối đa 1400px thoáng đãng) */}
+      <div className="w-full max-w-7xl 2xl:max-w-[1440px] flex flex-col items-center gap-1.5 sm:gap-2 flex-1 min-h-0 relative z-20 overflow-hidden px-1 sm:px-2 lg:px-4">
         <Header
           activeMode={activeMode}
           setActiveMode={setActiveMode}
@@ -393,11 +473,15 @@ export default function Home() {
           isMuted={isMuted}
           onToggleMute={handleToggleMute}
           onOpenSpotlight={() => setIsSpotlightOpen(true)}
-          onOpenStatsModal={() => setIsStatsModalOpen(true)}
-          onOpenWorksheetModal={() => setIsWorksheetModalOpen(true)}
-          onOpenVoiceShadowing={() => setIsVoiceShadowingOpen(true)}
           isZenMusicPlaying={isZenPlaying}
           onToggleZenMusic={handleToggleZenMusic}
+          selectedMusicTrack={selectedTrack}
+          onSelectMusicTrack={handleSelectMusicTrack}
+          petalsEnabled={petalsEnabled}
+          onTogglePetals={() => setPetalsEnabled((prev) => !prev)}
+          autoSpeechEnabled={autoSpeechEnabled}
+          onToggleAutoSpeech={() => setAutoSpeechEnabled((prev) => !prev)}
+          onReplaySplash={() => setShowSplash(true)}
         />
 
         {activeMode === 'study' && (
@@ -420,12 +504,18 @@ export default function Home() {
             onOpenGridModal={() => setIsGridModalOpen(true)}
             onOpenPracticeModal={() => setIsPracticeModalOpen(true)}
             onOpenRadicalModal={() => setIsRadicalModalOpen(true)}
-            onOpenMindmapModal={() => setIsMindmapModalOpen(true)}
+            onOpenVocabModal={() => setIsVocabModalOpen(true)}
+            onOpenMnemonicModal={() => setIsMnemonicModalOpen(true)}
+            onOpenExampleModal={() => setIsExampleModalOpen(true)}
             onOpenVoiceShadowing={() => setIsVoiceShadowingOpen(true)}
             onOpenWorksheetModal={() => setIsWorksheetModalOpen(true)}
+            onOpenStatsModal={() => setIsStatsModalOpen(true)}
             onSrsReview={handleSrsReview}
             dueCount={dueKanjiList.length}
             isMastered={isMastered}
+            isAnalysisMode={isAnalysisMode}
+            onToggleAnalysisMode={handleToggleAnalysisMode}
+            fullDb={fullDb}
           />
         )}
 
@@ -477,54 +567,26 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="w-full max-w-4xl mt-12 py-6 border-t border-washi-border/50 text-center text-xs opacity-70 flex flex-col sm:flex-row items-center justify-between gap-2 z-20 font-ui">
-        <div className="flex items-center gap-2">
-          <span>⛩️</span>
-          <span>Sổ tay học Kanji tiếng Nhật • Luyện thi JLPT N5 - N1</span>
+      <footer className="w-full max-w-7xl 2xl:max-w-[1440px] mt-0.5 py-1 px-2 sm:px-4 border-t border-stone-200/60 dark:border-stone-800/80 text-stone-600 dark:text-stone-400 text-[10px] sm:text-xs flex flex-col sm:flex-row items-center justify-between gap-1 sm:gap-2 z-20 font-ui shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={theme === 'yozakura' ? '/images/logo_emblem_dark.png' : '/images/logo_emblem.png'}
+            alt="Logo"
+            className="w-4 h-4 object-contain filter drop-shadow-2xs"
+          />
+          <span className="font-semibold text-stone-800 dark:text-stone-200">漢字学習帳 (Kanji Gakushūchō)</span>
+          <span className="text-stone-600 dark:text-stone-300">• Luyện thi JLPT N5 - N1</span>
         </div>
-        <div className="text-[11px]">
+        <div className="text-[11px] flex items-center justify-center sm:justify-end gap-2 text-stone-500 dark:text-stone-400 font-medium">
           {activeMode === 'quiz' ? (
-            <>
-              Phím tắt Quiz:{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">1</kbd>{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">2</kbd>{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">3</kbd>{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">4</kbd>{' '}
-              chọn đáp án •{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">Space</kbd>{' '}
-              câu tiếp •{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">⌘K</kbd>{' '}
-              tìm kiếm
-            </>
+            <span>Trắc nghiệm phản xạ • Phím 1-4 chọn đáp án</span>
           ) : activeMode === 'listening' ? (
-            <>
-              Luyện nghe Choukai:{' '}
-              Bấm <span className="font-bold text-torii">▶️ Nghe hội thoại</span> • Chọn phương án đúng • Bấm <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">⌘K</kbd> tìm kiếm
-            </>
+            <span>Luyện nghe Choukai • Chọn phương án theo ngữ cảnh</span>
           ) : activeMode === 'vocab' ? (
-            <>
-              Từ vựng JLPT:{' '}
-              <span className="font-bold">Lật thẻ 3D</span> • Phát âm chuẩn bản xứ • Bấm <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">⌘K</kbd> tìm kiếm
-            </>
+            <span>Từ vựng JLPT • Lật thẻ 3D & Âm thanh bản ngữ</span>
           ) : (
-            <>
-              Phím tắt:{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">⌘K</kbd>{' '}
-              tìm kiếm •{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">Space</kbd>{' '}
-              lật thẻ •{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">1-4</kbd>{' '}
-              lưu SRS •{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">W</kbd>{' '}
-              tập viết •{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">M</kbd>{' '}
-              sơ đồ •{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">R</kbd>{' '}
-              chiết tự •{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">←</kbd>{' '}
-              <kbd className="px-1.5 py-0.5 bg-black/10 dark:bg-white/10 rounded border border-washi-border font-mono">→</kbd>{' '}
-              chuyển thẻ
-            </>
+            <span>Zen Studio • Phím tắt hiển thị trực tiếp trên nút</span>
           )}
         </div>
       </footer>
@@ -536,6 +598,7 @@ export default function Home() {
         kanjiList={KANJI_DATA[currentLevel] || []}
         currentLevel={currentLevel}
         currentIndex={currentIndex}
+        fullDb={fullDb}
         onSelectKanji={(idx) => {
           setCurrentIndex(idx);
           setIsFlipped(false);
@@ -563,6 +626,7 @@ export default function Home() {
         currentLevel={currentLevel}
         cardInfo={cardInfo}
         allKanjiList={kanjiList}
+        fullDb={fullDb}
         onSelectKanji={(selectedChar) => {
           const foundIdx = kanjiList.indexOf(selectedChar);
           if (foundIdx !== -1) {
@@ -578,10 +642,28 @@ export default function Home() {
         }}
       />
 
-      {/* Kanji Compound Mindmap Modal */}
-      <KanjiMindmapModal
-        isOpen={isMindmapModalOpen}
-        onClose={() => setIsMindmapModalOpen(false)}
+      {/* Kanji JLPT Compound Vocabulary Modal */}
+      <KanjiVocabModal
+        isOpen={isVocabModalOpen}
+        onClose={() => setIsVocabModalOpen(false)}
+        currentChar={currentChar}
+        currentLevel={currentLevel}
+        cardInfo={cardInfo}
+      />
+
+      {/* Kanji Visual Mnemonic Modal */}
+      <KanjiMnemonicModal
+        isOpen={isMnemonicModalOpen}
+        onClose={() => setIsMnemonicModalOpen(false)}
+        currentChar={currentChar}
+        currentLevel={currentLevel}
+        cardInfo={cardInfo}
+      />
+
+      {/* Kanji Context Example Modal */}
+      <KanjiExampleModal
+        isOpen={isExampleModalOpen}
+        onClose={() => setIsExampleModalOpen(false)}
         currentChar={currentChar}
         currentLevel={currentLevel}
         cardInfo={cardInfo}
@@ -607,11 +689,14 @@ export default function Home() {
       <VoiceShadowingModal
         isOpen={isVoiceShadowingOpen}
         onClose={() => setIsVoiceShadowingOpen(false)}
+        currentLevel={currentLevel}
+        currentChar={currentChar}
+        cardInfo={cardInfo}
         initialPhrase={
           cardInfo?.exampleJp?.replace(/<[^>]+>/g, '') ||
-          (currentChar ? `「${currentChar}」の勉強` : 'こんにちは、よろしくお願いします。')
+          (currentChar ? `「${currentChar}」の勉強` : '')
         }
-        initialMeaning={cardInfo?.exampleVn || 'Xin chào, rất mong được giúp đỡ.'}
+        initialMeaning={cardInfo?.exampleVn || ''}
       />
 
       {/* Spotlight Command Palette Search Modal */}
@@ -621,6 +706,22 @@ export default function Home() {
         onSelectKanji={handleSelectKanjiFromSearch}
         fullDb={fullDb}
         levelsData={KANJI_DATA}
+      />
+
+      {/* Màn chào chuyển cảnh Zen mở đầu (Cinematic Zen Splash Transition) */}
+      {showSplash && (
+        <ZenSplashIntro
+          theme={theme}
+          onFinish={() => setShowSplash(false)}
+        />
+      )}
+
+      {/* Trình phát nhạc YouTube Chính thức cho bài NIGHT DANCER (Điều khiển qua Menu Cài đặt) */}
+      <YouTubeNightDancerPlayer
+        isPlaying={isZenPlaying}
+        onTogglePlay={handleToggleZenMusic}
+        activeTrackId={selectedTrack}
+        theme={theme}
       />
 
       {/* Toast Notification */}
