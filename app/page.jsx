@@ -27,7 +27,6 @@ import StatsModal from '../components/StatsModal';
 import SpotlightSearchModal from '../components/SpotlightSearchModal';
 import Toast from '../components/Toast';
 import ZenSplashIntro from '../components/ZenSplashIntro';
-import YouTubeNightDancerPlayer from '../components/YouTubeNightDancerPlayer';
 import { KANJI_DATA } from '../lib/kanjiData';
 
 import {
@@ -711,13 +710,6 @@ export default function Home() {
         />
       )}
 
-      {/* Trình phát nhạc YouTube Chính thức cho bài NIGHT DANCER của imase */}
-      <YouTubeNightDancerPlayer
-        isPlaying={isZenPlaying}
-        onTogglePlay={handleToggleZenMusic}
-        activeTrackId={getSelectedMusicTrack()}
-        theme={theme}
-      />
 
       {/* Toast Notification */}
       <Toast toast={toast} />

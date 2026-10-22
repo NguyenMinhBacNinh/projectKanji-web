@@ -231,40 +231,6 @@ export default function Header({
               )}
             </button>
 
-            {/* Nút phát Nhạc nền Night Dancer hiển thị trực tiếp trên Header */}
-            {onToggleZenMusic && (
-              <button
-                onClick={() => {
-                  playWaterDrop();
-                  onToggleZenMusic();
-                }}
-                className={`h-8 sm:h-9 px-2.5 sm:px-3 rounded-xl border flex items-center gap-1.5 transition-all text-xs font-bold shadow-2xs cursor-pointer active:scale-95 ${
-                  isZenMusicPlaying
-                    ? 'border-[#BC002D] bg-[#BC002D] text-white shadow-xs'
-                    : 'border-[#D8CEBF] dark:border-stone-700 bg-white/80 dark:bg-stone-800 hover:bg-[#F2ECE0] dark:hover:bg-stone-750 text-stone-800 dark:text-stone-200 hover:border-[#BC002D]/40'
-                }`}
-                title={isZenMusicPlaying ? 'Đang phát bài Night Dancer (Bấm để tạm dừng)' : 'Bấm để phát bài Night Dancer (Nhạc nền Nhật Bản)'}
-              >
-                <span className={`text-xs ${isZenMusicPlaying ? 'animate-spin' : ''}`}>💿</span>
-                <span className="font-bold flex items-center gap-1">
-                  <span>Night Dancer</span>
-                  <span className="text-[10px] opacity-75 hidden sm:inline">
-                    {isZenMusicPlaying ? '(Đang phát)' : ''}
-                  </span>
-                </span>
-                {isZenMusicPlaying ? (
-                  <span className="flex items-center gap-0.5 ml-0.5">
-                    <span className="w-0.5 h-2.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <span className="w-0.5 h-3.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <span className="w-0.5 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                  </span>
-                ) : (
-                  <span className="text-[10px] px-1 py-0.2 rounded bg-black/5 dark:bg-white/10 text-stone-600 dark:text-stone-300">
-                    Phát
-                  </span>
-                )}
-              </button>
-            )}
 
             {/* Tiện ích & Cài đặt Dropdown Popover */}
             <div className="relative" ref={settingsRef}>
